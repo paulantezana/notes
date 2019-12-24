@@ -14,4 +14,4 @@ Hotel Principe III
 ------------------------------------------------------------
 regreso de estado de ocupado a reservado
 yovanna flores
-10049
+reserva: 10049
