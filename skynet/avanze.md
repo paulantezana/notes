@@ -31,6 +31,11 @@ SQL
 
     DELIMITER ;
 
+--> ALTER TABLE
+
+    ALTER TABLE `mante_registro_nota_pedido` CHANGE `IdVenta` `IdVenta` INT(11) NOT NULL AUTO_INCREMENT;
+
+
 New Queryes
     SELECT mua.IdAlmacen, ma.Almacen, ma.ColorFondo, ma.ColorTexto  FROM `mante_usuario_almacen` AS mua INNER JOIN mante_almacen AS ma ON mua.IdAlmacen = ma.IdAlmacen WHERE IdUsuario = '2'
 
@@ -40,3 +45,5 @@ Update
     -panel_Html.js
     -ManteAlmacen.js
     -Mante.php
+    -Procesos.php
+    -RegistroVenta.js
