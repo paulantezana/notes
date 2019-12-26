@@ -1,10 +1,8 @@
 -------------------
-# Sistema de ventas
+# Sistema de ventas ZYBER primeros cambios
 SQL
     ALTER TABLE mante_almacen ADD COLUMN ColorFondo VARCHAR(16);
     ALTER TABLE mante_almacen ADD COLUMN ColorTexto VARCHAR(16);
-
-
 --> Procedure == mante_save_almacen
 
     DELIMITER $$
@@ -32,12 +30,7 @@ SQL
     DELIMITER ;
 
 --> ALTER TABLE
-
     ALTER TABLE `mante_registro_nota_pedido` CHANGE `IdVenta` `IdVenta` INT(11) NOT NULL AUTO_INCREMENT;
-
-
-New Queryes
-    SELECT mua.IdAlmacen, ma.Almacen, ma.ColorFondo, ma.ColorTexto  FROM `mante_usuario_almacen` AS mua INNER JOIN mante_almacen AS ma ON mua.IdAlmacen = ma.IdAlmacen WHERE IdUsuario = '2'
 
 Update
     -homeModel.php
