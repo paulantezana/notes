@@ -40,3 +40,28 @@ Update
     -Mante.php
     -Procesos.php
     -RegistroVenta.js
+
+-> Mejorar Sistema de ventas
+    - Nota de pedido => Agregar nombre cliente.
+                     => Manejo de stock
+    - Venta rapida importar nota de pedido.
+        -> ya no se permite modificar la cantidad **check*
+        -> quitar el manejo del stock **ckeck**
+
+        // if ($aIdProducto!='-1') {//en caso de que sea un producto que existe, ya que -1 indica producto no existente
+        // 	$query1234="UPDATE `mante_producto_almacen` SET Stock=Stock-'".$aCantidad."'
+        // 					WHERE IdAlmacen='".$aIdAlm."' AND IdProducto='".$aIdProducto."';";
+        // 	$sql3 = $pdo->prepare($query1234);
+        // 	if($sql3->execute()){
+        // 		$queryGast="SELECT fn_save_kardex_Venta('".$IdUser."','".$pOrigen."','".$pDestino."','".$aIdAlm."',
+        // 					'".$aIdProducto."','".addslashes($aDescripcion)."','".$aCantidad."','".$aPU."',
+        // 					'".$aImporte."','".$IdTipoEnt."','".$aComprob."') as con;";
+        // 		//echo $queryGast;
+        // 		$sql4 = $pdo->prepare($queryGast);				
+        // 		if($sql4->execute()){
+        // 			$fila4=$sql4->fetchAll();
+        // 			$valor=$fila4[0]["con"];
+        // 			if($valor==1){$valido=true;}else{$valido=false;}
+        // 		}
+        // 	}else{$valido=false;}
+        // }
