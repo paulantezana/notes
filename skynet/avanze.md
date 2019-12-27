@@ -65,3 +65,6 @@ Update
         // 		}
         // 	}else{$valido=false;}
         // }
+
+
+    ALTER TABLE mante_registro_nota_pedido ADD COLUMN IdComprobante INT(3);    
