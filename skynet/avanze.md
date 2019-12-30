@@ -68,3 +68,25 @@ Update
 
 
     ALTER TABLE mante_registro_nota_pedido ADD COLUMN IdComprobante INT(3);    
+
+
+proforma
+
+-----------------------------------------------------------------------------------------------
+# SISEMA RESTAURANT CAPON
+- Numero de mozo => Nombre de mozo
+# Cocina
+- Otro layout
+- Quitar header
+- Quitar todo los items
+- Reubicar (Logo - Zonas - LoginUser)
+    - boton que indique atendido o servido
+
+
+- Interfaz cocina:
+	* Lista de pedidos por atender (preparar)
+	* Boton de agrandar orden
+	* Boton de marcar orden como atendida y quitar dicha orden
+	* Interfaz actualizada automaticamente
+	* Ordenes listadas por hora de pedido
+	* Mosatrar observaciones o notas para cocina
