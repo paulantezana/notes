@@ -81,12 +81,31 @@ proforma
 - Quitar todo los items
 - Reubicar (Logo - Zonas - LoginUser)
     - boton que indique atendido o servido
-
+- Agregar sonido
 
 - Interfaz cocina:
 	* Lista de pedidos por atender (preparar)
-	* Boton de agrandar orden
-	* Boton de marcar orden como atendida y quitar dicha orden
-	* Interfaz actualizada automaticamente
-	* Ordenes listadas por hora de pedido
-	* Mosatrar observaciones o notas para cocina
+	* Boton de agrandar orden                                       => Con icono de ZOOM Modal
+	* Boton de marcar orden como atendida y quitar dicha orden      => Con icono de check verde
+	* Interfaz actualizada automaticamente                          => 
+	* Ordenes listadas por hora de pedido                           => Dibujar por javascript segun la hora de la consulta (consulta por fecha)
+	* Mosatrar observaciones o notas para cocina                    => 
+
+
+
+# SQL AJECUTADO
+
+ //   ALTER TABLE atencion_clientes ADD COLUMN atendidoCocina TINYINT DEFAULT 0;
+
+consulta atencion cliente.
+    -detalles
+    -mesa
+    -ordenes
+
+COCINA
+    filtrar los nuevos
+
+
+    pintar con prefixId 
+        - se se encuentra pintar ijos
+        - si no pintar todo  
