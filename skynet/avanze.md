@@ -105,7 +105,6 @@ consulta atencion cliente.
 COCINA
     filtrar los nuevos
 
-
     pintar con prefixId 
         - se se encuentra pintar ijos
         - si no pintar todo  
