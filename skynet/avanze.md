@@ -106,17 +106,14 @@ consulta atencion cliente.
 COCINA
     filtrar los nuevos
     atencion
-    pintar con prefixId 
+    pintar con prefixId
         - se se encuentra pintar ijos
         - si no pintar todo
 
-
-
-atencion/interfas de atencion
+Atencion/interfas de atencion
 - animacion inicial
 - ganar mas espacio
 - agregar como marcado por pedido
 - orden inverso
-
 
 233
