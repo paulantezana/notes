@@ -117,3 +117,90 @@ Atencion/interfas de atencion
 - orden inverso
 
 233
+
+
+# Sistema de Ventas Zyber
+- la relacon empresa analizar para la facturacion * de momento esta de forma statica*
+- Peticion de manuel
+    Precio mayor = p.distribuidor
+    Precio menor = p.publico
+
+- en compra simple
+    Tabla Alm-Pro = Tabla compra simple
+    ----------------------------------
+    precio mayor == precio distribuido  -- bien
+    precio menor == precio base         -- analizar
+
+## Observacion
+- En nota de venta exonerado verificar  funcionalidad
+- Revisar detalladamente VentaRapida Y nota de pedido
+
+- STORE PROCEDURE MODIFICADO
+
+```sql
+    DELIMITER $$
+
+    USE `zayber`$$
+
+    DROP PROCEDURE IF EXISTS `mante_save_almacen`$$
+
+    CREATE DEFINER=`root`@`localhost` PROCEDURE `mante_save_almacen`(`pId` INT(11), `pAlm` VARCHAR(150), `pSimbolo` VARCHAR(25), `pDescrip` VARCHAR(150), `pRuc` VARCHAR(50), `pRS` VARCHAR(200), `pDireccion` VARCHAR(150), `pColorFondo` VARCHAR(16), `pColorTexto` VARCHAR(16),   `pEstado` INT(1))
+    BEGIN
+    DECLARE cont INT(11);
+    IF(pId>0)THEN
+        UPDATE `mante_almacen` SET Almacen=pAlm,Simbolo=pSimbolo,Descripcion=pDescrip,Ruc=pRuc,RazonSocial=pRS,
+        Direccion=pDireccion, `ColorFondo`=pColorFondo, `ColorTexto`=pColorTexto, `Estado`=pEstado
+        WHERE IdAlmacen=pId;
+    ELSE
+        SELECT IFNULL(COUNT(*),0) INTO cont FROM `mante_almacen` WHERE Almacen=pAlm;
+        IF(cont=0)THEN
+        SELECT IFNULL(MAX(IdAlmacen+1),1) INTO pId FROM mante_almacen;
+        INSERT INTO mante_almacen VALUES(pId,pAlm,pSimbolo,pEstado,pDescrip,pRuc,pRS,pDireccion,pColorFondo,pColorTexto);
+        INSERT INTO mante_almacen_empresa VALUES(pId,1);
+        END IF;
+    END IF;
+    END$$
+
+    DELIMITER ;
+```
+
+```sql
+    DELIMITER $$
+
+    USE `zayber`$$
+
+    DROP FUNCTION IF EXISTS `fn_Save_Productos_importP`$$
+
+    CREATE DEFINER=`root`@`localhost` FUNCTION `fn_Save_Productos_importP`(`pCod` VARCHAR(50), `pDescrip` VARCHAR(200), `pIdMarca` INT(5), `pIdModelo` INT(5), `pCompra` DOUBLE(11,2), `pMayor` DOUBLE(11,2), `pMenor` DOUBLE(11,2), `pPublico` DOUBLE(11,2), `pIdAlm` INT(3)) RETURNS int(2)
+        READS SQL DATA
+        DETERMINISTIC
+    BEGIN
+        DECLARE aCont INT(5);
+        DECLARE aId INT(11);
+        SET aCont=0;SET aId=1;
+        
+        SELECT IFNULL(COUNT(*),0) INTO aCont FROM `mante_producto` WHERE Codigo=pCod;
+        IF(aCont>0)THEN
+            SELECT IFNULL(IdProducto,0) INTO aId FROM `mante_producto` WHERE Codigo=pCod LIMIT 1;
+            UPDATE `mante_producto` SET Producto=pDescrip,IdMarca=pIdMarca,IdCategoria=pIdModelo
+            WHERE IdProducto=aId AND Codigo=pCod;
+            SET aCont=0;
+            SELECT IFNULL(COUNT(*),0) INTO  aCont FROM `mante_producto_almacen` WHERE IdAlmacen=pIdAlm AND IdProducto=aId;
+            IF(aCont>0)THEN
+                UPDATE `mante_producto_almacen` SET PrecioCompra=pCompra,PrecioBase=pMenor,PrecioDistribuido=pMayor,
+                    PrecioPublico=pPublico
+                WHERE IdAlmacen=pIdAlm AND IdProducto=aId;
+            ELSE
+                INSERT INTO mante_producto_almacen VALUES(pIdAlm,aId,1,1,0,pCompra,pMenor,pMayor,pPublico,1,1);
+            END IF;
+        ELSE
+            SELECT IFNULL(MAX(IdProducto+1),1) INTO aId FROM `mante_producto`;
+            INSERT INTO `mante_producto` VALUES(aId,pCod,pDescrip,pIdMarca,pIdModelo,1);
+            INSERT INTO mante_producto_almacen VALUES(pIdAlm,aId,1,1,0,pCompra,pMenor,pMayor,pPublico,1,1);
+        END IF;
+            
+        RETURN aId;
+    END$$
+
+    DELIMITER ;
+```
