@@ -11,7 +11,7 @@ SQL
 
     DROP PROCEDURE IF EXISTS `mante_save_almacen`$$
 
-    CREATE DEFINER=`root`@`localhost` PROCEDURE `mante_save_almacen`(`pId` INT(11), `pAlm` VARCHAR(150), `pSimbolo` VARCHAR(25), `pDescrip` VARCHAR(150), `pRuc` VARCHAR(50), `pRS` VARCHAR(200), `pDireccion` VARCHAR(150), `pColorFondo` VARCHAR(16), `pColorTexto` VARCHAR(16),   `pEstado` INT(1))
+    CREATE DEFINER=`store_niko`@`localhost` PROCEDURE `mante_save_almacen`(`pId` INT(11), `pAlm` VARCHAR(150), `pSimbolo` VARCHAR(25), `pDescrip` VARCHAR(150), `pRuc` VARCHAR(50), `pRS` VARCHAR(200), `pDireccion` VARCHAR(150), `pColorFondo` VARCHAR(16), `pColorTexto` VARCHAR(16),   `pEstado` INT(1))
     BEGIN
         DECLARE cont INT(11);
         IF(pId>0)THEN
@@ -137,6 +137,12 @@ Atencion/interfas de atencion
 
 - STORE PROCEDURE MODIFICADO
 
+===
+textIdAlmacen_PVNP
+
+$IdAlmacen
+===
+
 ```sql
     DELIMITER $$
 
@@ -144,7 +150,7 @@ Atencion/interfas de atencion
 
     DROP PROCEDURE IF EXISTS `mante_save_almacen`$$
 
-    CREATE DEFINER=`root`@`localhost` PROCEDURE `mante_save_almacen`(`pId` INT(11), `pAlm` VARCHAR(150), `pSimbolo` VARCHAR(25), `pDescrip` VARCHAR(150), `pRuc` VARCHAR(50), `pRS` VARCHAR(200), `pDireccion` VARCHAR(150), `pColorFondo` VARCHAR(16), `pColorTexto` VARCHAR(16),   `pEstado` INT(1))
+    CREATE DEFINER=`store_niko`@`localhost` PROCEDURE `mante_save_almacen`(`pId` INT(11), `pAlm` VARCHAR(150), `pSimbolo` VARCHAR(25), `pDescrip` VARCHAR(150), `pRuc` VARCHAR(50), `pRS` VARCHAR(200), `pDireccion` VARCHAR(150), `pColorFondo` VARCHAR(16), `pColorTexto` VARCHAR(16),   `pEstado` INT(1))
     BEGIN
     DECLARE cont INT(11);
     IF(pId>0)THEN
@@ -171,7 +177,7 @@ Atencion/interfas de atencion
 
     DROP FUNCTION IF EXISTS `fn_Save_Productos_importP`$$
 
-    CREATE DEFINER=`root`@`localhost` FUNCTION `fn_Save_Productos_importP`(`pCod` VARCHAR(50), `pDescrip` VARCHAR(200), `pIdMarca` INT(5), `pIdModelo` INT(5), `pCompra` DOUBLE(11,2), `pMayor` DOUBLE(11,2), `pMenor` DOUBLE(11,2), `pPublico` DOUBLE(11,2), `pIdAlm` INT(3)) RETURNS int(2)
+    CREATE DEFINER=`store_niko`@`localhost` FUNCTION `fn_Save_Productos_importP`(`pCod` VARCHAR(50), `pDescrip` VARCHAR(200), `pIdMarca` INT(5), `pIdModelo` INT(5), `pCompra` DOUBLE(11,2), `pMayor` DOUBLE(11,2), `pMenor` DOUBLE(11,2), `pPublico` DOUBLE(11,2), `pIdAlm` INT(3)) RETURNS int(2)
         READS SQL DATA
         DETERMINISTIC
     BEGIN
