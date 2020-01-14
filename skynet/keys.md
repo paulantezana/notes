@@ -20,15 +20,16 @@ factura2020
 --------------------------------- DATOS --------------------------
 20601821801
 
-comercial av andres P.M. 001
-mazuco comercial 002
-colorado 003
+* E&L
+comercial av andres P.M.(Principal) 001
+mazuco comercial                    002
+colorado                            003
 
-inversiones ziber
-andrez avelino caseres  001
-colorado                002
+* inversiones ziber
+andrez avelino caseres(principal)  001
+colorado                           002
 
-corporacion zyber
-jirorn tacna P.M        001
-Mazuco                  002
-Colorado                003
+* corporacion zyber
+jirorn tacna P.M (principal)        001
+Mazuco                              002
+Colorado                            003
