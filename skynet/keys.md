@@ -48,4 +48,6 @@ karyna lendes                       venta y caja    -> cambiar a ventas1
 2: TIENEDA PRINCIPAL KALU
 
 
+
 Venta Facturacion
+7750804004614.00 
