@@ -38,20 +38,14 @@ Colorado                            003
 edwin garcia guerra                 almacen         -> cambiar a almacen
 karyna lendes                       venta y caja    -> cambiar a ventas1
 
+1 Eliminar todo
+2 Regularizar stock
 
 
 
 
-SELECT * FROM `mante_producto_almacen` WHERE `IdProducto` = 127;
-
-SELECT * FROM `mante_producto` WHERE `Producto` = 'FRUGOS DURAZNO';
-
-SELECT * FROM `mante_kardex` WHERE `IdProducto` = 127;
+1: 
+2: TIENEDA PRINCIPAL KALU
 
 
-DELETE FROM mante_producto_almacen WHERE `IdProducto` = 127 AND `estado` = 0 AND `Stock` = 0
-
-
-
-
-SELECT IdProducto, Producto, COUNT(*) FROM mante_producto GROUP BY Producto HAVING COUNT(*) > 1
+Venta Facturacion
