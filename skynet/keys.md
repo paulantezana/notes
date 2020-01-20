@@ -51,3 +51,30 @@ karyna lendes                       venta y caja    -> cambiar a ventas1
 
 Venta Facturacion
 7750804004614.00 
+
+
+
+aceite sell
+almacen principal -> tiemda principal.
+
+tp. tida principal
+
+
+168
+
+-   96 venta
+
+
+CODIGO          = ORIGEN          DESTINO       CANTIDAD
+SOF12354        113                 37          37
+310202610.00    4                   2           4
+
+
+
+
+CATAA '3087298	
+310202610
+
+
+
+-- Proceso linea 1349
