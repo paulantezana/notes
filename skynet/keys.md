@@ -27,6 +27,7 @@ facturacion@chaskihotel.com
 factura2018
 
 - Comprobantes que debrian estar anuladas.
-BPP2-3812
-BPP2-3813
-BPP2-3814
+BPP2-3812 14 -> nota de credito
+BPP2-3813 14 -> nota de credito
+BPP2-3814 anulado
+BPP2-3817 venta directa
