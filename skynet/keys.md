@@ -30,14 +30,11 @@ factura2018
 BPP2-3812 14 -> nota de credito
 BPP2-3813 14 -> nota de credito
 BPP2-3814 anulado
-
 BPP2-3817 venta directa
 
 
-1255
-
-
-Comercial l& e eirl
+=================================================
+Comercial L&E
 ----------------------------------------
 PRINCIPAL -> B001   desde el numero 1 hasta el 24
 
@@ -47,7 +44,7 @@ Inversones zayber
 PRINCIPAL -> B001 desde el numero 1 hasta el 11
 
 
-kalu
+KALU
 ----------------------------------
 -> B001 desde el numero 1 hasta el 4
 -> BPP1 desde el numero 5 hasta el 10
