@@ -1,11 +1,11 @@
 Comercial l& e eirl
----------------------------------- CON PROBLEMAS
+---------------------------------- CON PROBLEMAS SOLO FACTURA CON NUBEFACT.
 factura@comerciallieeirl.com
 factura2020
 
 
 inversones zayber
----------------------------------- CON PROBLEMAS
+---------------------------------- CON PROBLEMAS SOLO FACTURA CON NUBEFACT.
 factura@inversioneszayber.com
 factura2020
 
@@ -51,3 +51,16 @@ KALU
 -> FPP1	62
 -> FPP1	61
 -> FPP1	60
+
+
+Los Boletas electronica que tenian problemas fueron reenviado y aceptados por la sunat *Los pdf estan actualizados en el reporte de ventas*
+--------------------------------------
+Comercial L&E
+[BPP1-1,BPP1-2,BPP1-3,BPP1-4..., BPP1-24];
+--------------------------------------
+Inversones zayber
+[BPP1-1,BPP1-2,BPP1-3,BPP1-4..., BPP1-11];
+--------------------------------------
+KALU
+[BPP1-1,BPP1-2,BPP1-3,BPP1-4];
+--------------------------------------
