@@ -1,23 +1,23 @@
 Comercial l& e eirl
----------------------------------- CON PROBLEMAS SOLO FACTURA CON NUBEFACT.
+----------------------------------
 factura@comerciallieeirl.com
 factura2020
 
 
 inversones zayber
----------------------------------- CON PROBLEMAS SOLO FACTURA CON NUBEFACT.
+----------------------------------
 factura@inversioneszayber.com
 factura2020
 
 
 kalu
----------------------------------- CON PROBLEMAS
+----------------------------------
 factura@kalu.com
 factura2020
 
 
 Corporacion zayber
----------------------------------- SIN PROBLEMAS
+----------------------------------
 factura@corporacionzayber.com
 factura2020
 
@@ -25,6 +25,14 @@ factura2020
 Hotel Chasky
 facturacion@chaskihotel.com
 factura2018
+
+=========================
+iguazutr
+factura@transportesiguazu.com
+Factura2020-
+
+
+
 
 - Comprobantes que debrian estar anuladas.
 BPP2-3812 14 -> nota de credito
@@ -64,3 +72,13 @@ Inversones zayber
 KALU
 [BPP1-1,BPP1-2,BPP1-3,BPP1-4];
 --------------------------------------
+
+
+-------------------------------
+girar. una letra 9 de la noche
+1A
+3A
+
+----------------- 
+pasajero
+pasaporte
