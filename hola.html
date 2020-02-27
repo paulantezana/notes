@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Home</h1>
+    <script>
+        fetch("http://localhost/calendario/availability/parameters?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJjdXN0b21lcklkIjoiMTMiLCJjYWxlbmRhcklkIjoiNSJ9.qAXJcDIjzo2LfH4Oortfvcs9XaEX6UbAyhYJQ1f23idoejTy3NbpO8ToYTMvhr1VfESreymwSZ1hTP8A_iWJcqEWedJLXxlrHvbZZTjicuCp3eSvCG2dBXrpZaUSrCJycKQKt8T4UZWXFscV3xW8x6Juiy3NSS7sC9ncqxeRB1Q",
+            {
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                method: "POST",
+                body: JSON.stringify({
+                    mode: 'all',
+                    route_id: null,
+                })
+            })
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(myJson) {
+                console.log(myJson);
+            });
+
+
+
+            Token: 'sss'
+            Url: 'http://calendariocaminoinca.com/calendario/api/v2/availability/parameters?token=REMPLAZAR_POR_TOKEN'
+            Metodo: POST
+            Tipo_dato: json
+            
+            let body = {
+                mode: 'all',
+                route_id: null,
+            }
+            let body = {
+                mode: 'only', // single
+                route_id: 104,
+            }
+            let body = {
+                mode: 'array',
+                route_id: [103,104],
+            }
+
+
+            // availabilities
+            url: 'http://calendariocaminoinca.com/calendario/api/v2/availability/availabilities?token=REMPLAZAR_POR_TOKEN'
+            let body = {
+                year: '2020',
+                month: '3', // 1 - 12
+                route_id: "103"
+            }
+    </script>
+</body>
+</html>
