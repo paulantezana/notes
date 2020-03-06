@@ -18,16 +18,15 @@ var SerieUser=Datos["SerieUser"]; // no es necesario actualizar -> datos estatic
 
 ````sql
 CREATE TABLE mante_cotizacion (
-    IdCotizacion INT AUTO_INCREMENT NOT NULL,
-	IdAlmacen int(5) NOT NULL,
+  IdCotizacion INT AUTO_INCREMENT NOT NULL,
 	Serie varchar(6) DEFAULT '',
 	Numero int(11) DEFAULT 0,
 	FechaEmision date,
 	Total double(11,2) NOT NULL,
 	SubTotal double(11,2) DEFAULT 0.00,
+	Exonerado double(11,2) DEFAULT 0.00,
 	Igv double(11,2) DEFAULT 0.00,
 	TotalEnLetra varchar(150) DEFAULT '',
-	IdTipoDoc int(5) DEFAULT -1,
 	NumeroDoc varchar(15) DEFAULT '',
 	FechaEntrega date DEFAULT NULL,
 	Telefono varchar(32) DEFAULT '',
@@ -37,28 +36,33 @@ CREATE TABLE mante_cotizacion (
 	Observacion varchar(150) DEFAULT '',
 	IdComprobante int(3) DEFAULT 0,
 	PlacaVehiculo varchar(64) DEFAULT '',
-	IdUsuario int(11) DEFAULT NULL,
 
-    FechaCreacion DATETIME,
-    IdUsuarioCreacion INT,
+	IdAlmacen int(5) NOT NULL,
+	IdEmpresa int(5) NOT NULL,
+  IdCliente int DEFAULT 0,
+	IdTipoDoc int(5) DEFAULT -1,
+  IdUsuario INT,
+  FechaCreacion DATETIME,
 	Estado int(1) DEFAULT 1,
-
-    CONSTRAINT pk_mante_cotizacion PRIMARY KEY (IdCotizacion)
+  CONSTRAINT pk_mante_cotizacion PRIMARY KEY (IdCotizacion)
 );
 
 CREATE TABLE mante_cotizacion_detalle (
-    IdCotizacionDetalle INT AUTO_INCREMENT NOT NULL,
-    IdAlmacen int(11) DEFAULT NULL,
-    Cantidad double(11,2) DEFAULT 0.00,
-    Codigo varchar(50) DEFAULT '',
-    Descripcion varchar(150) DEFAULT '',
-    Precio double(11,2) DEFAULT 0.00,
-    Importe double(11,2) DEFAULT 0.00,
-    IdProducto int(11) DEFAULT 0,
-    Unidad varchar(50) DEFAULT NULL,
+  IdCotizacionDetalle INT AUTO_INCREMENT NOT NULL,
+  Cantidad double(11,2) DEFAULT 0.00,
+  Codigo varchar(50) DEFAULT '',
+  Descripcion varchar(150) DEFAULT '',
+  Precio double(11,2) DEFAULT 0.00,
+  Importe double(11,2) DEFAULT 0.00,
+  Unidad varchar(50) DEFAULT '',
+  TipoIgv INT NOT NULL,
 
-    IdCotizacion INT NOT NULL,
-    CONSTRAINT pk_mante_cotizacion_detalle PRIMARY KEY (IdCotizacionDetalle)
+  IdAlmacen int(11) NOT NULL,
+  IdEmpresa int(11) NOT NULL,
+  IdProducto int(11) NOT NULL,
+  IdUnidad int DEFAULT 0,
+  IdCotizacion INT NOT NULL,
+  CONSTRAINT pk_mante_cotizacion_detalle PRIMARY KEY (IdCotizacionDetalle)
 );
 
 INSERT INTO user_menu_sistema(IdForm, Enlace, Nombre, Estado, Nivel1, Nivel2, Menu, ColorFondo, ColorLetra, Permiso, Clase, Icono) 
@@ -71,48 +75,52 @@ INSERT INTO user_menu_sistema(IdForm, Enlace, Nombre, Estado, Nivel1, Nivel2, Me
 
 
 ```sql
-CREATE TABLE `mante_venta_nota_cre_deb` (
-  `idVentaCreDeb` int(11) NOT NULL,
-  `idVenta` int(11) DEFAULT NULL,
-  `idEmpresa` int(11) DEFAULT NULL,
-  `idComprobante` int(11) DEFAULT NULL,
-  `FechaReg` datetime DEFAULT NULL,
-  `IdUsuario` int(11) DEFAULT NULL,
-  `idTipoDoc` int(11) DEFAULT NULL,
-  `Ruc` varchar(25) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `RasonSocial` varchar(150) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `Direccion` varchar(150) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `Total` double(11,2) DEFAULT 0.00,
-  `Subtotal` double(11,2) DEFAULT 0.00,
-  `Igv` double(11,2) DEFAULT 0.00,
-  `son` varchar(150) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `motivoCreDeb` int(2) DEFAULT NULL,
-  `idCliente` int(11) DEFAULT NULL,
-  `Estado` int(2) DEFAULT NULL,
-  `Serie` int(5) DEFAULT NULL,
-  `Numero` int(11) DEFAULT NULL,
-  `nroFactura` varchar(20) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `enlace` varchar(200) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `errorSunat` varchar(250) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `idComprobanteAntiguo` int(3) DEFAULT NULL,
-  PRIMARY KEY (`idVentaCreDeb`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+CREATE TABLE mante_venta_nota_cre_deb (
+  IdVentaNotaCreDeb INT AUTO_INCREMENT NOT NULL,
+  NumeroDoc varchar(25) DEFAULT '',
+  RasonSocial varchar(150) DEFAULT '',
+  Direccion varchar(150) DEFAULT '',
+  Total double(11,2) DEFAULT 0.00,
+  Subtotal double(11,2) DEFAULT 0.00,
+  Igv double(11,2) DEFAULT 0.00,
+  Son varchar(150) DEFAULT '',
+  IdCliente int(11) DEFAULT 0,
+	Serie varchar(6) DEFAULT '',
+	Numero int(11) DEFAULT 0,
+  Contingencia TINYINT DEFAULT 0,
+  Enlace varchar(200) DEFAULT '',
+  ErrorSunat varchar(250) DEFAULT '',
 
+  IdEmpresa int(11) NOT NULL,
+  IdAlmacen int(11) NOT NULL,
+  IdComprobante int(11) NOT NULL,
+  IdTipoDoc int(11) DEFAULT NULL,
+  IdVenta int(11) DEFAULT NULL,
 
-CREATE TABLE `mante_venta_nota_cre_deb_detalle` (
-  `IdEmpresa` int(11) NOT NULL,
-  `IdAlmacen` int(11) NOT NULL,
-  `IdVentaCredDeb` int(11) NOT NULL,
-  `IdDetalle` int(11) NOT NULL,
-  `Cantidad` double(11,2) DEFAULT NULL,
-  `Codigo` varchar(50) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `Producto` varchar(150) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `Punitario` double(11,2) DEFAULT NULL,
-  `Importe` double(11,2) DEFAULT NULL,
-  `IdProducto` int(11) DEFAULT -1,
-  `IdUnidad` varchar(50) COLLATE utf8_unicode_ci DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+  IdComprobanteAntiguo int(3) DEFAULT NULL,
+  MotivoCreDeb int(2) DEFAULT NULL,
+  SerieComprobanteAntiguo varchar(6) DEFAULT '',
+	NumeroComprobanteAntiguo int(11) DEFAULT 0,
 
+  Estado int(2) DEFAULT NULL,
+  CONSTRAINT pk_mante_venta_nota_cre_deb PRIMARY KEY (IdVentaNotaCreDeb)
+);
+
+CREATE TABLE mante_venta_nota_cre_deb_detalle (
+  IdVentaNotaCreDebDetalle int(11) NOT NULL,
+  Cantidad double(11,2) DEFAULT 0.00,
+  Codigo varchar(50) DEFAULT  '',
+  Producto varchar(150) DEFAULT '',
+  Precio double(11,2) DEFAULT 0.00,
+  Importe double(11,2) DEFAULT 0.00,
+  Unidad varchar(50) DEFAULT '',
+
+  IdEmpresa int(11) NOT NULL,
+  IdAlmacen int(11) NOT NULL,
+  IdProducto int(11) DEFAULT NOT NULL,
+  IdUnidad int(11) DEFAULT 0,
+  CONSTRAINT pk_mante_venta_nota_cre_deb_detalle PRIMARY KEY (IdVentaNotaCreDebDetalle)
+);
 
 CREATE TABLE `mante_notas_motivo` (
   `idComprobante` int(11) NOT NULL,
@@ -121,4 +129,35 @@ CREATE TABLE `mante_notas_motivo` (
   `Estado` int(2) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 insert  into `mante_notas_motivo`(`idComprobante`,`idMotivo`,`Nombre`,`Estado`) values (3,1,'ANULACION DE LA OPERACION',1),(3,2,'ANULACION POR ERROR DE RUC',1),(3,3,'CORRECCION POR ERROR EN LA DESCRIPCION',1),(3,4,'DESCUENTO GLOBAL',1),(3,5,'DESCUENTO POR ITEM',1),(3,6,'DEVOLUCION TOTAL',1),(3,7,'DEVOLUCION POR ITEM',1),(3,8,'BONIFICACION',1),(4,1,'INTERESES POR MORA',1),(4,2,'AUMENTO DE VALOR',1),(4,3,'PENALIDADES',1);
+
+
+
+
+DELIMITER $$
+
+USE `db_zayber`$$
+
+DROP FUNCTION IF EXISTS `fn_Serie_Numero_FE_Credito_Debito`$$
+
+CREATE FUNCTION `fn_Serie_Numero_FE_Credito_Debito`(`pIdEmp` INT(5), `pIdComp` INT(3), `pIdCompAntiguo` INT(3)) RETURNS VARCHAR(25) CHARSET utf8 COLLATE utf8_unicode_ci
+    READS SQL DATA
+    DETERMINISTIC
+BEGIN
+	DECLARE aResult VARCHAR(25);
+	DECLARE aSerie INT(5);
+	DECLARE aNumero INT(11);
+	DECLARE aSimbolo VARCHAR(3);
+	SET aSerie=1;SET aNumero=-1;SET aSimbolo='';
+	
+	SELECT IFNULL(Serie,1) INTO aSerie FROM `mante_almacen_serie` 
+	WHERE IdComprobante=pIdComp AND IdEmpresa=pIdEmp AND Estado=1 LIMIT 1;
+	
+	SELECT IFNULL(MAX(Numero+1),1) INTO aNumero FROM  `mante_venta_nota_cre_deb`
+	WHERE idComprobante=pIdComp AND Serie=aSerie AND idComprobanteAntiguo=pIdCompAntiguo AND IdEmpresa=pIdEmp;
+	
+	SET aResult=CONCAT(aSerie,'/',aNumero);
+	RETURN aResult;
+END$$
+
+DELIMITER ;
 ```
