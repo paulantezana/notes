@@ -60,6 +60,7 @@ CREATE TABLE mante_cotizacion_detalle (
   IdAlmacen int(11) NOT NULL,
   IdEmpresa int(11) NOT NULL,
   IdProducto int(11) NOT NULL,
+  IdTipoPrecio int(11) NOT NULL,
   IdUnidad int DEFAULT 0,
   IdCotizacion INT NOT NULL,
   CONSTRAINT pk_mante_cotizacion_detalle PRIMARY KEY (IdCotizacionDetalle)
