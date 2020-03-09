@@ -170,3 +170,48 @@ END$$
 
 DELIMITER ;
 ```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## PLANTILLA
+````sql
+CREATE TABLE plantilla_importacion (
+  idPlantillaImportacion INT AUTO_INCREMENT NOT NULL,
+  marca VARCHAR(128) NOT NULL,
+  modelo VARCHAR(128) NOT NULL,
+  codigo VARCHAR(128) NOT NULL,
+  descripcion VARCHAR(255) NOT NULL,
+
+  precio_compra double(11,2) NOT NULL,
+  precio_publico double(11,2) NOT NULL,
+  precio_distribuido double(11,2) NOT NULL,
+  precio_base double(11,2) NOT NULL,
+  cantidad INT NOT NULL,
+
+  observacion VARCHAR(255) DEFAULT '',
+  fechaCreacion DATETIME,
+  estado TINYINT DEFAULT TRUE,
+  idUsuario INT NOT NULL,
+  idAlmacen INT NOT NULL,
+  CONSTRAINT pk_plantilla_importacion PRIMARY KEY (idPlantillaImportacion)
+);
+````
+
+
+
+- 8
+- 5
+- 6
