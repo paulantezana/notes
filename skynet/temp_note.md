@@ -66,10 +66,9 @@ CREATE TABLE mante_cotizacion_detalle (
   CONSTRAINT pk_mante_cotizacion_detalle PRIMARY KEY (IdCotizacionDetalle)
 );
 
-INSERT INTO user_menu_sistema(IdForm, Enlace, Nombre, Estado, Nivel1, Nivel2, Menu, ColorFondo, ColorLetra, Permiso, Clase, Icono) 
-			VALUES ('220','index.php?action=ReporteCotizacion','R. Cotizacion','1','2','9','Reporte','#FFD812','','1','','fa fa-cart-arrow-down'),
-			       ('221','index.php?action=RegistroCotizacion','Cotizacion','1','5','18','Registro','#FF7814','','1','','');
-
+-- INSERT INTO user_menu_sistema(IdForm, Enlace, Nombre, Estado, Nivel1, Nivel2, Menu, ColorFondo, ColorLetra, Permiso, Clase, Icono) 
+-- 			VALUES ('220','index.php?action=ReporteCotizacion','R. Cotizacion','1','2','9','Reporte','#FFD812','','1','','fa fa-cart-arrow-down'),
+-- 			       ('221','index.php?action=RegistroCotizacion','Cotizacion','1','5','18','Registro','#FF7814','','1','','');
 ````
 
 
@@ -80,9 +79,12 @@ CREATE TABLE mante_venta_nota_cre_deb (
   IdVentaNotaCreDeb INT AUTO_INCREMENT NOT NULL,
   NumeroDoc varchar(25) DEFAULT '',
   RasonSocial varchar(150) DEFAULT '',
+  FechaEmision DATETIME,
   Direccion varchar(150) DEFAULT '',
+  Email varchar(150) DEFAULT '',
   Total double(11,2) DEFAULT 0.00,
   Subtotal double(11,2) DEFAULT 0.00,
+  Exonerado double(11,2) DEFAULT 0.00,
   Igv double(11,2) DEFAULT 0.00,
   Son varchar(150) DEFAULT '',
   IdCliente int(11) DEFAULT 0,
@@ -91,35 +93,40 @@ CREATE TABLE mante_venta_nota_cre_deb (
   Contingencia TINYINT DEFAULT 0,
   Enlace varchar(200) DEFAULT '',
   ErrorSunat varchar(250) DEFAULT '',
+  Formato varchar(32) DEFAULT '',
 
   IdEmpresa int(11) NOT NULL,
   IdAlmacen int(11) NOT NULL,
   IdComprobante int(11) NOT NULL,
   IdTipoDoc int(11) DEFAULT NULL,
-  IdVenta int(11) DEFAULT NULL,
 
-  IdComprobanteAntiguo int(3) DEFAULT NULL,
-  MotivoCreDeb int(2) DEFAULT NULL,
-  SerieComprobanteAntiguo varchar(6) DEFAULT '',
-	NumeroComprobanteAntiguo int(11) DEFAULT 0,
+  IdMotivoCreDeb int(2) DEFAULT NULL,
+  SerieComprobanteAntiguo varchar(6) NOT NULL,
+	NumeroComprobanteAntiguo int(11) NOT NULL,
+  IdComprobanteAntiguo int(3) NOT NULL,
+  IdVentaAntiguo int(3) NOT NULL,
 
-  Estado int(2) DEFAULT NULL,
+  IdUsuario INT,
+  FechaCreacion DATETIME,
+	Estado int(1) DEFAULT 1,
   CONSTRAINT pk_mante_venta_nota_cre_deb PRIMARY KEY (IdVentaNotaCreDeb)
 );
 
 CREATE TABLE mante_venta_nota_cre_deb_detalle (
   IdVentaNotaCreDebDetalle int(11) NOT NULL,
-  Cantidad double(11,2) DEFAULT 0.00,
+  Cantidad double(11,2) NOT NULL,
   Codigo varchar(50) DEFAULT  '',
   Producto varchar(150) DEFAULT '',
-  Precio double(11,2) DEFAULT 0.00,
-  Importe double(11,2) DEFAULT 0.00,
+  Precio double(11,2) NOT NULL,
+  Importe double(11,2) NOT NULL,
   Unidad varchar(50) DEFAULT '',
+  TipoIgv INT NOT NULL, 
 
   IdEmpresa int(11) NOT NULL,
   IdAlmacen int(11) NOT NULL,
-  IdProducto int(11) DEFAULT NOT NULL,
+  IdProducto int(11) NOT NULL,
   IdUnidad int(11) DEFAULT 0,
+  IdVentaNotaCreDeb INT NOT NULL,
   CONSTRAINT pk_mante_venta_nota_cre_deb_detalle PRIMARY KEY (IdVentaNotaCreDebDetalle)
 );
 
@@ -133,14 +140,10 @@ insert  into `mante_notas_motivo`(`idComprobante`,`idMotivo`,`Nombre`,`Estado`) 
 
 
 
-
 DELIMITER $$
-
 USE `db_zayber`$$
-
-DROP FUNCTION IF EXISTS `fn_Serie_Numero_FE_Credito_Debito`$$
-
-CREATE FUNCTION `fn_Serie_Numero_FE_Credito_Debito`(`pIdEmp` INT(5), `pIdComp` INT(3), `pIdCompAntiguo` INT(3)) RETURNS VARCHAR(25) CHARSET utf8 COLLATE utf8_unicode_ci
+DROP FUNCTION IF EXISTS `fn_Serie_Numero_Simbolo_NC_ND`$$
+CREATE FUNCTION `fn_Serie_Numero_Simbolo_NC_ND`(`pIdAlm` INT(5), `pIdComp` INT(3), `pContingencia` INT(1)) RETURNS VARCHAR(25) CHARSET utf8 COLLATE utf8_unicode_ci
     READS SQL DATA
     DETERMINISTIC
 BEGIN
@@ -148,15 +151,20 @@ BEGIN
 	DECLARE aSerie INT(5);
 	DECLARE aNumero INT(11);
 	DECLARE aSimbolo VARCHAR(3);
+	DECLARE aIdEmpresa INT(3);
 	SET aSerie=1;SET aNumero=-1;SET aSimbolo='';
 	
 	SELECT IFNULL(Serie,1) INTO aSerie FROM `mante_almacen_serie` 
-	WHERE IdComprobante=pIdComp AND IdEmpresa=pIdEmp AND Estado=1 LIMIT 1;
+	WHERE IdComprobante=pIdComp AND IdAlmacen=pIdAlm AND Estado=1 AND `Contingencia` = pContingencia LIMIT 1;
 	
-	SELECT IFNULL(MAX(Numero+1),1) INTO aNumero FROM  `mante_venta_nota_cre_deb`
-	WHERE idComprobante=pIdComp AND Serie=aSerie AND idComprobanteAntiguo=pIdCompAntiguo AND IdEmpresa=pIdEmp;
+	SELECT IFNULL(Simbolo,1) INTO aSimbolo FROM `mante_comprobante` WHERE IdComprobante=pIdComp LIMIT 1;
 	
-	SET aResult=CONCAT(aSerie,'/',aNumero);
+	SELECT IdEmpresa INTO aIdEmpresa FROM `mante_almacen_empresa` WHERE IdAlmacen=pIdAlm LIMIT 1;
+	
+	SELECT IFNULL(MAX(Numero+1),1) INTO aNumero FROM `mante_venta_nota_cre_deb` 
+	WHERE IdComprobante=pIdComp AND Serie=aSerie AND IdEmpresa=aIdEmpresa AND `Contingencia` = pContingencia;
+	
+	SET aResult=CONCAT(aSimbolo,'/',aSerie,'/',aNumero);
 	RETURN aResult;
 END$$
 
