@@ -113,7 +113,7 @@ CREATE TABLE mante_venta_nota_cre_deb (
 );
 
 CREATE TABLE mante_venta_nota_cre_deb_detalle (
-  IdVentaNotaCreDebDetalle int(11) NOT NULL,
+  IdVentaNotaCreDebDetalle int(11) AUTO_INCREMENT NOT NULL,
   Cantidad double(11,2) NOT NULL,
   Codigo varchar(50) DEFAULT  '',
   Producto varchar(150) DEFAULT '',
