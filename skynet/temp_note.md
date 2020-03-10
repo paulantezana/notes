@@ -143,7 +143,7 @@ insert  into `mante_notas_motivo`(`idComprobante`,`idMotivo`,`Nombre`,`Estado`) 
 DELIMITER $$
 USE `db_zayber`$$
 DROP FUNCTION IF EXISTS `fn_Serie_Numero_Simbolo_NC_ND`$$
-CREATE FUNCTION `fn_Serie_Numero_Simbolo_NC_ND`(`pIdAlm` INT(5), `pIdComp` INT(3), `pContingencia` INT(1)) RETURNS VARCHAR(25) CHARSET utf8 COLLATE utf8_unicode_ci
+CREATE FUNCTION `fn_Serie_Numero_Simbolo_NC_ND`(`pIdAlm` INT(5), `pIdComp` INT(3), `pIdCompAntiguo` INT(3), `pContingencia` INT(1)) RETURNS VARCHAR(25) CHARSET utf8 COLLATE utf8_unicode_ci
     READS SQL DATA
     DETERMINISTIC
 BEGIN
@@ -152,17 +152,17 @@ BEGIN
 	DECLARE aNumero INT(11);
 	DECLARE aSimbolo VARCHAR(3);
 	DECLARE aIdEmpresa INT(3);
-	SET aSerie=1;SET aNumero=-1;SET aSimbolo='';
+	SET aSerie=0;SET aNumero=-1;SET aSimbolo='';
 	
-	SELECT IFNULL(Serie,1) INTO aSerie FROM `mante_almacen_serie` 
+	SELECT IFNULL(Serie,0) INTO aSerie FROM `mante_almacen_serie` 
 	WHERE IdComprobante=pIdComp AND IdAlmacen=pIdAlm AND Estado=1 AND `Contingencia` = pContingencia LIMIT 1;
 	
-	SELECT IFNULL(Simbolo,1) INTO aSimbolo FROM `mante_comprobante` WHERE IdComprobante=pIdComp LIMIT 1;
+	SELECT IFNULL(Simbolo,'') INTO aSimbolo FROM `mante_comprobante` WHERE IdComprobante=pIdComp LIMIT 1;
 	
 	SELECT IdEmpresa INTO aIdEmpresa FROM `mante_almacen_empresa` WHERE IdAlmacen=pIdAlm LIMIT 1;
 	
 	SELECT IFNULL(MAX(Numero+1),1) INTO aNumero FROM `mante_venta_nota_cre_deb` 
-	WHERE IdComprobante=pIdComp AND Serie=aSerie AND IdEmpresa=aIdEmpresa AND `Contingencia` = pContingencia;
+	WHERE IdComprobanteAntiguo=pIdCompAntiguo AND IdComprobante = pIdComp AND Serie=aSerie AND IdEmpresa=aIdEmpresa AND `Contingencia` = pContingencia;
 	
 	SET aResult=CONCAT(aSimbolo,'/',aSerie,'/',aNumero);
 	RETURN aResult;
