@@ -208,10 +208,123 @@ CREATE TABLE plantilla_importacion (
   idAlmacen INT NOT NULL,
   CONSTRAINT pk_plantilla_importacion PRIMARY KEY (idPlantillaImportacion)
 );
-````
 
 
 
-- 8
-- 5
-- 6
+
+
+
+
+
+
+
+DELIMITER $$
+
+USE `db_ferconst`$$
+
+DROP FUNCTION IF EXISTS `fn_Save_marca_importP`$$
+
+CREATE DEFINER=`root`@`localhost` FUNCTION `fn_Save_marca_importP`(`pMarca` VARCHAR(100)) RETURNS INT(2)
+    READS SQL DATA
+    DETERMINISTIC
+BEGIN
+	DECLARE aId INT(5);
+	SET aId=0;
+	
+	SELECT IdMarca INTO aId FROM mante_marca WHERE Marca=pMarca;
+	IF(aId=0)THEN
+		SELECT IFNULL(MAX(IdMarca+1),1) INTO aId FROM `mante_marca`;
+		INSERT INTO mante_marca VALUES(aId,pMarca,'',1);
+	END IF;
+		
+	RETURN aId;
+END$$
+
+DELIMITER ;
+
+
+
+
+
+
+
+
+
+
+
+DELIMITER $$
+
+USE `db_ferconst`$$
+
+DROP FUNCTION IF EXISTS `fn_Save_modelo_importP`$$
+
+CREATE DEFINER=`root`@`localhost` FUNCTION `fn_Save_modelo_importP`(`pModelo` VARCHAR(100)) RETURNS INT(2)
+    READS SQL DATA
+    DETERMINISTIC
+BEGIN
+	DECLARE aId INT(5);
+	SET aId=0;
+	
+	SELECT IdCategoria INTO aId FROM `mante_categoria` WHERE Categoria=pModelo;
+	IF(aId=0)THEN
+		SELECT IFNULL(MAX(IdCategoria+1),1) INTO aId FROM `mante_categoria`;
+		INSERT INTO `mante_categoria` VALUES(aId,pModelo,'',1);
+	END IF;
+		
+	RETURN aId;
+END$$
+
+DELIMITER ;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DELIMITER $$
+
+USE `db_ferconst`$$
+
+DROP FUNCTION IF EXISTS `fn_Save_Productos_importP`$$
+
+CREATE DEFINER=`root`@`localhost` FUNCTION `fn_Save_Productos_importP`(`pCod` VARCHAR(50), `pDescrip` VARCHAR(200), `pIdMarca` INT(5), `pIdModelo` INT(5), `pCompra` DOUBLE(11,2), `pMayor` DOUBLE(11,2), `pMenor` DOUBLE(11,2), `pPublico` DOUBLE(11,2), `pIdAlm` INT(3)) RETURNS INT(2)
+    READS SQL DATA
+    DETERMINISTIC
+BEGIN
+        DECLARE aCont INT(5);
+        DECLARE aId INT(11);
+        SET aCont=0;SET aId=1;
+        
+        SELECT IFNULL(COUNT(*),0) INTO aCont FROM `mante_producto` WHERE Codigo=pCod AND `Producto` = pDescrip AND IdMarca=pIdMarca AND IdCategoria=pIdModelo ;
+        IF(aCont>0)THEN
+            SELECT IFNULL(IdProducto,0) INTO aId FROM `mante_producto` WHERE Codigo=pCod AND `Producto` = pDescrip AND IdMarca=pIdMarca AND IdCategoria=pIdModelo LIMIT 1;
+            UPDATE `mante_producto` SET Producto=pDescrip,IdMarca=pIdMarca,IdCategoria=pIdModelo
+            WHERE IdProducto=aId AND Codigo=pCod;
+            SET aCont=0;
+            SELECT IFNULL(COUNT(*),0) INTO  aCont FROM `mante_producto_almacen` WHERE IdAlmacen=pIdAlm AND IdProducto=aId;
+            IF(aCont>0)THEN
+                UPDATE `mante_producto_almacen` SET PrecioCompra=pCompra,PrecioBase=pMenor,PrecioDistribuido=pMayor,
+                    PrecioPublico=pPublico
+                WHERE IdAlmacen=pIdAlm AND IdProducto=aId;
+            ELSE
+                INSERT INTO mante_producto_almacen VALUES(pIdAlm,aId,1,1,0,pCompra,pMenor,pMayor,pPublico,1,1);
+            END IF;
+        ELSE
+            SELECT IFNULL(MAX(IdProducto+1),1) INTO aId FROM `mante_producto`;
+            INSERT INTO `mante_producto` VALUES(aId,pCod,pDescrip,pIdMarca,pIdModelo,1);
+            INSERT INTO mante_producto_almacen VALUES(pIdAlm,aId,1,1,0,pCompra,pMenor,pMayor,pPublico,1,1);
+        END IF;
+            
+        RETURN aId;
+    END$$
+
+DELIMITER ;
+```
