@@ -224,7 +224,7 @@ USE `db_ferconst`$$
 
 DROP FUNCTION IF EXISTS `fn_Save_marca_importP`$$
 
-CREATE DEFINER=`root`@`localhost` FUNCTION `fn_Save_marca_importP`(`pMarca` VARCHAR(100)) RETURNS INT(2)
+CREATE  FUNCTION `fn_Save_marca_importP`(`pMarca` VARCHAR(100)) RETURNS INT(2)
     READS SQL DATA
     DETERMINISTIC
 BEGIN
@@ -258,7 +258,7 @@ USE `db_ferconst`$$
 
 DROP FUNCTION IF EXISTS `fn_Save_modelo_importP`$$
 
-CREATE DEFINER=`root`@`localhost` FUNCTION `fn_Save_modelo_importP`(`pModelo` VARCHAR(100)) RETURNS INT(2)
+CREATE  FUNCTION `fn_Save_modelo_importP`(`pModelo` VARCHAR(100)) RETURNS INT(2)
     READS SQL DATA
     DETERMINISTIC
 BEGIN
@@ -295,7 +295,7 @@ USE `db_ferconst`$$
 
 DROP FUNCTION IF EXISTS `fn_Save_Productos_importP`$$
 
-CREATE DEFINER=`root`@`localhost` FUNCTION `fn_Save_Productos_importP`(`pCod` VARCHAR(50), `pDescrip` VARCHAR(200), `pIdMarca` INT(5), `pIdModelo` INT(5), `pCompra` DOUBLE(11,2), `pMayor` DOUBLE(11,2), `pMenor` DOUBLE(11,2), `pPublico` DOUBLE(11,2), `pIdAlm` INT(3)) RETURNS INT(2)
+CREATE  FUNCTION `fn_Save_Productos_importP`(`pCod` VARCHAR(50), `pDescrip` VARCHAR(200), `pIdMarca` INT(5), `pIdModelo` INT(5), `pCompra` DOUBLE(11,2), `pMayor` DOUBLE(11,2), `pMenor` DOUBLE(11,2), `pPublico` DOUBLE(11,2), `pIdAlm` INT(3)) RETURNS INT(2)
     READS SQL DATA
     DETERMINISTIC
 BEGIN
