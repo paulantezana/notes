@@ -187,7 +187,7 @@ DELIMITER ;
 
 
 ## PLANTILLA
-````sql
+```sql
 CREATE TABLE plantilla_importacion (
   idPlantillaImportacion INT AUTO_INCREMENT NOT NULL,
   marca VARCHAR(128) NOT NULL,
@@ -327,4 +327,335 @@ BEGIN
     END$$
 
 DELIMITER ;
+```
+
+
+
+
+
+
+
+-- ##
+--  - Salones
+--   - Espacios / 
+--   - Reservaciones
+
+
+```sql
+CREATE TABLE salon (
+  id_salon INT AUTO_INCREMENT NOT NULL,
+  nombre VARCHAR(128) NOT NULL,
+  descripcion VARCHAR(255) DEFAULT '',
+  n_fila INT NOT NULL,
+  n_columna INT NOT NULL,
+  observacion VARCHAR(255) DEFAULT '',
+
+  fecha_creacion DATETIME,
+  id_usuario INT NOT NULL,
+  estado TINYINT DEFAULT 1,
+  CONSTRAINT pk_salon PRIMARY KEY (id_salon)
+);
+
+CREATE TABLE salon_espacio(
+  id_salon_espacio INT AUTO_INCREMENT NOT NULL,
+  denominacion VARCHAR(32) NOT NULL,
+  fila INT NOT NULL,
+  columna INT NOT NULL,
+  abarcar_fila INT NOT NULL,
+  abarcar_columna INT NOT NULL,
+  tipo enum('1','2','3'),
+  estado enum('LIBRE','OCUPADO','RESERVADO','DESACTIVADO'),
+  motivo_estado VARCHAR(12) DEFAULT '',
+
+  id_salon INT NOT NULL,
+  CONSTRAINT pk_salon_espacio PRIMARY KEY (id_salon_espacio)
+);
+
+CREATE TABLE salon_espacio_atencion(
+  id_salon_espacio_atencion INT AUTO_INCREMENT NOT NULL,
+  hora_ingreso DATETIME NOT NULL,
+  hora_salida DATETIME NOT NULL,
+
+  id_salon_espacio INT NOT NULL,
+  id_cliente INT NOT NULL,
+  estado INT DEFAULT 1,
+  CONSTRAINT pk_salon_espacio_atencion PRIMARY KEY (id_salon_espacio_atencion)
+);
+
+
+
+-- INSERT INTO user_menu_sistema(IdForm, Enlace, Nombre, Estado, Nivel1, Nivel2, Menu, ColorFondo, ColorLetra, Permiso, Clase, Icono) 
+-- 			VALUES ('215','index.php?action=ReporteGimnacio','R. Gimnacio','1','5','15','Reporte','#FFD812','','1','claRsva',''),
+-- 			       ('221','index.php?action=ProcesoGimnacio','Gimnacio','1','1','6','Principal','#FF7814','','1','claRsva','fas fa-dumbbell');
+
+INSERT INTO salon(nombre, descripcion, n_fila, n_columna, observacion, fecha_creacion, id_usuario, estado) 
+          VALUES 
+            ('FUll BODY','','10','18','','2020-03-11 17:01:44','1','1'),
+            ('FUll BODY 2','','10','18','','2020-03-11 17:01:44','1','1'),
+            ('X BOX','','10','19','','2020-03-11 17:01:44','1','1'),
+            ('BAILE','','10','19','','2020-03-11 17:01:44','1','1');
+
+INSERT INTO salon_espacio(denominacion, fila, columna, abarcar_fila, abarcar_columna, tipo, estado, id_salon)
+  VALUES 
+    ('1',1,4,1,1,1,'LIBRE',1),
+    ('2',1,14,1,1,1,'LIBRE',1),
+    ('3',1,16,1,1,1,'LIBRE',1),
+    ('4',2,3,1,1,1,'LIBRE',1),
+    ('5',2,5,1,1,1,'LIBRE',1),
+    ('6',2,7,1,1,1,'LIBRE',1),
+    ('7',2,9,1,1,1,'LIBRE',1),
+    ('8',2,11,1,1,1,'LIBRE',1),
+    ('9',2,13,1,1,1,'LIBRE',1),
+    ('10',2,15,1,1,1,'LIBRE',1),
+    ('11',3,4,1,1,1,'LIBRE',1),
+    ('12',3,6,1,1,1,'LIBRE',1),
+    ('13',3,8,1,1,1,'LIBRE',1),
+    ('14',3,10,1,1,1,'LIBRE',1),
+    ('15',3,12,1,1,1,'LIBRE',1),
+    ('16',3,14,1,1,1,'LIBRE',1),
+    ('17',4,3,1,1,1,'LIBRE',1),
+    ('18',4,5,1,1,1,'LIBRE',1),
+    ('19',4,7,1,1,1,'LIBRE',1),
+    ('20',4,9,1,1,1,'LIBRE',1),
+    ('21',4,11,1,1,1,'LIBRE',1),
+    ('22',4,13,1,1,1,'LIBRE',1),
+    ('23',5,4,1,1,1,'LIBRE',1),
+    ('24',5,6,1,1,1,'LIBRE',1),
+    ('25',5,8,1,1,1,'LIBRE',1),
+    ('26',5,10,1,1,1,'LIBRE',1),
+    ('27',5,12,1,1,1,'LIBRE',1),
+    ('28',5,14,1,1,1,'LIBRE',1),
+    ('29',6,3,1,1,1,'LIBRE',1),
+    ('30',6,5,1,1,1,'LIBRE',1),
+    ('31',6,7,1,1,1,'LIBRE',1),
+    ('32',6,9,1,1,1,'LIBRE',1),
+    ('33',6,11,1,1,1,'LIBRE',1),
+    ('34',6,13,1,1,1,'LIBRE',1),
+    ('35',6,15,1,1,1,'LIBRE',1),
+    ('36',7,4,1,1,1,'LIBRE',1),
+    ('37',7,6,1,1,1,'LIBRE',1),
+    ('38',7,8,1,1,1,'LIBRE',1),
+    ('39',7,10,1,1,1,'LIBRE',1),
+    ('40',7,12,1,1,1,'LIBRE',1),
+    ('41',7,14,1,1,1,'LIBRE',1),
+    ('42',8,4,1,1,1,'LIBRE',1),
+    ('43',8,6,1,1,1,'LIBRE',1),
+    ('44',8,8,1,1,1,'LIBRE',1),
+    ('45',8,10,1,1,1,'LIBRE',1),
+    ('46',8,12,1,1,1,'LIBRE',1),
+    ('47',9,4,1,1,1,'LIBRE',1),
+    ('48',9,6,1,1,1,'LIBRE',1),
+    ('49',9,8,1,1,1,'LIBRE',1),
+    ('50',9,10,1,1,1,'LIBRE',1),
+    ('51',9,12,1,1,1,'LIBRE',1),
+    ('52',9,14,1,1,1,'LIBRE',1),
+    ('53',10,4,1,1,1,'LIBRE',1),
+    ('54',10,6,1,1,1,'LIBRE',1),
+    ('55',10,8,1,1,1,'LIBRE',1),
+    ('56',10,10,1,1,1,'LIBRE',1),
+    ('57',10,12,1,1,1,'LIBRE',1),
+    ('58',10,14,1,1,1,'LIBRE',1),
+    ('59',10,16,1,1,1,'LIBRE',1),
+
+    ('A',1,1,1,1,3,'LIBRE',1),
+    ('B',2,1,1,1,3,'LIBRE',1),
+    ('C',3,1,1,1,3,'LIBRE',1),
+    ('D',4,1,1,1,3,'LIBRE',1),
+    ('E',5,1,1,1,3,'LIBRE',1),
+    ('F',6,1,1,1,3,'LIBRE',1),
+    ('G',7,1,1,1,3,'LIBRE',1),
+    ('H',8,1,1,1,3,'LIBRE',1),
+    ('I',9,1,1,1,3,'LIBRE',1),
+    ('J',10,1,1,1,3,'LIBRE',1),
+
+    ('A',1,18,1,1,3,'LIBRE',1),
+    ('B',2,18,1,1,3,'LIBRE',1),
+    ('C',3,18,1,1,3,'LIBRE',1),
+    ('D',4,18,1,1,3,'LIBRE',1),
+    ('E',5,18,1,1,3,'LIBRE',1),
+    ('F',6,18,1,1,3,'LIBRE',1),
+    ('G',7,18,1,1,3,'LIBRE',1),
+    ('H',8,18,1,1,3,'LIBRE',1),
+    ('I',9,18,1,1,3,'LIBRE',1),
+    ('J',10,18,1,1,3,'LIBRE',1),
+
+    ('FULL BODY',1,6,1,7,2,'LIBRE',1);
+
+INSERT INTO salon_espacio(denominacion, fila, columna, abarcar_fila, abarcar_columna, tipo, estado, id_salon)
+  VALUES 
+    ('1',1,4,1,1,1,'LIBRE',2),
+    ('2',1,14,1,1,1,'LIBRE',2),
+    ('3',1,16,1,1,1,'LIBRE',2),
+    ('4',2,3,1,1,1,'LIBRE',2),
+    ('5',2,5,1,1,1,'LIBRE',2),
+    ('6',2,7,1,1,1,'LIBRE',2),
+    ('7',2,9,1,1,1,'LIBRE',2),
+    ('8',2,11,1,1,1,'LIBRE',2),
+    ('9',2,13,1,1,1,'LIBRE',2),
+    ('10',2,15,1,1,1,'LIBRE',2),
+    ('11',3,4,1,1,1,'LIBRE',2),
+    ('12',3,6,1,1,1,'LIBRE',2),
+    ('13',3,8,1,1,1,'LIBRE',2),
+    ('14',3,10,1,1,1,'LIBRE',2),
+    ('15',3,12,1,1,1,'LIBRE',2),
+    ('16',3,14,1,1,1,'LIBRE',2),
+    ('17',4,3,1,1,1,'LIBRE',2),
+    ('18',4,5,1,1,1,'LIBRE',2),
+    ('19',4,7,1,1,1,'LIBRE',2),
+    ('20',4,9,1,1,1,'LIBRE',2),
+    ('21',4,11,1,1,1,'LIBRE',2),
+    ('22',4,13,1,1,1,'LIBRE',2),
+    ('23',5,4,1,1,1,'LIBRE',2),
+    ('24',5,6,1,1,1,'LIBRE',2),
+    ('25',5,8,1,1,1,'LIBRE',2),
+    ('26',5,10,1,1,1,'LIBRE',2),
+    ('27',5,12,1,1,1,'LIBRE',2),
+    ('28',5,14,1,1,1,'LIBRE',2),
+    ('29',6,3,1,1,1,'LIBRE',2),
+    ('30',6,5,1,1,1,'LIBRE',2),
+    ('31',6,7,1,1,1,'LIBRE',2),
+    ('32',6,9,1,1,1,'LIBRE',2),
+    ('33',6,11,1,1,1,'LIBRE',2),
+    ('34',6,13,1,1,1,'LIBRE',2),
+    ('35',6,15,1,1,1,'LIBRE',2),
+    ('36',7,4,1,1,1,'LIBRE',2),
+    ('37',7,6,1,1,1,'LIBRE',2),
+    ('38',7,8,1,1,1,'LIBRE',2),
+    ('39',7,10,1,1,1,'LIBRE',2),
+    ('40',7,12,1,1,1,'LIBRE',2),
+    ('41',7,14,1,1,1,'LIBRE',2),
+    ('42',8,4,1,1,1,'LIBRE',2),
+    ('43',8,6,1,1,1,'LIBRE',2),
+    ('44',8,8,1,1,1,'LIBRE',2),
+    ('45',8,10,1,1,1,'LIBRE',2),
+    ('46',8,12,1,1,1,'LIBRE',2),
+    ('47',9,4,1,1,1,'LIBRE',2),
+    ('48',9,6,1,1,1,'LIBRE',2),
+    ('49',9,8,1,1,1,'LIBRE',2),
+    ('50',9,10,1,1,1,'LIBRE',2),
+    ('51',9,12,1,1,1,'LIBRE',2),
+    ('52',9,14,1,1,1,'LIBRE',2),
+    ('53',10,4,1,1,1,'LIBRE',2),
+    ('54',10,6,1,1,1,'LIBRE',2),
+    ('55',10,8,1,1,1,'LIBRE',2),
+    ('56',10,10,1,1,1,'LIBRE',2),
+    ('57',10,12,1,1,1,'LIBRE',2),
+    ('58',10,14,1,1,1,'LIBRE',2),
+    ('59',10,16,1,1,1,'LIBRE',2),
+
+    ('A',1,1,1,1,3,'LIBRE',2),
+    ('B',2,1,1,1,3,'LIBRE',2),
+    ('C',3,1,1,1,3,'LIBRE',2),
+    ('D',4,1,1,1,3,'LIBRE',2),
+    ('E',5,1,1,1,3,'LIBRE',2),
+    ('F',6,1,1,1,3,'LIBRE',2),
+    ('G',7,1,1,1,3,'LIBRE',2),
+    ('H',8,1,1,1,3,'LIBRE',2),
+    ('I',9,1,1,1,3,'LIBRE',2),
+    ('J',10,1,1,1,3,'LIBRE',2),
+
+    ('A',1,18,1,1,3,'LIBRE',2),
+    ('B',2,18,1,1,3,'LIBRE',2),
+    ('C',3,18,1,1,3,'LIBRE',2),
+    ('D',4,18,1,1,3,'LIBRE',2),
+    ('E',5,18,1,1,3,'LIBRE',2),
+    ('F',6,18,1,1,3,'LIBRE',2),
+    ('G',7,18,1,1,3,'LIBRE',2),
+    ('H',8,18,1,1,3,'LIBRE',2),
+    ('I',9,18,1,1,3,'LIBRE',2),
+    ('J',10,18,1,1,3,'LIBRE',2),
+
+    ('FULL BODY 2',1,6,1,7,2,'LIBRE',2);
+
+
+INSERT INTO salon_espacio(denominacion, fila, columna, abarcar_fila, abarcar_columna, tipo, estado, id_salon)
+  VALUES 
+    ('1',1,4,1,1,1,'LIBRE',3),
+    ('2',1,14,1,1,1,'LIBRE',3),
+    ('3',1,16,1,1,1,'LIBRE',3),
+    ('4',2,3,1,1,1,'LIBRE',3),
+    ('5',2,5,1,1,1,'LIBRE',3),
+    ('6',2,7,1,1,1,'LIBRE',3),
+    ('7',2,9,1,1,1,'LIBRE',3),
+    ('8',2,11,1,1,1,'LIBRE',3),
+    ('9',2,13,1,1,1,'LIBRE',3),
+    ('10',2,15,1,1,1,'LIBRE',3),
+    ('11',3,4,1,1,1,'LIBRE',3),
+    ('12',3,6,1,1,1,'LIBRE',3),
+    ('13',3,8,1,1,1,'LIBRE',3),
+    ('14',3,10,1,1,1,'LIBRE',3),
+    ('15',3,12,1,1,1,'LIBRE',3),
+    ('16',3,14,1,1,1,'LIBRE',3),
+    ('17',3,16,1,1,1,'LIBRE',3),
+    ('18',4,3,1,1,1,'LIBRE',3),
+    ('19',4,5,1,1,1,'LIBRE',3),
+    ('20',4,7,1,1,1,'LIBRE',3),
+    ('21',4,9,1,1,1,'LIBRE',3),
+    ('22',4,11,1,1,1,'LIBRE',3),
+    ('23',4,13,1,1,1,'LIBRE',3),
+    ('24',4,15,1,1,1,'LIBRE',3),
+    ('25',5,3,1,1,1,'LIBRE',3),
+    ('26',5,5,1,1,1,'LIBRE',3),
+    ('27',5,7,1,1,1,'LIBRE',3),
+    ('28',5,9,1,1,1,'LIBRE',3),
+    ('29',5,11,1,1,1,'LIBRE',3),
+    ('30',5,13,1,1,1,'LIBRE',3),
+    ('31',5,15,1,1,1,'LIBRE',3),
+    ('32',5,17,1,1,1,'LIBRE',3),
+    ('33',6,3,1,1,1,'LIBRE',3),
+    ('34',6,5,1,1,1,'LIBRE',3),
+    ('35',6,7,1,1,1,'LIBRE',3),
+    ('36',6,9,1,1,1,'LIBRE',3),
+    ('37',6,11,1,1,1,'LIBRE',3),
+    ('38',6,13,1,1,1,'LIBRE',3),
+    ('39',6,15,1,1,1,'LIBRE',3),
+    ('40',7,3,1,1,1,'LIBRE',3),
+    ('41',7,5,1,1,1,'LIBRE',3),
+    ('42',7,7,1,1,1,'LIBRE',3),
+    ('43',7,9,1,1,1,'LIBRE',3),
+    ('44',7,11,1,1,1,'LIBRE',3),
+    ('45',7,13,1,1,1,'LIBRE',3),
+    ('46',7,15,1,1,1,'LIBRE',3),
+    ('47',7,17,1,1,1,'LIBRE',3),
+    ('48',8,4,1,1,1,'LIBRE',3),
+    ('49',8,6,1,1,1,'LIBRE',3),
+    ('50',8,8,1,1,1,'LIBRE',3),
+    ('51',8,10,1,1,1,'LIBRE',3),
+    ('52',8,12,1,1,1,'LIBRE',3),
+    ('53',8,14,1,1,1,'LIBRE',3),
+    ('54',8,16,1,1,1,'LIBRE',3),
+    ('55',9,3,1,1,1,'LIBRE',3),
+    ('56',9,5,1,1,1,'LIBRE',3),
+    ('57',9,7,1,1,1,'LIBRE',3),
+    ('58',9,9,1,1,1,'LIBRE',3),
+    ('59',9,11,1,1,1,'LIBRE',3),
+    ('60',9,13,1,1,1,'LIBRE',3),
+    ('61',9,15,1,1,1,'LIBRE',3),
+    ('62',9,17,1,1,1,'LIBRE',3),
+    ('63',10,13,1,1,1,'LIBRE',3),
+    ('64',10,15,1,1,1,'LIBRE',3),
+
+    ('A',1,1,1,1,3,'LIBRE',3),
+    ('B',2,1,1,1,3,'LIBRE',3),
+    ('C',3,1,1,1,3,'LIBRE',3),
+    ('D',4,1,1,1,3,'LIBRE',3),
+    ('E',5,1,1,1,3,'LIBRE',3),
+    ('F',6,1,1,1,3,'LIBRE',3),
+    ('G',7,1,1,1,3,'LIBRE',3),
+    ('H',8,1,1,1,3,'LIBRE',3),
+    ('I',9,1,1,1,3,'LIBRE',3),
+    ('J',10,1,1,1,3,'LIBRE',3),
+
+    ('A',1,18,1,1,3,'LIBRE',3),
+    ('B',2,18,1,1,3,'LIBRE',3),
+    ('C',3,18,1,1,3,'LIBRE',3),
+    ('D',4,18,1,1,3,'LIBRE',3),
+    ('E',5,18,1,1,3,'LIBRE',3),
+    ('F',6,18,1,1,3,'LIBRE',3),
+    ('G',7,18,1,1,3,'LIBRE',3),
+    ('H',8,18,1,1,3,'LIBRE',3),
+    ('I',9,18,1,1,3,'LIBRE',3),
+    ('J',10,18,1,1,3,'LIBRE',3),
+
+    ('X-BOX',1,6,1,7,2,'LIBRE',3);
 ```
