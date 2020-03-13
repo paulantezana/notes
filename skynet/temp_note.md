@@ -368,17 +368,22 @@ CREATE TABLE salon_espacio(
   motivo_estado VARCHAR(12) DEFAULT '',
 
   id_salon INT NOT NULL,
+  fecha_creacion DATETIME,
+  id_usuario INT NOT NULL,
   CONSTRAINT pk_salon_espacio PRIMARY KEY (id_salon_espacio)
 );
 
 CREATE TABLE salon_espacio_atencion(
   id_salon_espacio_atencion INT AUTO_INCREMENT NOT NULL,
-  hora_ingreso DATETIME NOT NULL,
-  hora_salida DATETIME NOT NULL,
+  fecha_ingreso DATETIME NOT NULL,
+  fecha_salida DATETIME NOT NULL,
+  observacion VARCHAR(255) DEFAULT '',
 
   id_salon_espacio INT NOT NULL,
   id_cliente INT NOT NULL,
-  estado INT DEFAULT 1,
+  fecha_creacion DATETIME,
+  id_usuario INT NOT NULL,
+  estado TINYINT DEFAULT 1,
   CONSTRAINT pk_salon_espacio_atencion PRIMARY KEY (id_salon_espacio_atencion)
 );
 
@@ -658,4 +663,114 @@ INSERT INTO salon_espacio(denominacion, fila, columna, abarcar_fila, abarcar_col
     ('J',10,18,1,1,3,'LIBRE',3),
 
     ('X-BOX',1,6,1,7,2,'LIBRE',3);
+
+
+-- //
+INSERT INTO salon_espacio(denominacion, fila, columna, abarcar_fila, abarcar_columna, tipo, estado, id_salon)
+  VALUES 
+    ('1',1,4,1,1,1,'LIBRE',4),
+    ('2',1,14,1,1,1,'LIBRE',4),
+    ('3',1,16,1,1,1,'LIBRE',4),
+    ('4',2,3,1,1,1,'LIBRE',4),
+    ('5',2,5,1,1,1,'LIBRE',4),
+    ('6',2,7,1,1,1,'LIBRE',4),
+    ('7',2,9,1,1,1,'LIBRE',4),
+    ('8',2,11,1,1,1,'LIBRE',4),
+    ('9',2,13,1,1,1,'LIBRE',4),
+    ('10',2,15,1,1,1,'LIBRE',4),
+    ('11',2,17,1,1,1,'LIBRE',4),
+
+    ('12',3,4,1,1,1,'LIBRE',4),
+    ('13',3,6,1,1,1,'LIBRE',4),
+    ('14',3,8,1,1,1,'LIBRE',4),
+    ('15',3,10,1,1,1,'LIBRE',4),
+    ('16',3,12,1,1,1,'LIBRE',4),
+    ('17',3,14,1,1,1,'LIBRE',4),
+    ('18',3,16,1,1,1,'LIBRE',4),
+    ('19',4,3,1,1,1,'LIBRE',4),
+    ('20',4,5,1,1,1,'LIBRE',4),
+    ('21',4,7,1,1,1,'LIBRE',4),
+    ('22',4,9,1,1,1,'LIBRE',4),
+    ('23',4,11,1,1,1,'LIBRE',4),
+    ('24',4,13,1,1,1,'LIBRE',4),
+    ('25',4,15,1,1,1,'LIBRE',4),
+    ('26',5,3,1,1,1,'LIBRE',4),
+    ('27',5,5,1,1,1,'LIBRE',4),
+    ('28',5,7,1,1,1,'LIBRE',4),
+    ('29',5,9,1,1,1,'LIBRE',4),
+    ('30',5,11,1,1,1,'LIBRE',4),
+    ('31',5,13,1,1,1,'LIBRE',4),
+    ('32',5,15,1,1,1,'LIBRE',4),
+    ('33',5,17,1,1,1,'LIBRE',4),
+    ('34',6,4,1,1,1,'LIBRE',4),
+    ('35',6,6,1,1,1,'LIBRE',4),
+    ('36',6,8,1,1,1,'LIBRE',4),
+    ('37',6,10,1,1,1,'LIBRE',4),
+    ('38',6,12,1,1,1,'LIBRE',4),
+    ('39',6,14,1,1,1,'LIBRE',4),
+    ('40',6,16,1,1,1,'LIBRE',4),
+    ('41',7,3,1,1,1,'LIBRE',4),
+    ('42',7,5,1,1,1,'LIBRE',4),
+    ('43',7,7,1,1,1,'LIBRE',4),
+    ('44',7,9,1,1,1,'LIBRE',4),
+    ('45',7,11,1,1,1,'LIBRE',4),
+    ('46',7,13,1,1,1,'LIBRE',4),
+    ('47',7,15,1,1,1,'LIBRE',4),
+    ('48',7,17,1,1,1,'LIBRE',4),
+    ('49',8,4,1,1,1,'LIBRE',4),
+    ('50',8,6,1,1,1,'LIBRE',4),
+    ('51',8,8,1,1,1,'LIBRE',4),
+    ('52',8,10,1,1,1,'LIBRE',4),
+    ('53',8,12,1,1,1,'LIBRE',4),
+    ('54',8,14,1,1,1,'LIBRE',4),
+    ('55',8,16,1,1,1,'LIBRE',4),
+    ('56',9,3,1,1,1,'LIBRE',4),
+    ('57',9,5,1,1,1,'LIBRE',4),
+    ('58',9,7,1,1,1,'LIBRE',4),
+    ('59',9,9,1,1,1,'LIBRE',4),
+    ('60',9,11,1,1,1,'LIBRE',4),
+    ('61',9,13,1,1,1,'LIBRE',4),
+    ('62',9,15,1,1,1,'LIBRE',4),
+    ('63',9,17,1,1,1,'LIBRE',4),
+    ('64',10,4,1,1,1,'LIBRE',4),
+    ('65',10,6,1,1,1,'LIBRE',4),
+    ('66',10,8,1,1,1,'LIBRE',4),
+    ('67',10,10,1,1,1,'LIBRE',4),
+    ('68',10,12,1,1,1,'LIBRE',4),
+    ('69',10,14,1,1,1,'LIBRE',4),
+    ('70',10,16,1,1,1,'LIBRE',4),
+
+    ('A',1,1,1,1,3,'LIBRE',4),
+    ('B',2,1,1,1,3,'LIBRE',4),
+    ('C',3,1,1,1,3,'LIBRE',4),
+    ('D',4,1,1,1,3,'LIBRE',4),
+    ('E',5,1,1,1,3,'LIBRE',4),
+    ('F',6,1,1,1,3,'LIBRE',4),
+    ('G',7,1,1,1,3,'LIBRE',4),
+    ('H',8,1,1,1,3,'LIBRE',4),
+    ('I',9,1,1,1,3,'LIBRE',4),
+    ('J',10,1,1,1,3,'LIBRE',4),
+
+    ('A',1,19,1,1,3,'LIBRE',4),
+    ('B',2,19,1,1,3,'LIBRE',4),
+    ('C',3,19,1,1,3,'LIBRE',4),
+    ('D',4,19,1,1,3,'LIBRE',4),
+    ('E',5,19,1,1,3,'LIBRE',4),
+    ('F',6,19,1,1,3,'LIBRE',4),
+    ('G',7,19,1,1,3,'LIBRE',4),
+    ('H',8,19,1,1,3,'LIBRE',4),
+    ('I',9,19,1,1,3,'LIBRE',4),
+    ('J',10,19,1,1,3,'LIBRE',4),
+
+    ('BAILE',1,6,1,7,2,'LIBRE',4);
 ```
+
+
+
+
+
+Dos vecespor dia
+11: Am.
+10: Pm.
+
+Finalizar Turno.
