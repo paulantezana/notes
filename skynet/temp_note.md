@@ -188,6 +188,7 @@ DELIMITER ;
 
 ## PLANTILLA
 ```sql
+
 CREATE TABLE plantilla_importacion (
   idPlantillaImportacion INT AUTO_INCREMENT NOT NULL,
   marca VARCHAR(128) NOT NULL,
@@ -220,8 +221,6 @@ CREATE TABLE plantilla_importacion (
 
 DELIMITER $$
 
-USE `db_ferconst`$$
-
 DROP FUNCTION IF EXISTS `fn_Save_marca_importP`$$
 
 CREATE  FUNCTION `fn_Save_marca_importP`(`pMarca` VARCHAR(100)) RETURNS INT(2)
@@ -253,8 +252,6 @@ DELIMITER ;
 
 
 DELIMITER $$
-
-USE `db_ferconst`$$
 
 DROP FUNCTION IF EXISTS `fn_Save_modelo_importP`$$
 
@@ -291,8 +288,6 @@ DELIMITER ;
 
 DELIMITER $$
 
-USE `db_ferconst`$$
-
 DROP FUNCTION IF EXISTS `fn_Save_Productos_importP`$$
 
 CREATE  FUNCTION `fn_Save_Productos_importP`(`pCod` VARCHAR(50), `pDescrip` VARCHAR(200), `pIdMarca` INT(5), `pIdModelo` INT(5), `pCompra` DOUBLE(11,2), `pMayor` DOUBLE(11,2), `pMenor` DOUBLE(11,2), `pPublico` DOUBLE(11,2), `pIdAlm` INT(3)) RETURNS INT(2)
@@ -327,7 +322,19 @@ BEGIN
     END$$
 
 DELIMITER ;
+
+
+
+
 ```
+
+
+
+
+
+
+
+
 
 
 
@@ -354,6 +361,19 @@ CREATE TABLE salon (
   id_usuario INT NOT NULL,
   estado TINYINT DEFAULT 1,
   CONSTRAINT pk_salon PRIMARY KEY (id_salon)
+);
+
+CREATE TABLE salon_sesion (
+  id_salon_sesion INT AUTO_INCREMENT NOT NULL,
+  id_salon INT NOT NULL,
+
+  fecha_inicio DATETIME NOT NULL,
+  responsable VARCHAR(12) DEFAULT '',
+
+  fecha_creacion DATETIME,
+  id_usuario INT NOT NULL,
+  estado SMALLINT DEFAULT 1,
+  CONSTRAINT pk_salon_sesion PRIMARY KEY (id_salon_sesion)
 );
 
 CREATE TABLE salon_espacio(
@@ -389,9 +409,9 @@ CREATE TABLE salon_espacio_atencion(
 
 
 
--- INSERT INTO user_menu_sistema(IdForm, Enlace, Nombre, Estado, Nivel1, Nivel2, Menu, ColorFondo, ColorLetra, Permiso, Clase, Icono) 
--- 			VALUES ('215','index.php?action=ReporteGimnacio','R. Gimnacio','1','5','15','Reporte','#FFD812','','1','claRsva',''),
--- 			       ('221','index.php?action=ProcesoGimnacio','Gimnacio','1','1','6','Principal','#FF7814','','1','claRsva','fas fa-dumbbell');
+INSERT INTO user_menu_sistema(IdForm, Enlace, Nombre, Estado, Nivel1, Nivel2, Menu, ColorFondo, ColorLetra, Permiso, Clase, Icono) 
+			VALUES ('216','index.php?action=ReporteGimnacio','R. Gimnacio','1','5','15','Reporte','#FFD812','','1','claRsva',''),
+			       ('112','index.php?action=ProcesoGimnacio','Gimnacio','1','1','6','Principal','#FF7814','','1','claRsva','fas fa-dumbbell');
 
 INSERT INTO salon(nombre, descripcion, n_fila, n_columna, observacion, fecha_creacion, id_usuario, estado) 
           VALUES 

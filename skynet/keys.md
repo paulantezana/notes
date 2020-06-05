@@ -2,6 +2,10 @@ Comercial l& e eirl
 ----------------------------------
 factura@comerciallieeirl.com
 factura2020
+* Principal     Serie 1
+* Colorado      Serie 3
+* Mazuco        Serie 2
+* 
 
 inversones zayber
 ----------------------------------
@@ -37,3 +41,9 @@ Pass: D#hUX1B@
 servidor: amerinka
 administrador
 antojitosmarquez
+
+========================
+CORPORACION SKYNET
+www.corporacionskynet.com:8443
+Usuario: corporac
+Password: A6s9il9@
