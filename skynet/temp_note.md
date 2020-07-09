@@ -75,6 +75,7 @@ CREATE TABLE mante_cotizacion_detalle (
 
 
 ```sql
+
 CREATE TABLE mante_venta_nota_cre_deb (
   IdVentaNotaCreDeb INT AUTO_INCREMENT NOT NULL,
   NumeroDoc varchar(25) DEFAULT '',
@@ -141,7 +142,6 @@ insert  into `mante_notas_motivo`(`idComprobante`,`idMotivo`,`Nombre`,`Estado`) 
 
 
 DELIMITER $$
-USE `db_zayber`$$
 DROP FUNCTION IF EXISTS `fn_Serie_Numero_Simbolo_NC_ND`$$
 CREATE FUNCTION `fn_Serie_Numero_Simbolo_NC_ND`(`pIdAlm` INT(5), `pIdComp` INT(3), `pIdCompAntiguo` INT(3), `pContingencia` INT(1)) RETURNS VARCHAR(25) CHARSET utf8 COLLATE utf8_unicode_ci
     READS SQL DATA
@@ -209,6 +209,16 @@ CREATE TABLE plantilla_importacion (
   idAlmacen INT NOT NULL,
   CONSTRAINT pk_plantilla_importacion PRIMARY KEY (idPlantillaImportacion)
 );
+
+-- OPCIONAL
+ALTER TABLE plantilla_importacion ADD COLUMN lote VARCHAR(128) NOT NULL AFTER cantidad;
+ALTER TABLE plantilla_importacion ADD COLUMN fecha_vencimiento DATE AFTER lote;
+ALTER TABLE plantilla_importacion ADD COLUMN laboratorio VARCHAR(128) NOT NULL AFTER fecha_vencimiento;
+
+
+ALTER TABLE mante_producto_almacen ADD COLUMN lote VARCHAR(128) NOT NULL AFTER PrecioPublico;
+ALTER TABLE mante_producto_almacen ADD COLUMN fecha_vencimiento DATE AFTER lote;
+ALTER TABLE mante_producto_almacen ADD COLUMN laboratorio VARCHAR(128) NOT NULL AFTER fecha_vencimiento;
 
 
 
@@ -301,8 +311,10 @@ BEGIN
         SELECT IFNULL(COUNT(*),0) INTO aCont FROM `mante_producto` WHERE Codigo=pCod AND `Producto` = pDescrip AND IdMarca=pIdMarca AND IdCategoria=pIdModelo ;
         IF(aCont>0)THEN
             SELECT IFNULL(IdProducto,0) INTO aId FROM `mante_producto` WHERE Codigo=pCod AND `Producto` = pDescrip AND IdMarca=pIdMarca AND IdCategoria=pIdModelo LIMIT 1;
+
             UPDATE `mante_producto` SET Producto=pDescrip,IdMarca=pIdMarca,IdCategoria=pIdModelo
             WHERE IdProducto=aId AND Codigo=pCod;
+
             SET aCont=0;
             SELECT IFNULL(COUNT(*),0) INTO  aCont FROM `mante_producto_almacen` WHERE IdAlmacen=pIdAlm AND IdProducto=aId;
             IF(aCont>0)THEN
@@ -316,6 +328,51 @@ BEGIN
             SELECT IFNULL(MAX(IdProducto+1),1) INTO aId FROM `mante_producto`;
             INSERT INTO `mante_producto` VALUES(aId,pCod,pDescrip,pIdMarca,pIdModelo,1);
             INSERT INTO mante_producto_almacen VALUES(pIdAlm,aId,1,1,0,pCompra,pMenor,pMayor,pPublico,1,1);
+        END IF;
+            
+        RETURN aId;
+    END$$
+
+DELIMITER ;
+
+
+-- //
+
+DELIMITER $$
+
+DROP FUNCTION IF EXISTS `fn_Save_Productos_importP`$$
+
+CREATE  FUNCTION `fn_Save_Productos_importP`(`pCod` VARCHAR(50), `pDescrip` VARCHAR(200), `pLote` VARCHAR(128), `pFechaVencimiento` VARCHAR(128), `laboratorio` VARCHAR(128), `pIdMarca` INT(5), `pIdModelo` INT(5), `pCompra` DOUBLE(11,2), `pMayor` DOUBLE(11,2), `pMenor` DOUBLE(11,2), `pPublico` DOUBLE(11,2), `pIdAlm` INT(3)) RETURNS INT(2)
+    READS SQL DATA
+    DETERMINISTIC
+BEGIN
+        DECLARE aCont INT(5);
+        DECLARE aId INT(11);
+        SET aCont=0;SET aId=1;
+        
+        SELECT IFNULL(COUNT(*),0) INTO aCont FROM `mante_producto` WHERE Codigo=pCod AND `Producto` = pDescrip AND IdMarca=pIdMarca AND IdCategoria=pIdModelo ;
+        IF(aCont>0)THEN
+            SELECT IFNULL(IdProducto,0) INTO aId FROM `mante_producto` WHERE Codigo=pCod AND `Producto` = pDescrip AND IdMarca=pIdMarca AND IdCategoria=pIdModelo LIMIT 1;
+
+            UPDATE `mante_producto` SET Producto=pDescrip,IdMarca=pIdMarca,IdCategoria=pIdModelo
+            WHERE IdProducto=aId AND Codigo=pCod;
+            
+            SET aCont=0;
+            SELECT IFNULL(COUNT(*),0) INTO  aCont FROM `mante_producto_almacen` WHERE IdAlmacen=pIdAlm AND IdProducto=aId;
+            IF(aCont>0)THEN
+                UPDATE `mante_producto_almacen` SET PrecioCompra=pCompra,PrecioBase=pMenor,PrecioDistribuido=pMayor,
+                    PrecioPublico=pPublico, lote=pLote,fecha_vencimiento=pFechaVencimiento,laboratorio=pLaboratorio
+                WHERE IdAlmacen=pIdAlm AND IdProducto=aId;
+            ELSE
+                INSERT INTO mante_producto_almacen (IdAlmacen, IdProducto, IdUnidad, IdMoneda, Stock, PrecioCompra, PrecioBase,PrecioDistribuido, PrecioPublico, lote, fecha_vencimiento, laboratorio, Estado, TipoCambio)
+                  VALUES(pIdAlm,aId,1,1,0,pCompra,pMenor,pMayor,pPublico,pLote,pFechaVencimiento,laboratorio,1,1);
+            END IF;
+        ELSE
+            SELECT IFNULL(MAX(IdProducto+1),1) INTO aId FROM `mante_producto`;
+            INSERT INTO `mante_producto` (IdProducto, Codigo, Producto, IdMarca, IdCategoria, Estado)
+			                              VALUES(aId, pCod, pDescrip, pIdMarca, pIdModelo, 1);
+            INSERT INTO mante_producto_almacen (IdAlmacen, IdProducto, IdUnidad, IdMoneda, Stock, PrecioCompra, PrecioBase,PrecioDistribuido, PrecioPublico, lote, fecha_vencimiento, laboratorio, Estado, TipoCambio)
+              VALUES(pIdAlm,aId,1,1,0,pCompra,pMenor,pMayor,pPublico,pLote,pFechaVencimiento,laboratorio,1,1);
         END IF;
             
         RETURN aId;
@@ -794,3 +851,56 @@ Dos vecespor dia
 10: Pm.
 
 Finalizar Turno.
+
+
+
+
+```sql
+DELIMITER $$
+
+DROP PROCEDURE IF EXISTS `mante_save_mante_productos`$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `mante_save_mante_productos`(`pId` INT(11), `pCodigo` VARCHAR(50), `pProducto` VARCHAR(150), `pIdMarca` INT(5), `pIdCategoria` INT(5), `pEstado` INT(11))
+BEGIN
+	DECLARE cont INT(11);
+	IF(pId>0)THEN
+		UPDATE mante_producto SET Codigo=pCodigo,Producto=pProducto,IdMarca=pIdMarca,IdCategoria=pIdCategoria,Estado=pEstado
+		WHERE IdProducto=pId;
+	ELSE
+		SELECT IFNULL(COUNT(*),0) INTO cont FROM mante_producto WHERE Codigo=pCodigo;
+		IF(cont=0)THEN
+			SELECT IFNULL(MAX(IdProducto+1),1) INTO pId FROM mante_producto;
+      INSERT INTO mante_producto (IdProducto, Codigo, Producto, IdMarca, IdCategoria, Estado)
+			                              VALUES(pId, pCodigo, pProducto, pIdMarca, pIdCategoria, pEstado);
+		END IF;
+	END IF;
+    END$$
+
+DELIMITER ;
+
+-- //////////////
+
+-- //////////////
+DELIMITER $$
+
+DROP PROCEDURE IF EXISTS `mante_save_mante_ProductoAlm`$$
+
+CREATE PROCEDURE `mante_save_mante_ProductoAlm`(`pId` INT(11), `pIdAlm` INT(3), `pIdPro` INT(11), `pPCompra` DOUBLE(11,2), `pPBase` DOUBLE(11,2), `pPDistri` DOUBLE(11,2), `pPPublico` DOUBLE(11,2), pLote VARCHAR(128), pFechaVencimiento VARCHAR(128), pLaboratorio VARCHAR(128), `pIdUnidad` INT(3), `pIdMoneda` INT(2), `pIdEstado` INT(1), `pTC` DOUBLE(11,2))
+BEGIN
+	DECLARE cont INT(11);
+	SELECT IFNULL(COUNT(*),0) INTO cont FROM `mante_producto_almacen` 
+	WHERE IdProducto=pIdPro AND IdAlmacen=pIdAlm AND IdUnidad=pIdUnidad;
+	IF(cont>0)THEN
+		UPDATE `mante_producto_almacen` SET PrecioCompra=pPCompra,PrecioBase=pPBase,PrecioDistribuido=pPDistri,
+			PrecioPublico=pPPublico, lote=pLote, fecha_vencimiento=pFechaVencimiento, laboratorio=pLaboratorio, IdMoneda=pIdMoneda,Estado=pIdEstado,TipoCambio=pTC
+		WHERE IdProducto=pIdPro AND IdAlmacen=pIdAlm AND IdUnidad=pIdUnidad;
+	ELSE
+  
+		INSERT INTO mante_producto_almacen (IdAlmacen, IdProducto, IdUnidad, IdMoneda, Stock, PrecioCompra, PrecioBase,PrecioDistribuido, PrecioPublico, lote, fecha_vencimiento, laboratorio, Estado, TipoCambio)
+      VALUES(pIdAlm,pIdPro,pIdUnidad,pIdMoneda,0,pPCompra,pPBase,pPDistri,pPPublico, pLote, pFechaVencimiento, pLaboratorio, pIdEstado,pTC);
+	END IF;
+    END$$
+
+DELIMITER ;
+
+```
