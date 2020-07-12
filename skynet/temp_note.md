@@ -904,3 +904,9 @@ BEGIN
 DELIMITER ;
 
 ```
+
+
+```sql
+INSERT INTO `user_menu_sistema`(`IdForm`, `Enlace`, `Nombre`, `Estado`, `Nivel1`, `Nivel2`, `Menu`, `ColorFondo`, `ColorLetra`, `Permiso`, `Clase`, `Icono`) 
+			VALUES ('222','index.php?action=ReporteNotaCreditoDebito','R. Nota credito debito','1','5','19','Reporte','#FFD812','','1','claRsva','');
+```
