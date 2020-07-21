@@ -104,3 +104,12 @@ Password: baA%0c58
 FTP
 Usuario: skycuscoftp
 Password: Pi889&cp
+
+=========================
+skypayperu.com:8443
+skypaype
+4@1al6iX
+
+FTP
+skypaypeftp
+K610%rsu
