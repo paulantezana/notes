@@ -113,3 +113,12 @@ skypaype
 FTP
 skypaypeftp
 K610%rsu
+
+=========================
+TURISMO MER
+facturacion@turismomer.com
+factura2020
+
+CPANEL
+user: zkhuqmxudin2
+pas: yT?}0jvY
