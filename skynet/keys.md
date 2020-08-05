@@ -5,7 +5,6 @@ factura2020
 * Principal     Serie 1
 * Colorado      Serie 3
 * Mazuco        Serie 2
-* 
 
 inversones zayber
 ----------------------------------
@@ -59,12 +58,6 @@ Usuario: buscarucftp
 Password: d32pR*t5
 
 =========================
-EASY PAY PERU
-easypayperu.com
-| UserName: easypayp
-| PassWord: HC5V:p>+(GLMp?Ag
-
-=========================
 CALENDARIO CAMINO INCA
 www.calendariocaminoinca.com:8443
 Usuario: calendar
@@ -77,7 +70,7 @@ Password: Q~o7s60y
 
 =========================
 EASY PAY PERU
-easypayperu.com
+easypayperu.com:8443
 | UserName: easypayp
 | PassWord: 67qeQr4?
 
@@ -122,3 +115,27 @@ factura2020
 CPANEL
 user: zkhuqmxudin2
 pas: yT?}0jvY
+
+=========================
+www.skyrestaurante.com
+uttpefumpq29
+&,Pt8yV~6lew^
+
+=========================
+Domain: turismotisoc.com
+UserName: turitiso
+PassWord: e@E~Y{?;^nV3
+
+sistema
+us: niko
+pas: 032635102016
+
+=========================
+skyhoteles.com
+skyhoteles
+Vw0>%Tb-xr
+
+=========================
+cpanel.skystoreperu.com
+username: xnu2aw8llumz
+password: lLHeXyg}97
