@@ -209,6 +209,7 @@ CREATE TABLE plantilla_importacion (
   idAlmacen INT NOT NULL,
   CONSTRAINT pk_plantilla_importacion PRIMARY KEY (idPlantillaImportacion)
 );
+ALTER TABLE plantilla_importacion ENGINE=InnoDB;
 
 -- OPCIONAL
 ALTER TABLE plantilla_importacion ADD COLUMN lote VARCHAR(128) NOT NULL AFTER cantidad;

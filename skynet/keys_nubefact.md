@@ -41,3 +41,27 @@ password: autoteffact
 iquique
 username: iquique@skynetcusco.com
 password: Fact2018-
+
+
+=======================
+DWASI
+info@cafedwasi.com
+facturadwasi2018
+
+
+=======================
+FERCONST
+factura@ferrcons.com
+factura2020
+
+
+=======================
+CHIFA CAPON
+factura@chifacapon.com
+factura2020
+
+
+=======================
+seronwe
+usuario: info@seronwe.com
+contraseña: factura2019
