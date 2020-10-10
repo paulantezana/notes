@@ -144,3 +144,13 @@ password: lLHeXyg}97
 =========================
 factura@ferrcons.com
 factura2020
+
+
+=========================
+FULL AVISOS PERU
+fullavisosperu.com
+fullavis
+!E3z12rj
+
+fullavisftp
+G3v1y!m0

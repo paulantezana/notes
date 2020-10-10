@@ -15,6 +15,11 @@ El chinito
 username: facturacion@elchinito.com
 password: factura2019
 
+=======================
+El chinito 2
+factura@elchinito2.com
+factura2019
+
 
 =======================
 DEMO - Pruebas
@@ -28,7 +33,7 @@ password: demo2019
 =======================
 Facturacion Tisoc
 username: facturacion@tisoctransportes.com
-password: Factura2018
+password: Facturas2019
 
 
 =======================
