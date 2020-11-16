@@ -131,9 +131,14 @@ us: niko
 pas: 032635102016
 
 =========================
+SKY HOTELES
 skyhoteles.com
-skyhoteles
-Vw0>%Tb-xr
+
+skyhotel
+^15Mgg9d
+
+skyhotelftp
+Zsvg72$8
 
 =========================
 cpanel.skystoreperu.com
@@ -154,3 +159,43 @@ fullavis
 
 fullavisftp
 G3v1y!m0
+
+=========================
+AUQU COLLECTION
+www.auqucollection.com
+auqucoll
+w*X10xu0
+
+auqucollftp
+#l8k8uN8
+
+
+
+===========================
+AUTORIZADO:
+4919-1481-0785-9067
+4919-1481-0785-9067
+4500-3400-9000-0016
+Correo(aprobado sin autenticacion):
+accept@cybersourse.com
+Correo(Verified by visa):
+review@cyversourse.com
+
+Foranea:
+4072-2102-9053-6663
+
+DENEGADO:
+4444-3333-2222-1111
+4111-1111-1111-1111
+
+
+## Usuario SKYPAY
+https://skypayperu.com/deposito/ClienteAdministrador
+SkynetCusco@admin.com
+SkynetAdministrador
+
+===========================
+RAP TRAVEL PERU
+| Domain: raptravelperu.com
+| UserName: raptrcom
+| PassWord: tvO?ubd_b1J=
