@@ -70,3 +70,15 @@ factura2020
 seronwe
 usuario: info@seronwe.com
 contraseña: factura2019
+
+
+=======================
+muebleinnova
+muebleinnova@skynetcorp.pe
+Factura2020
+
+
+=========================
+iguazutr
+factura@transportesiguazu.com
+Factura2020-
