@@ -94,3 +94,35 @@ Factura2020
 PELTROCHE FOOD
 factura@peltrochefeedfood.com
 factura2020
+
+
+=========================
+ENCOMIENDA
+bartos@skynetcorp.pe
+Factura2021
+
+
+=========================
+TRANSPORT
+transportesmoquegua@skynetcorp.pe
+Factura2021
+
+
+=========================
+farmaciahumanitaria@skynetcorp.pe
+Factura2021
+
+
+
+===========================
+PASTELERIA      LOCAL 1
+tortasyennifer@skynetcorp.pe
+Factura2021
+RS: HUAMAN RUIZ VICENTE
+
+
+===========================
+PASTELERIA      LOCAL 2
+yennifersrl@skynetcorp.pe
+Factura2021
+RS: YENIFER SOCIEDAD COMERCIAL DE RESPONSABILIDAD LIMITADA - YENIFER S.R.L.

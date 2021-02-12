@@ -42,3 +42,51 @@ el reporte de acciiones.
 
 
 Alvaro tiene que enviar que datos son requeridos.
+
+
+
+# Guardar datos
+Cambiar por boleto = btnCanjearSeat_RsvaTM
+"aTipoPago":'5',"EstadoVenta":'true',"aTipoCompra":'2'
+
+1634
+----------------------------------------------------------
+290 completar datos boleto => Completar_Datos_Boleto		=> 335 AND 359
+
+
+# Rango de apertura
+15027
+15047
+
+
+
+# Skynet PELTROCHE --
+- Reporte de ventas sea mas especifico, que muestre los productos en el reporte, como figura en el kardex de la misma manera que detalle BOLETA, FACTURA Y TICKET. // -> Ventas con detalle de los productos.
+- Crear reportes de ventas de suplementos, membresias, ventas menores. // 3 -> tipo de ventas 
+- Crear boton de resumen de ventas de membresias, que estan sujetos a una meta diaria, meta mensual. // -> 
+- Resumen de ventas con ventas con tarjeta y efectivo. // -> 
+- Agregar al reporte los items de nombre de clientes, dni y celulares para generar base de datos. // -> Se agrego
+- Al momento de vender por el boton azul, que especifique el producto de venta, ya que no figura, y tambien habilitar el boton de observacion para poder escribir algun texto. // Varios -> especificar el cliente // Observacion en ventas.
+- Habilitar boton de poder agregar referencia de la venta que se hizo con tarjeta al momento de facturar , y plasme en el reporte de venta.
+
+
+# Skynet MUEBLE INNOVA --
+LUNES
+- ERROR EN FACTURAR EL PRODUCTO EN CONSTRUCCION.
+- AL MOMENTO DE HACER UNA VENTA NO SALE EL PDF DE IMPRESION REVISAR 
+
+MARTES
+- COMO REINSERTAR LOS PRODUCTOS QUE ESTAN SOBRANDO.
+- CAMBIAR FORMATO DE IMPRESION LOS CONTRATOS DEBERAN TENER UN FORMATO EN WORD PARA QUE SE PUEDA RELLENAR Y DESPUES SE PUEDA IMPRIMIR EN FORMATO A4 Y PARA VENTAS EN FORMATO ETIQUETERA.
+- TERMINAR EL MODULO DE CONSTRUCCION, AGREGARLE UN REPORTE EN DONDE HAYA UNA PESTAÑA QUE PARA PODER VER EL DETALLE DE LOS PRODUCTOS AGREGADOS PARA LA CONSTRUCCION DE LOS PRODUCTOS, Y SE PUEDA EDITAR Y CAMBIAR LOS TIEMPOS DE ENTREGA, CAMBIAR LOS PRODUCTOS DE MATERIA PRIMA, 
+
+TIEMPO DE ENTREGA : PRIMERA SEMANA DE FEBRERO.
+
+# Farmacia
+- Bonificaciones
+- Compras devolucion credito
+
+## Sabado Importante
+En tisoc anular los comprobantes EN TISOC
+-----------
+BP18-000073
