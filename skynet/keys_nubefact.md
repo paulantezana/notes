@@ -1,3 +1,6 @@
+https://skynetgroup.pse.pe/
+
+
 ========================
 Chaskihotel
 username:    recepcion@chaskihotel.com
@@ -8,6 +11,13 @@ password:    recepcion2018
 Antojitos
 username: antojitoscusco@gmail.com
 password: facturas2018
+
+
+
+=======================
+Antojitos
+username: antojitostupac@gmail.com
+password: factantojitos2018
 
 
 =======================
@@ -126,3 +136,28 @@ PASTELERIA      LOCAL 2
 yennifersrl@skynetcorp.pe
 Factura2021
 RS: YENIFER SOCIEDAD COMERCIAL DE RESPONSABILIDAD LIMITADA - YENIFER S.R.L.
+
+
+===========================
+AURIFERA
+selvadeoroperu@skynetcorp.pe
+Factura2021
+
+
+
+===========================
+RUADE
+mafisan@skynetcorp.pe
+Factura2021
+
+
+
+===========================
+SUMAQ
+sumaq08@outlook.com
+Factura2020
+
+===========================
+SUMAQ UNSAACC
+sumaqunsaac@skynetcorp.pe
+Factura2021
