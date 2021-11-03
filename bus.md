@@ -1,0 +1,18 @@
+- General
+	- Tener la posibilidad de elejir la oficina.
+- En operatividad
+	- Elejir si las ventas son con IGV o Sin Igv y por oficina.
+- Venta pasaje
+	- Imprecion de tickets -> Desarrollar para generar declaracion jurada y otros documentos. Considerar Formato multiempresa
+	- En pasajeros mostrar tambien los reservados, tener la posibilidad de imprimir comprobantes.
+	- Las reservaciones pensar como manejar por grupos o individuales.
+	- A la hora de confirmar reserva. Seleccionar el precio sugerido.
+	- DESARROLLAR EL MODULO DE POSTERGAR ASIENTO.
+	- Generar manifiesto version PDF. -> Y su correspondiente reporte de manifiestos
+	- En tripulacion establecer una tabla lista para llenar almenos dos tripulantes, conductor, ayudante tener la posibilidad de cambiar el tipo de personal.
+- Facturacion electronica
+	- Tenera la posibilidad de anular mediante nota de credito.
+
+- No Urgente
+	- venta pasaje: modal -> ocultar botones mostrar solo lo necesario.
+	- En venta pasaje: Crear Otro menu para realizar otras operaciones con los pasajeros. Como generar documentos. Revisiones. ETC.

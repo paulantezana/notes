@@ -119,6 +119,7 @@ Factura2021
 
 
 =========================
+FARMACIA
 farmaciahumanitaria@skynetcorp.pe
 Factura2021
 
@@ -161,3 +162,9 @@ Factura2020
 SUMAQ UNSAACC
 sumaqunsaac@skynetcorp.pe
 Factura2021
+
+
+===========================
+COROSHO
+gfacturacion@corocho.com
+Factura2021-

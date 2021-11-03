@@ -132,9 +132,6 @@ skyhoteles.com
 skyhotel
 ^15Mgg9d
 
-skyhotelftp
-Zsvg72$8
-
 =========================
 cpanel.skystoreperu.com
 username: xnu2aw8llumz
@@ -203,3 +200,17 @@ Ld*nt090
 
 transmoqftp
 179xaa*C
+
+
+
+
+===========================
+https://sistemadepasajes.com:8443/
+user: sistemad
+pass: v8~h0Tw9
+
+user ftp: sistemadftp
+pass ftp: qf8x^J96
+
+
+

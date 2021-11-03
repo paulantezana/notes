@@ -90,3 +90,6 @@ TIEMPO DE ENTREGA : PRIMERA SEMANA DE FEBRERO.
 En tisoc anular los comprobantes EN TISOC
 -----------
 BP18-000073
+
+
+
