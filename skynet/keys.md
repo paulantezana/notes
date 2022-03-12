@@ -213,4 +213,7 @@ user ftp: sistemadftp
 pass ftp: qf8x^J96
 
 
-
+===========================
+http://gimnasio.pe/cpanel
+cPanel username	gimnicig
+cPanel password	m5HCNzV0zwVc
