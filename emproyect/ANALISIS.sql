@@ -72,6 +72,10 @@ INNER JOIN Configuracion.DiccionarioTabla as dt ON dc.IdTabla = dt.Id
 WHERE IIf(Left('ViewLoteTransaccionPorPagar', 4) = 'View', dt.Vista, dt.Pantalla) = 'ViewLoteTransaccionPorPagar'
 
 
+-----------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------
+-- TUTORIAL CREAR SSAS
+-- https://www.grapecity.com/blogs/wijmo-olap-and-microsoft-ssas-cubes
 
 -- // COMO SIEMPRE
 /*
