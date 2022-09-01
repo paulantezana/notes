@@ -168,3 +168,26 @@ Factura2021
 COROSHO
 gfacturacion@corocho.com
 Factura2021-
+
+# Check table TURISMO MER
+```sql
+SELECT fn_Serie_Numero_Simbolo_FE(1,2), 'AVENIDA LA PAZ CUSCO'; -- 
+SELECT fn_Serie_Numero_Simbolo_FE(2,2), 'TERMINAL TERRESTRE CUSCO'; -- 
+SELECT fn_Serie_Numero_Simbolo_FE(3,2), 'JR TACNA PUNO'; -- 
+SELECT fn_Serie_Numero_Simbolo_FE(4,2), 'TERMINAL PRIVADO PUNO'; -- 
+SELECT fn_Serie_Numero_Simbolo_FE(5,2), 'TERMINAL TERRESTRE PUNO OFICINA 1'; --  	
+SELECT fn_Serie_Numero_Simbolo_FE(6,2), 'TERMINAL TERRESTRE PUNO OFICINA 2'; --  	
+SELECT fn_Serie_Numero_Simbolo_FE(10,2), 'AGENCIA';
+```
+
+# Check table IGUAZU
+```sql
+-- pIdComp, pIdOficina, pIdTipoProceso
+SELECT `fn_Serie_Numero_Simbolo_FE`(2,1,1), 'CUSCO 1'; 
+SELECT `fn_Serie_Numero_Simbolo_FE`(2,2,1), 'CUSCO 2 Prin'; 
+SELECT `fn_Serie_Numero_Simbolo_FE`(2,3,1), 'URCOS'; 
+SELECT `fn_Serie_Numero_Simbolo_FE`(2,4,1), 'MAZUCO'; 
+SELECT `fn_Serie_Numero_Simbolo_FE`(2,5,1), 'PUERTO 1'; 
+SELECT `fn_Serie_Numero_Simbolo_FE`(2,6,1), 'PUERTO 2 Prin'; 
+SELECT `fn_Serie_Numero_Simbolo_FE`(2,7,1), 'AREQUIPA';
+```
