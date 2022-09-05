@@ -173,7 +173,10 @@ enum Salarios { bajo = 100, bueno = 2000, excelente = 7000};
 # Programacion Generica
 
 
-
+# Patrones de diseño
+https://refactoring.guru/es/design-patterns/csharp
+https://aspnetcoremaster.com/csharp/patron-de-dise%C3%B1o-singleton-csharp.html
+https://www.udemy.com/course/aprender-patrones-de-disenos-aplicados-en-asp-net/
 
 
 
