@@ -91,3 +91,22 @@ CREATE TABLE Configuracion.DiccionarioCampo(
 	filterable bit NULL,
 	type varchar(30) NULL
 )
+
+
+
+
+
+
+SET @row_number = 0;
+SELECT
+    cli.IdReserva,cli.IdCliente,cli.IdHabitacion,
+    mc.IdTipoDocumento,mc.NroDocumento,mc.Nombres,mc.APaterno,mc.AMaterno,DATE_FORMAT(mc.FechaNac,'%d/%m/%Y') AS FechaNac,
+    mc.Sexo,mc.Direccion,mc.IdNacionalidad,mc.IdCiudad,mc.Telefono,mc.Email,mc.Ruc,mc.RazonSocial,
+    fn_RecuperarNombre('TA_TIPODOCUMENTO',mc.IdTipoDocumento) AS TipoDoc,fn_RecuperarNombre('TA_NACIONALIDAD',mc.IdNacionalidad) AS Nacio,
+    fn_RecuperarNombre('TA_CIUDAD',mc.IdCiudad) AS Ciudad,
+    (@row_number:=@row_number + 1) AS row_num
+FROM (
+	SELECT DISTINCT IdReserva, IdHabitacion, IdCliente
+	FROM ta_reserva_habitacion_cliente WHERE IdReserva='7614' AND IdHabitacion='1'
+) AS cli
+INNER JOIN ta_mantenimiento_cliente AS mc ON cli.IdCliente = mc.IdCliente
