@@ -1,1100 +1,517 @@
-select 
-		TXT = rtrim(d.CodigoCuenta)
-	+	'|'+ convert( varchar, isnull(d.idarticulo,'') )
-	+	'|'+ convert( varchar, convert( decimal(16,3), sum(cantidad) ) )
-	+	'|'+ convert( varchar, sum(DebeBase - HaberBase))
+-- Fecha contable = fecha del asiento
 
-	,	d.CodigoCuenta
-	,	d.idarticulo
-	,	CantidadExistencia = sum(cantidad)
-	,	CostoTotal = sum(DebeBase - HaberBase)
-from
-		Financiero.ViewLoteDetalle d
-where	
-		d.DescripcionAnioPeriodo <= '2021-09'
-	and d.CodigoDiario not in ('00','99')
-	and	left(d.CodigoCuenta,2) in ('20','21')
-	--and	left(d.CodigoCuenta,2) in ('30')
-	--and	left(d.CodigoCuenta,2) in ('34')
-group by 
-		d.CodigoCuenta
-	,	d.idarticulo
+-----------------------------------------------------------------------------------
+-- GENERA PLE
+-- ----
 
+/*
+1.- Revisar los ple que faltan
+2.- Ver una mejor manera de consultar los ple que sea por view
+3.- Analizar para reporte de tesoreria, Ver el funcionamiento de combranza
 
+# OBSERVACIONES
+   # Libro Diario
+	- Existe una entidad con el numero documento vacio
+	- Existen entidades con numero documento con "-" que no corresponde a un numero de documento valido
+	- Existen operaciones de nota de credito, debito y otros tipos de documentos sin serie y/o numero.
+   # Por Pagar
+    - Numero de documentos no corresponde al tipo de documento
+	- Las series en factura, nd y nd deben tener 3 digitos
 
+# PENDIENTE
+	- Actualizar fecha contable en: Libro diario, Libro Mayor, Libro Cajas y Bancos.
 
 
+# Retenciones Back Office
+	ANTES -> por contabilidad
+	AHORA -> Provicion por pagar
+		  -> porvision pagado
+
+# Retencion.
+	- https://pqs.pe/actualidad/economia/ejemplos-de-detracciones-retenciones-percepciones-de-igv/
 
 
--- *****************************************************************************************
--- *****************************************************************************************
--- 3.7
-SELECT 
-		-- TOP 100 
-		TXT = RTRIM(a.Codigo) + RTRIM(p.Codigo) + RTRIM(day(dateadd(dd,-1,convert(date,a.codigo+case when p.codigo <'12' then right('00'+rtrim(convert(numeric(2),p.Codigo)+1),2) else '01' end +'01',112))))
-			+ '|' + RTRIM(ce.Codigo)					-- campo 2
-			+ '|' + '1'									-- campo 3
-			+ '|' + RTRIM(ISNULL(ar.Codigo,''))			-- campo 4
+# Duda ALEXIS: Resuelto
+ - Libro 8.1
+	- Campo 36
+	- Falta el contenido de ISC, ISBR, Contrato, Error,1,2,3,4
+ - Libro 8.2
+	- Falata, Campo 11(Doc Aduana), Campo 14 (Serie adua), Campos: 22,23,24 (Beneficiario pago), Campo 35 (Ley IGV ART76)
 
-			+ '|' + RTRIM(ce.Codigo)					-- campo 5
-			+ '|' + RTRIM(ISNULL(ar.Codigo,''))			-- campo 6
-			+ '|' + RTRIM(ISNULL(ar.Descripcion,''))	-- campo 7
-			+ '|' + RTRIM(ISNULL(u.UnidadSunat,''))		-- campo 8
-			+ '|' + '1'									-- campo 9 -- Promedio Ponderado
-			+ '|' + CONVERT(varchar,convert(int,mp.CantidadExistencia))				-- campo 10
-			+ '|' + CONVERT(varchar,convert(decimal(20,8),mp.CostoUnitario))		-- campo 11
-			+ '|' + CONVERT(varchar,convert(decimal(20,8),mp.CostoTotal))			-- campo 12
-			+ '|' + '1' + '|'
-	, Periodo = RTRIM(a.Codigo) + RTRIM(p.Codigo) + RTRIM(day(dateadd(dd,-1,convert(date,a.codigo+case when p.codigo <'12' then right('00'+rtrim(convert(numeric(2),p.Codigo)+1),2) else '01' end +'01',112))))
-	, CodigoCatalogo = ce.Codigo
-	, TipoExistencia = '1'
-	, CodigoArticulo = ar.Codigo
-	, ar.Descripcion
 
-	-- UNIDAD
-	, u.UnidadSunat
-	, MetodoValuacion = '1' -- Promedio Ponderado
-	, mp.CantidadExistencia
-	, mp.CostoUnitario
-	, mp.CostoTotal
-	, Estado = '1'
-FROM Financiero.ViewLoteDetalleMercaderiaProductoxPeriodo mp
-INNER JOIN Financiero.Cuenta c (NOLOCK) on c.IdCompania= mp.IdCompania and c.id = mp.IdCuenta   
-INNER JOIN Financiero.Anio a (NOLOCK) on a.IdCompania = mp.IdCompania and a.id = mp.IdAnio
-INNER JOIN Financiero.AnioPeriodo P (NOLOCK) on p.idAnio = mp.IdAnio and p.id = mp.IdAnioPeriodo
-INNER JOIN Sunat.T13CatalogoExistencia ce (NOLOCK) on ce.Id = '1'
-LEFT JOIN Maestros.Articulo ar (NOLOCK) on ar.Id = mp.IdArticulo
-LEFT JOIN Maestros.UnidadMedida u (NOLOCK) on mp.IdUnidadMedida = u.IdUnidadMedida
-LEFT JOIN Sunat.T06CodigoUnidadMedida cu (NOLOCK) on u.UnidadSunat = cu.Codigo
+# Reporte a alexis: No es necesario
+	- Para crear tipo asiento
+		- Solo permite DXP = documento por pagar
+
+# Continuar en
+	- https://docs.microsoft.com/es-es/sql/t-sql/queries/select-over-clause-transact-sql?view=sql-server-ver15
+	- https://docs.microsoft.com/es-es/sql/relational-databases/collations/collation-and-unicode-support?view=sql-server-ver15
+*/
+
+EXEC [Financiero].[usp_rpt_CTB191] '( (Periodo like ''%202112%'') and (codigo like ''%010100%'') )','','14'
+EXEC [Financiero].[usp_rpt_CTB191] '( (Periodo like ''%202112%'') and (codigo like ''%010200%'') )','','14'
+
+EXEC [Financiero].[usp_rpt_CTB191] '( (Periodo like ''%202112%'') and (codigo like ''%030100%'') )','','14'
+EXEC [Financiero].[usp_rpt_CTB191] '( (Periodo like ''%202112%'') and (codigo like ''%030200%'') )','','14'
+EXEC [Financiero].[usp_rpt_CTB191] '( (Periodo like ''%202112%'') and (codigo like ''%030300%'') )','','14'
+EXEC [Financiero].[usp_rpt_CTB191] '( (Periodo like ''%202112%'') and (codigo like ''%030400%'') )','','14'
+EXEC [Financiero].[usp_rpt_CTB191] '( (Periodo like ''%202112%'') and (codigo like ''%030500%'') )','','14'
+EXEC [Financiero].[usp_rpt_CTB191] '( (Periodo like ''%202112%'') and (codigo like ''%030600%'') )','','14'
+EXEC [Financiero].[usp_rpt_CTB191] '( (Periodo like ''%202112%'') and (codigo like ''%030700%'') )','','14'
+--EXEC [Financiero].[usp_rpt_CTB191] '( (Periodo like ''%202112%'') and (codigo like ''%030800%'') )','','14'
+--EXEC [Financiero].[usp_rpt_CTB191] '( (Periodo like ''%202112%'') and (codigo like ''%030900%'') )','','14'
+
+EXEC [Financiero].[usp_rpt_CTB191] '( (Periodo like ''%202112%'') and (codigo like ''%031100%'') )','','14'
+EXEC [Financiero].[usp_rpt_CTB191] '( (Periodo like ''%202112%'') and (codigo like ''%031200%'') )','','14'
+EXEC [Financiero].[usp_rpt_CTB191] '( (Periodo like ''%202112%'') and (codigo like ''%031300%'') )','','14'
+
+EXEC [Financiero].[usp_rpt_CTB191] '( (Periodo like ''%202112%'') and (codigo like ''%031500%'') )','','14'
+
+EXEC [Financiero].[usp_rpt_CTB191] '( (Periodo like ''%202112%'') and (codigo like ''%031700%'') )','','14'
+
+EXEC [Financiero].[usp_rpt_CTB191] '( (Periodo like ''%202112%'') and (codigo like ''%040100%'') )','','14'
+
+-- Libro diario, mayor y plan contable
+EXEC [Financiero].[usp_rpt_CTB191] '( (Periodo like ''%202112%'') and (codigo like ''%050100%'') )','','14'
+EXEC [Financiero].[usp_rpt_CTB191] '( (Periodo like ''%202112%'') and (codigo like ''%050300%'') )','','14'
+EXEC [Financiero].[usp_rpt_CTB191] '( (Periodo like ''%202112%'') and (codigo like ''%060100%'') )','','14'
+-- Libro simplificado
+--EXEC [Financiero].[usp_rpt_CTB191] '( (Periodo like ''%202112%'') and (codigo like ''%050200%'') )','','14'
+--EXEC [Financiero].[usp_rpt_CTB191] '( (Periodo like ''%202112%'') and (codigo like ''%050400%'') )','','14'
+
+-- Compra - venta
+EXEC [Financiero].[usp_rpt_CTB191] '( (Periodo like ''%202112%'') and (codigo like ''%080100%'') )','','14' --15 = 20518915119
+EXEC [Financiero].[usp_rpt_CTB191] '( (Periodo like ''%202112%'') and (codigo like ''%080200%'') )','','14'
+EXEC [Financiero].[usp_rpt_CTB191] '( (Periodo like ''%202112%'') and (codigo like ''%140100%'') )','','14'
+-- Compra - venta : Simplificado
+--EXEC [Financiero].[usp_rpt_CTB191] '( (Periodo like ''%202112%'') and (codigo like ''%080300%'') )','','14'
+--EXEC [Financiero].[usp_rpt_CTB191] '( (Periodo like ''%202112%'') and (codigo like ''%140200%'') )','','14'
+
+
+
+
+
+
+
+-- CREADO ====================================================================================
+SELECT d.DebeHaber, d.TotalMonedaBase, d.ImpuestoMonedaBase, IdCategoriaImpuesto, IdImpuesto
+	, d.IdLoteTrazable, D.IdLoteTransaccionTrazable, D.IdLoteTransaccionDetalleTrazable
+	, p.TotalMonedaBase
+FROM Financiero.LoteTransaccionPorPagar as p
+INNER JOIN Financiero.LoteTransaccionPorPagarDetalle as d ON p.Id = d.IdTransaccion
+WHERE p.IdLote = 2180082;
+--
+SELECT * FROM Reporte.CTB190_080100 WHERE Cuo = 2180082;
+
+
+-- LIBERADO ====================================================================================
+SELECT * FROM Financiero.ViewLoteDetalle WHERE IdLote IN (2180082);
+--
+SELECT * FROM Financiero.SaldoDocumento sd (nolock) WHERE IdLote = 2180082;
+
+
+-- PROGRAMADO ====================================================================================
+SELECT Descripcion, OpcionCreacion, Id, * FROM Financiero.ViewLoteTransaccionPagado
+WHERE IdCompania = 16 AND IdEstadoLote = 1 AND OpcionCreacion = 'FI.CP.002' -- Listado de programados
+--
+SELECT * FROM Financiero.ViewLoteTransaccionPagadoDetalle WHERE IdTransaccion = 5334 -- Listado de docs programados
+
+
+-- PAGOS ====================================================================================
+SELECT Id, * FROM Financiero.ViewLoteTransaccionPagado
+WHERE IdCompania = 16 AND IdEstadoLote = 1 AND OpcionCreacion = 'FI.CP.003'
+--
+SELECT * FROM Financiero.ViewPagoIndividualYMasivoParaPagar WHERE idTransaccion = 3637
+
+
+-- FINAL
+SELECT
+    LTP.IdLoteTransaccionTrazable, LTP.IdLoteTrazable, ltp.Id, ltp.UsuarioCreacion, ltp.Descripcion, ltp.IdLote, L.IdEstadoLote,
+    '|||' as M, dd.Id, dd.IdLoteTransaccionDetalleTrazable, dd.IdLoteTransaccionTrazable, dd.IdLoteTrazable
+FROM
+    Financiero.LoteTransaccionPagado AS LTP
+    LEFT JOIN Financiero.Lote AS L WITH (NOLOCK) ON L.Id = LTP.IdLote
+    --LEFT JOIN Financiero.AnioPeriodo AS P ON L.IdPeriodo = P.Id
+    --LEFT JOIN Financiero.Anio ON P.IdAnio = Financiero.Anio.Id
+    LEFT JOIN Financiero.LoteTransaccionPagadoDetalle as dd ON LTP.Id = dd.IdTransaccion
 WHERE
-	mp.CodigoDiario not in ('00','99') AND
-	(mp.CodigoCuenta LIKE '20%' OR mp.CodigoCuenta LIKE '21%' )
+    dd.IdLoteTrazable = 2180082
 
 
--- *****************************************************************************************
--- *****************************************************************************************
--- 3.9    
+SELECT LTP.*, dd.* FROM Financiero.LoteTransaccionPagado AS LTP
+LEFT JOIN Financiero.Lote AS L WITH (NOLOCK) ON L.Id = LTP.IdLote
+LEFT JOIN Financiero.LoteTransaccionPagadoDetalle as dd ON LTP.Id = dd.IdTransaccion
+WHERE dd.IdLoteTrazable = 2180082
+
+--
+SELECT * FROM Configuracion.EstadoLote
+SELECT IdCuentaBancariaBeneficiario, IdEntidadBeneficiario, *
+FROM Financiero.LoteTransaccionPagadoDetalle WHERE IdTransaccion IN (3636,3637,3638)
+-- // 
+-- SELECT * FROM Financiero.ViewPagoIndividualYMasivoParaPagar
+-- SELECT * FROM Configuracion.ViewTablaPLE WHERE Reporte = 'ESTADO DE GANANCIAS Y PERDIDAS - PLE'
+
+
+
+
+
+
+
+-- // ************************************************************************************************
+-- // ****************************************** CONSULTAS *******************************************
 SELECT
-    TOP 1000
-	TXT = RTRIM(a.codigo) + RTRIM(p.Codigo) + RTRIM(day(
-        dateadd(
-            dd,
-            -1,
-            convert(
-                date,
-                a.codigo +case
-                    when p.codigo < '12' then right(
-                        '00' + rtrim(convert(numeric(2), p.Codigo) + 1),
-                        2
-                    )
-                    else '01'
-                end + '01',
-                112
-            )
-        )
-    ))
-	+'|'+ RTRIM(pp.Detalle)
-	+'|'+ 'M' + RTRIM(pp.Detalle)
-	+'|'+ RTRIM(FechaInicio)
-	+'|'+ RTRIM(CodigoCuenta)
-	+'|'+ RTRIM(ISNULL(ar.Descripcion,'ART'))
-	+'|'+ CONVERT(varchar,CONVERT(decimal(12,2),Valor))
-	+'|'+ CONVERT(varchar,CONVERT(decimal(12,2),Amortizacion))
-	+'|'+ '8' + '|',
-	Anio = a.codigo,
-    Mes = p.Codigo,
-    Dia = day(
-        dateadd(
-            dd,
-            -1,
-            convert(
-                date,
-                a.codigo +case
-                    when p.codigo < '12' then right(
-                        '00' + rtrim(convert(numeric(2), p.Codigo) + 1),
-                        2
-                    )
-                    else '01'
-                end + '01',
-                112
-            )
-        )
-    ),
-    Cuo = RTRIM(Detalle),
-    Correlativo = 'M' + RTRIM(Detalle),
-    FechaInicio,
-    CodigoCuenta,
-    Intangible = ar.Descripcion,
-    Valor,
-	Amortizacion,
-	Estado = '8'
+	Periodo = RTRIM('202112' + '31'),
+	Cuo = RTRIM(vld.Lote),
+	Correlativo = 'M' + RTRIM(vld.Detalle),
+	TipoDocumento = vld.TipoDocumentoID,
+	NumeroDocumento = vld.CodigoEntidad,
+	NombreRazonSocial = vld.DescripcionEntidad,
+	FechaEmision = CONVERT(VARCHAR, vld.FechaDocumento, 103),
+	Saldo = vld.Saldo,
+	Estado = '1',
+	vld.IdCompania
 FROM
-    (
-        SELECT
-            vld.idCompania,
-            vld.idLibro,
-            vld.idAnio,
-            vld.idAnioPeriodo,
-            vld.idCuenta,
-            vld.IdArticulo,
-            vld.CodigoCuenta,
-            Lote = max(vld.Lote),
-            Detalle = max(vld.Detalle),
-            FechaInicio = min(vld.FechaDocumento),
-            Valor = sum(vld.DebeBase - vld.HaberBase),
-            Amortizacion = 0
-        FROM
-            Financiero.ViewLoteDetalle vld
-        WHERE
-            vld.CodigoDiario not in ('00', '99')
-        GROUP by
-            vld.idCompania,
-            vld.idLibro,
-            vld.idAnio,
-            vld.idAnioPeriodo,
-            vld.idCuenta,
-            vld.IdArticulo,
-            vld.CodigoCuenta
-    ) pp
-    INNER JOIN Financiero.Cuenta c (NOLOCK) on c.IdCompania = pp.IdCompania
-    and c.id = pp.IdCuenta
-    INNER JOIN Financiero.Anio a (NOLOCK) on a.IdCompania = pp.IdCompania
-    and a.id = pp.IdAnio
-    INNER JOIN Financiero.AnioPeriodo P (NOLOCK) on p.idAnio = pp.IdAnio
-    and p.id = pp.IdAnioPeriodo
-    LEFT JOIN Maestros.Articulo ar (NOLOCK) on ar.Id = pp.IdArticulo
-
-
--- *****************************************************************************************
--- *****************************************************************************************
--- 3.11
-SELECT TOP 10
-	TXT = RTRIM(cc.anio) + RTRIM(cc.mes) + RTRIM(cc.dia)
-	+'|'+ RTRIM(cc.detalle)
-	+'|'+ 'M' + RTRIM(cc.detalle)
-	+'|'+RTRIM(cc.cuenta)
-	+'|'+RTRIM(t2.Codigo)
-	+'|'+RTRIM(cc.codigoEntidad)
-	+'|'+RTRIM(cc.codigoEntidad)
-	+'|'+RTRIM(e.NombreRazonSocial)
-	+'|'+CONVERT(varchar,CONVERT(decimal(12,2), SUM(cc.saldoDebe - cc.saldoHaber)))
-	+'|'+'1'+'|'
-
-	, Periodo = RTRIM(cc.anio) + RTRIM(cc.mes) + RTRIM(cc.dia)
-	, Cuo = RTRIM(cc.detalle)
-	, Correlativo = 'M' + RTRIM(cc.detalle)
-	, cc.Cuenta
-	, TipoDocumento = t2.Codigo
-	, cc.CodigoEntidad
-	, cc.CodigoEntidad
-	, e.NombreRazonSocial
-	, Saldo = CONVERT(varchar,CONVERT(decimal(12,2), SUM(cc.saldoDebe - cc.saldoHaber)))
-	, Estado = 1
-FROM
-    (
-        SELECT
-            s.lote,
-            s.detalle,
-            a.codigo anio,
-            p.Codigo mes,
-            a.Descripcion,
-            a.IdCompania,
-
-            s.IdCuenta,
-            c.codigo cuenta,
-            s.codigoEntidad,
-            s.debe debe,
-            s.haber haber,
-            SaldoDebe = case
-                when sacp.FinalSaldo + (s.debe - s.haber) > 0 then sacp.FinalSaldo + (s.debe - s.haber)
-                else 0
-            end,
-            SaldoHaber = case
-                when sacp.FinalSaldo + (s.debe - s.haber) < 0 then sacp.FinalSaldo + (s.debe - s.haber)
-                else 0
-            end,
-            day(
-                dateadd(
-                    dd,
-                    -1,
-                    convert(
-                        date,
-                        a.codigo +case
-                            when p.codigo < '12' then right(
-                                '00' + rtrim(convert(numeric(2), p.Codigo) + 1),
-                                2
-                            )
-                            else '01'
-                        end + '01',
-                        112
-                    )
-                )
-            ) dia
-        From
-            Financiero.ViewLoteDetalleEntidadxPeriodo s (NOLOCK)
-            INNER JOIN Financiero.Cuenta c (NOLOCK) on c.IdCompania = s.IdCompania
-            AND c.id = s.IdCuenta
-            INNER JOIN Financiero.Anio a (NOLOCK) on a.IdCompania = s.IdCompania
-            AND a.id = s.IdAnio
-            INNER JOIN Financiero.AnioPeriodo p (NOLOCK) on p.idAnio = s.IdAnio
-            AND p.id = s.IdAnioPeriodo
-            INNER JOIN Sunat.T22CatalogoEstadoFinanciero F (NOLOCK) on F.Id = 1
-            INNER JOIN financiero.viewSaldoAnioCuentaxPeriodo sacp (NOLOCK) on sacp.IdAnio = s.idAnio 
-		WHERE c.codigo LIKE '41%'
-    ) cc
-
-INNER JOIN Maestros.Entidad e ON e.IdEntidad = cc.CodigoEntidad
-INNER JOIN Sunat.T02TipoDocumentoIdentidad t2 ON e.IdTipoEntidad = t2.Id
-GROUP BY
-    cc.idcompania,
-    cc.anio,
-    cc.mes,
-    cc.dia,
-	cc.cuenta,
-	cc.codigoEntidad,
-	e.IdEntidad,
-	e.NombreRazonSocial,
-	cc.lote,
-	cc.detalle,
-	t2.Codigo
-
--- *****************************************************************************************
--- *****************************************************************************************
--- 3.14
-SELECT TOP 10
-	TXT = RTRIM(cc.anio) + RTRIM(cc.mes) + RTRIM(cc.dia)
-	+'|'+ RTRIM(cc.detalle)
-	+'|'+ 'M' + RTRIM(cc.detalle)
-	+'|'+RTRIM(cc.cuenta)
-	+'|'+RTRIM(t2.Codigo)
-	+'|'+RTRIM(cc.codigoEntidad)
-	+'|'+RTRIM(e.NombreRazonSocial)
-	+'|'+CONVERT(varchar,CONVERT(decimal(12,2), SUM(cc.saldoDebe - cc.saldoHaber)))
-	+'|'+'1'+'|'
-
-	, Periodo = RTRIM(cc.anio) + RTRIM(cc.mes) + RTRIM(cc.dia)
-	, Cuo = RTRIM(cc.detalle)
-	, Correlativo = 'M' + RTRIM(cc.detalle)
-	, cc.Cuenta
-	, TipoDocumento = t2.Codigo
-	, cc.CodigoEntidad
-	, e.NombreRazonSocial
-	, Saldo = CONVERT(varchar,CONVERT(decimal(12,2), SUM(cc.saldoDebe - cc.saldoHaber)))
-	, Estado = 1
-FROM
-    (
-        SELECT
-            s.lote,
-            s.detalle,
-            a.codigo anio,
-            p.Codigo mes,
-            a.Descripcion,
-            a.IdCompania,
-
-            s.IdCuenta,
-            c.codigo cuenta,
-            s.codigoEntidad,
-            s.debe debe,
-            s.haber haber,
-            SaldoDebe = case
-                when sacp.FinalSaldo + (s.debe - s.haber) > 0 then sacp.FinalSaldo + (s.debe - s.haber)
-                else 0
-            end,
-            SaldoHaber = case
-                when sacp.FinalSaldo + (s.debe - s.haber) < 0 then sacp.FinalSaldo + (s.debe - s.haber)
-                else 0
-            end,
-            day(
-                dateadd(
-                    dd,
-                    -1,
-                    convert(
-                        date,
-                        a.codigo +case
-                            when p.codigo < '12' then right(
-                                '00' + rtrim(convert(numeric(2), p.Codigo) + 1),
-                                2
-                            )
-                            else '01'
-                        end + '01',
-                        112
-                    )
-                )
-            ) dia
-        From
-            Financiero.ViewLoteDetalleEntidadxPeriodo s (NOLOCK)
-            INNER JOIN Financiero.Cuenta c (NOLOCK) on c.IdCompania = s.IdCompania
-            AND c.id = s.IdCuenta
-            INNER JOIN Financiero.Anio a (NOLOCK) on a.IdCompania = s.IdCompania
-            AND a.id = s.IdAnio
-            INNER JOIN Financiero.AnioPeriodo p (NOLOCK) on p.idAnio = s.IdAnio
-            AND p.id = s.IdAnioPeriodo
-            INNER JOIN Sunat.T22CatalogoEstadoFinanciero F (NOLOCK) on F.Id = 1
-            INNER JOIN financiero.viewSaldoAnioCuentaxPeriodo sacp (NOLOCK) on sacp.IdAnio = s.idAnio 
-		WHERE c.codigo LIKE '47%'
-    ) cc
-
-INNER JOIN Maestros.Entidad e ON e.IdEntidad = cc.CodigoEntidad
-INNER JOIN Sunat.T02TipoDocumentoIdentidad t2 ON e.IdTipoEntidad = t2.Id
-GROUP BY
-    cc.idcompania,
-    cc.anio,
-    cc.mes,
-    cc.dia,
-	cc.cuenta,
-	cc.codigoEntidad,
-	e.IdEntidad,
-	e.NombreRazonSocial,
-	cc.lote,
-	cc.detalle,
-	t2.Codigo
-
-
--- *****************************************************************************************
--- *****************************************************************************************
--- 3.15
-SELECT 
-	TXT = RTRIM(a.codigo) + RTRIM(p.Codigo) + RTRIM(CONVERT(varchar,DAY(CONVERT(date, vld.FechaDocumento,103))))
-	 + '|' + RTRIM(vld.Detalle)
-	 + '|' + 'M' + RTRIM(vld.Detalle)
-	 + '|' + RTRIM(CONVERT(varchar,t10.Codigo))
-	 + '|' + RTRIM(ISNULL(vld.Serie,''))
-	 + '|' + RTRIM(ISNULL(vld.Numero,''))
-	 + '|' + RTRIM(vld.CodigoCuenta)
-	 + '|' + RTRIM(vld.Descripcion)
-	 + '|' + '0'
-	 + '|' + '0'
-	 + '|' + '0'
-	 + '|' + '1' + '|'
-
-	 , Periodo = RTRIM(a.codigo) + RTRIM(p.Codigo) + RTRIM(CONVERT(varchar,DAY(CONVERT(date, vld.FechaDocumento,103))))
-	, Cuo = RTRIM(vld.Detalle)
-	, Correlativo = 'M' + RTRIM(vld.Detalle)
-	, TipoComprobante = RTRIM(CONVERT(varchar,t10.Codigo))
-	, Serie = RTRIM(vld.Serie)
-	, Numero = RTRIM(vld.Numero)
-	, Cuenta = RTRIM(vld.CodigoCuenta)
-	, Descripcion = RTRIM(vld.Descripcion)
-	, SaldoFinal = CONVERT(decimal(12,2), 0)
-	, Adiciones = CONVERT(decimal(12,2), 0)
-	, Deduciones = CONVERT(decimal(12,2), 0)
-	, Estado = '1'
-FROM Financiero.ViewLoteDetalle as vld
-INNER JOIN Financiero.Cuenta c (NOLOCK) on c.IdCompania = vld.IdCompania
-AND c.id = vld.IdCuenta
-INNER JOIN Financiero.Anio a (NOLOCK) on a.IdCompania = vld.IdCompania
-AND a.id = vld.IdAnio
-INNER JOIN Financiero.AnioPeriodo p (NOLOCK) on p.idAnio = vld.IdAnio
-AND p.id = vld.IdAnioPeriodo
-INNER JOIN Sunat.T10TipoComprobante t10 (NOLOCK) ON  t10.Id = vld.IdT10TipoComprobante
-WHERE vld.CodigoCuenta LIKE '37%' OR vld.CodigoCuenta LIKE '49%'
-
-
-SELECT scp.* FROM Financiero.ViewLoteDetalle AS vld
-INNER JOIN financiero.viewSaldoAnioCuentaxPeriodo AS scp ON vld.idCuenta = scp.IdCuenta AND vld.idCompania = scp.IdCompania
-WHERE vld.CodigoCuenta LIKE '49%'
-
--- *****************************************************************************************
--- *****************************************************************************************
--- 6.1
-
-SELECT
-	TXT = RTRIM(a.codigo) + RTRIM(p.Codigo) + RTRIM(CONVERT(varchar,DAY(CONVERT(date, vld.FechaDocumento,103))))
-		 + '|' + RTRIM(vld.Detalle)
-		 + '|' + 'M' + RTRIM(vld.Detalle)
-		 + '|' + RTRIM(vld.CodigoCuenta)
-		 + '|' + ''
-		 + '|' + ''
-		 + '|' + RTRIM(vld.CodigoT04TipoMoneda)
-		 + '|' + RTRIM(t2.Codigo)
-		 + '|' + RTRIM(vld.CodigoEntidad)
-		 + '|' + RTRIM(vld.CodigoTipoComprobante)
-		 + '|' + RTRIM(vld.Serie)
-		 + '|' + RTRIM(vld.Numero)
-		 + '|' + RTRIM(vld.FechaDocumento)
-		 + '|' + RTRIM(vld.FechaVencimiento)
-		 + '|' + RTRIM(vld.FechaDocumento)
-		 + '|' + RTRIM(vld.Descripcion)
-		 + '|' + ''
-		 + '|' + CONVERT(varchar, CONVERT(decimal(12,2),vld.DebeBase))
-		 + '|' + CONVERT(varchar, CONVERT(decimal(12,2),vld.HaberBase))
-		 + '|' + ''
-		 + '|' + '1' + '|'
-
-	, Periodo = RTRIM(a.codigo) + RTRIM(p.Codigo) + RTRIM(CONVERT(varchar,DAY(CONVERT(date, vld.FechaDocumento,103))))
-	, Cuo = RTRIM(vld.Detalle)
-	, Correlativo = 'M' + RTRIM(vld.Detalle)
-	, Cuenta = RTRIM(vld.CodigoCuenta)
-	, CodigoUnidad = ''
-	, CodigoCentroCosto = ''
-	, Moneda = RTRIM(vld.CodigoT04TipoMoneda)
-	, TipoDocumento = RTRIM(t2.Codigo)
-	, NumeroDocumento = RTRIM(vld.CodigoEntidad)
-	, TipoComprobante = RTRIM(vld.CodigoTipoComprobante)
-	, Serie = RTRIM(vld.Serie)
-	, Numero = RTRIM(vld.Numero)
-	, FechaContable = RTRIM(vld.FechaDocumento)
-	, FechaVencimiento = RTRIM(vld.FechaVencimiento)
-	, FechaOperacion = RTRIM(vld.FechaDocumento)
-	, GlosaDescripcion = RTRIM(vld.Descripcion)
-	, GlosaReferencial = ''
-	, Debe = CONVERT(decimal(12,2),vld.DebeBase)
-	, Haber = CONVERT(decimal(12,2),vld.HaberBase)
-	, DatoEstructurado = ''
-	, Estado = '1'
-FROM Financiero.ViewLoteDetalle as vld
-INNER JOIN Financiero.Cuenta c (NOLOCK) ON c.IdCompania = vld.IdCompania
-AND c.id = vld.IdCuenta
-INNER JOIN Financiero.Anio a (NOLOCK) ON a.IdCompania = vld.IdCompania
-AND a.id = vld.IdAnio
-INNER JOIN Financiero.AnioPeriodo p (NOLOCK) ON p.idAnio = vld.IdAnio
-AND p.id = vld.IdAnioPeriodo
-LEFT JOIN Maestros.Entidad as e (NOLOCK) ON e.IdEntidad = vld.CodigoEntidad
-LEFT JOIN Sunat.T02TipoDocumentoIdentidad t2 ON e.IdTipoEntidad = t2.Id
-
-
-/*
-SELECT * FROM [Configuracion].[DiccionarioPantallaTabla]
-*/
-
-
---Sp_helptext 'Financiero.ViewAnioTipoAsientoDetalle'
-
-
---SELECT DISTINCT Descripcion FROM Financiero.AnioPeriodo
-
---SELECT  * FROM Maestros.Moneda
---sp_helptext 'Financiero.ViewLoteDetalle'
-
-/*
-CREATE TABLE Sunat.LibroElectronico
 (
-	Id int IDENTITY(1,1),
-	Descripcion VARCHAR(200) DEFAULT '',
-	Codigo VARCHAR(12) NOT NULL,
-	AplicativoCreacion VARCHAR(30),
-	OpcionCreacion VARCHAR(30),
-	FechaCreacion datetime,
-	UsuarioCreacion VARCHAR(30),
-	AplicativoEdicion VARCHAR(30),
-	OpcionEdicion VARCHAR(30),
-	FechaEdicion datetime,
-	UsuarioEdicion VARCHAR(30),
-	IdNota INT,
-	TStamp timestamp,
-	CONSTRAINT XPKSunat_LibroElectronico PRIMARY KEY(Id)
-);
+	SELECT vld.*
+		, Saldo = SUM(DebeBase - HaberBase) OVER (PARTITION BY vld.idCompania, vld.idCuenta, vld.idEntidadOficial, vld.Documento)
+		, LoteMin = MIN(vld.idlote) OVER (PARTITION BY vld.idCompania, vld.idCuenta, vld.idEntidadOficial, vld.Documento)
+	FROM [Financiero].[ViewLoteDetalle] as vld
+	WHERE (LEFT(vld.CodigoCuenta,2) = '12' OR LEFT(vld.CodigoCuenta,2) = '13')
+		AND vld.DescripcionAnioPeriodo <= ('202112')
+		AND vld.idCompania in (16)
+) AS vld 
+WHERE vld.LoteMin = vld.Lote
+-- ORDER BY vld.CodigoCuenta, vld.idEntidadOficial, vld.Documento
 
+-- // --
+-- // --
 
-INSERT INTO Sunat.LibroElectronico (Descripcion, Codigo) VALUES ('LIBRO CAJA Y BANCOS - DETALLE DE LOS MOVIMIENTOS DEL EFECTIVO','010100'),
-('LIBRO CAJA Y BANCOS - DETALLE DE LOS MOVIMIENTOS DE LA CUENTA CORRIENTE','010200'),
-('LIBRO DE INVENTARIOS Y BALANCES - ESTADO DE SITUACIï¿½N FINANCIERA','030100'),
-('LIBRO DE INVENTARIOS Y BALANCES - DETALLE DEL SALDO DE LA CUENTA 10 EFECTIVO Y EQUIVALENTES DE EFECTIVO (2)','030200'),
-('LIBRO DE INVENTARIOS Y BALANCES - DETALLE DEL SALDO DE LA CUENTA 12 CUENTAS POR COBRAR COMERCIALES ï¿½ TERCEROS Y 13 CUENTAS POR COBRAR COMERCIALES ï¿½ RELACIONADAS','030300'),
-('LIBRO DE INVENTARIOS Y BALANCES - DETALLE DEL SALDO  DE LA CUENTA 14 CUENTAS POR COBRAR AL PERSONAL, A LOS ACCIONISTAS (SOCIOS), DIRECTORES Y GERENTES (2)','030400'),
-('LIBRO DE INVENTARIOS Y BALANCES - DETALLE DEL SALDO  DE LA CUENTA 16 CUENTAS POR COBRAR DIVERSAS - TERCEROS O CUENTA 17 - CUENTAS POR COBRAR DIVERSAS - RELACIONADAS','030500'),
-('LIBRO DE INVENTARIOS Y BALANCES - DETALLE DEL SALDO DE LA CUENTA 19 ESTIMACIï¿½N DE CUENTAS DE COBRANZA DUDOSA','030600'),
-('LIBRO DE INVENTARIOS Y BALANCES - DETALLE DEL SALDO DE LA CUENTA 20 - MERCADERIAS Y LA CUENTA 21 - PRODUCTOS TERMINADOS (2)','030700'),
-('LIBRO DE INVENTARIOS Y BALANCES - DETALLE DEL SALDO DE LA CUENTA 30 INVERSIONES MOBILIARIAS  (2)','030800'),
-('LIBRO DE INVENTARIOS Y BALANCES - DETALLE DEL SALDO DE LA CUENTA 34 - INTANGIBLES','030900'),
-('LIBRO DE INVENTARIOS Y BALANCES - DETALLE DEL SALDO DE LA CUENTA 41 REMUNERACIONES Y PARTICIPACIONES POR PAGAR (2)','031100'),
-('LIBRO DE INVENTARIOS Y BALANCES - DETALLE DEL SALDO DE LA CUENTA 42 CUENTAS POR PAGAR COMERCIALES ï¿½ TERCEROS Y LA CUENTA 43 CUENTAS POR PAGAR COMERCIALES ï¿½ RELACIONADAS ','031200'),
-('LIBRO DE INVENTARIOS Y BALANCES - DETALLE DEL SALDO DE LA CUENTA 46 CUENTAS POR PAGAR DIVERSAS ï¿½ TERCEROS Y DE LA CUENTA 47 CUENTAS POR PAGAR DIVERSAS ï¿½ RELACIONADAS','031300'),
-('LIBRO DE INVENTARIOS Y BALANCES - DETALLE DEL SALDO DE LA CUENTA 47 - BENEFICIOS SOCIALES DE LOS TRABAJADORES (PCGR) - NO APLICABLE PARA EL PCGE (2)','031400'),
-('LIBRO DE INVENTARIOS Y BALANCES - DETALLE DEL SALDO DE LA CUENTA 37 ACTIVO DIFERIDO Y DE LA CUENTA 49 PASIVO DIFERIDO','031500'),
-('LIBRO DE INVENTARIOS Y BALANCES - DETALLE DEL SALDO DE LA CUENTA 50 CAPITAL','031600'),
-('3.16.1 DETALLE DEL SALDO DE LA CUENTA 50 - CAPITAL ',''),
-('3.16.2 ESTRUCTURA DE LA PARTICIPACIï¿½N ACCIONARIA O DE PARTICIPACIONES SOCIALES',''),
-('LIBRO DE INVENTARIOS Y BALANCES - BALANCE DE COMPROBACIï¿½N','031700'),
-('LIBRO DE INVENTARIOS Y BALANCES - ESTADO DE FLUJOS DE EFECTIVO - Mï¿½TODO DIRECTO','031800'),
-('LIBRO DE INVENTARIOS Y BALANCES - ESTADO DE CAMBIOS EN EL PATRIMONIO NETO','031900'),
-('LIBRO DE INVENTARIOS Y BALANCES - ESTADO DE RESULTADOS','032000'),
-('LIBRO DE INVENTARIOS Y BALANCES - NOTAS A LOS ESTADOS FINANCIEROS (3)','032300'),
-('LIBRO DE INVENTARIOS Y BALANCES - ESTADO DE RESULTADOS INTEGRALES','032400'),
-('LIBRO DE INVENTARIOS Y BALANCES - ESTADO DE FLUJOS DE EFECTIVO - Mï¿½TODO INDIRECTO','32500'),
-('LIBRO DE RETENCIONES INCISO E) Y F) DEL ART. 34ï¿½ DE LA LEY DEL IMPUESTO A LA RENTA','040100'),
-('LIBRO DIARIO','050100'),
-('LIBRO DIARIO - DETALLE DEL PLAN CONTABLE UTILIZADO','050300'),
-('LIBRO DIARIO DE FORMATO SIMPLIFICADO','050200'),
-('LIBRO DIARIO DE FORMATO SIMPLIFICADO - DETALLE DEL PLAN CONTABLE UTILIZADO','050400'),
-('LIBRO MAYOR','060100'),
-('REGISTRO DE ACTIVOS FIJOS - DETALLE DE LOS ACTIVOS FIJOS REVALUADOS Y NO REVALUADOS','070100'),
-('REGISTRO DE ACTIVOS FIJOS - DETALLE DE LA DIFERENCIA DE CAMBIO','070300'),
-('REGISTRO DE ACTIVOS FIJOS - DETALLE DE LOS ACTIVOS FIJOS BAJO LA MODALIDAD DE ARRENDAMIENTO FINANCIERO AL 31.12','070400'),
-('REGISTRO DE COMPRAS','080100'),
-('REGISTRO DE COMPRAS - INFORMACIï¿½N DE OPERACIONES CON SUJETOS NO DOMICILIADOS','080200'),
-('REGISTRO DE COMPRAS SIMPLIFICADO','080300'),
-('REGISTRO DE CONSIGNACIONES - PARA EL CONSIGNADOR - CONTROL DE BIENES ENTREGADOS EN CONSIGNACIï¿½N','090100'),
-('REGISTRO DE CONSIGNACIONES - PARA EL CONSIGNATARIO - CONTROL DE BIENES RECIBIDOS EN CONSIGNACIï¿½N','090200'),
-('REGISTRO DE COSTOS - ESTADO DE COSTO DE VENTAS ANUAL','100100'),
-('REGISTRO DE COSTOS - ELEMENTOS DEL COSTO MENSUAL','100200'),
-('REGISTRO DE COSTOS - ESTADO DE COSTO DE PRODUCCION VALORIZADO ANUAL','100300'),
-('REGISTRO DE COSTOS - CENTRO DE COSTOS','100400'),
-('REGISTRO DEL INVENTARIO PERMANENTE EN UNIDADES Fï¿½SICAS - DETALLE DEL INVENTARIO PERMANENTE EN UNIDADES Fï¿½SICAS','120100'),
-('REGISTRO DEL INVENTARIO PERMANENTE VALORIZADO - DETALLE DEL INVENTARIO VALORIZADO','130100'),
-('REGISTRO DE VENTAS E INGRESOS','140100'),
-('REGISTRO DE VENTAS E INGRESOS SIMPLIFICADO','140200');
-
-*/
-
-
-
-
-
-
-
-------------------------------------------------------------------------------------------------------------------
-------------------------------------------------------------------------------------------------------------------
--- SEGURIDAD MENU 1
-/*
-SELECT * FROM [SeguridadTest].[dbo].[Accion]
-SELECT * FROM [SeguridadTest].[dbo].[Pantalla]
-SELECT * FROM [SeguridadTest].[dbo].[AccionPantalla]
-SELECT * FROM [SeguridadTest].[dbo].[Acceso]
-
---------------------------
-INSERT INTO [SeguridadTest].[dbo].[AccionPantalla] (IdAccion, IdPantalla, Activo, Eliminado, UsuarioCrea, FechaCrea)
-SELECT Id IdAccion, 490 IdPantalla, 1 Activo, 0  Eliminado, 1 UsuarioCrea, '2021-02-19 11:22:05.087' FechaCrea  FROM [dbo].[Accion] WHERE Id IN (1, 2, 3, 8, 9, 10, 2013, 2014, 2018, 2047)
-
-INSERT INTO [SeguridadTest].[dbo].[Acceso] (IdTipoAcceso, IdUsuarioRol, IdPantalla, IdAccion, Activo, Eliminado, UsuarioCrea, FechaCrea)
-SELECT 1 IdTipoAcceso, 2 IdUsuarioRol, 490 IdPantalla, Id IdAccion, 1 Activo, 0 Eliminado, 1 UsuarioCrea, '2020-01-01 00:00:00.000' FechaCrea
-	FROM [dbo].[Accion] WHERE Id IN (1, 2, 3, 8, 9, 10, 2013, 2014, 2018, 2047) 
-*/
-
-------------------------------------------------------------------------------------------------------------------
-------------------------------------------------------------------------------------------------------------------
--- 8.1 REGISTRO DE COMPRAS
-ALTER VIEW [Consulta].[CTB0300_0801] AS
 SELECT
-	TXT = RTRIM(a.codigo) + RTRIM(ap.codigo) + '00'
-		+ '|' + RTRIM(ltp.Id)
-		+ '|' + 'M' + RTRIM(ltp.Id)
-		+ '|' + CONVERT(VARCHAR, ltp.FechaDocumento, 103)
-		+ '|' + CONVERT(VARCHAR, ltp.FechaVencimiento, 103)
-		+ '|' + CONVERT(VARCHAR, t10.Codigo)
-		+ '|' + CONVERT(VARCHAR, CASE WHEN t10.Codigo IN ('50', '52') THEN ISNULL(t11.Codigo,'') ELSE ltp.Serie END)
-		+ '|' + CONVERT(VARCHAR, ISNULL(ltp.AnioEmisionDuaDsi,''))
-		+ '|' + CONVERT(varchar,ltp.Numero)
-		+ '|' + CASE WHEN t10.Codigo IN ('00','03','05','06','07','08','11','12','13','14','15','16','18','19','23','26','28','30','34','35','36','37','55','56','87','88') THEN '0' ELSE '' END
-		-- Proveedor
-		+ '|' + RTRIM(e.IdTipoEntidad)
-		+ '|' + RTRIM(e.NroFiscal)
-		+ '|' + RTRIM(e.NombreRazonSocial)						-- COLUMNA 13
-		-- Montos
-		+ '|' + CONVERT(VARCHAR, CONVERT(DECIMAL(12,2), ltp.TotalMonedaBase))
-		+ '|' + CONVERT(VARCHAR, CONVERT(DECIMAL(12,2), '0.00'))
-		+ '|' + CONVERT(VARCHAR, CONVERT(DECIMAL(12,2), '0.00'))
-		+ '|' + CONVERT(VARCHAR, CONVERT(DECIMAL(12,2), '0.00'))
-		+ '|' + CONVERT(VARCHAR, CONVERT(DECIMAL(12,2), '0.00'))
-		+ '|' + CONVERT(VARCHAR, CONVERT(DECIMAL(12,2), '0.00'))
-		+ '|' + CONVERT(VARCHAR, CONVERT(DECIMAL(12,2), '0.00'))
-		+ '|' + CONVERT(VARCHAR, CONVERT(DECIMAL(12,2), '0.00'))
-		+ '|' + CASE WHEN t10.Codigo IN ('01','03','07','08','12','87','88') THEN '0.00' ELSE '' END
-		+ '|' + CONVERT(VARCHAR, CONVERT(DECIMAL(12,2), '0.00'))
-		+ '|' + CONVERT(VARCHAR, CONVERT(DECIMAL(12,2), ltp.TotalMonedaBase))
-		-- Cambio
-		+ '|' + m.CodigoISO
-		+ '|' + CASE WHEN m.CodigoISO = 'PEN' THEN '1.000' ELSE CONVERT(VARCHAR, CONVERT(DECIMAL(12,3), ltp.ImporteCambio)) END -- COLUMNA 26
-		-- NC / ND
-		+ '|' + CASE WHEN t10.Codigo IN ('07','08','87','88','97','98') THEN CONVERT(VARCHAR, altp.FechaDocumento, 103) ELSE '' END
-		+ '|' + CASE WHEN t10.Codigo IN ('07','08','87','88','97','98') THEN at10.Codigo ELSE '' END
-		+ '|' + CASE WHEN t10.Codigo IN ('07','08','87','88','97','98') THEN altp.Serie ELSE '' END
-		+ '|' + ISNULL(at11.Codigo,'')
-		+ '|' + CASE WHEN t10.Codigo IN ('07','08','87','88','97','98') THEN altp.Numero ELSE '' END
-		-- Detraccion
-		+ '|' + CASE WHEN ltp.IdRegimen = 2 THEN ISNULL(CONVERT(VARCHAR, ltp.FechaConstanciaDetraccion, 103),'') ELSE '' END 
-		+ '|' + CASE WHEN ltp.IdRegimen = 2 THEN ISNULL(ltp.ConstanciaDetraccion,'') ELSE '' END 
-		-- Retencion
-		+ '|' + CASE WHEN ltp.IdRegimen = 1 THEN '1' ELSE '' END
-		+ '|' + at30.Codigo
-		+ '|' + ''
-		-- Error
-		+ '|' + ''
-		+ '|' + ''
-		+ '|' + ''
-		+ '|' + ''
-		-- Ultimo
-		+ '|' + CASE WHEN ltp.IdFormaPago = 1 THEN '1' ELSE '' END 
-		+ '|' + '1' + '|'
-	, Periodo = RTRIM(a.codigo) + RTRIM(ap.codigo) + '00'
-	, Cuo = ltp.Id
-	, Correlativo = 'M' + RTRIM(ltp.Id)
-	, FechaEmision = CONVERT(VARCHAR, ltp.FechaDocumento, 103)
-	, FechaVencimiento = CONVERT(VARCHAR, ltp.FechaVencimiento, 103)
-	, TipoComprobante = t10.Codigo
-	, Serie = CASE WHEN t10.Codigo IN ('50', '52') THEN ISNULL(t11.Codigo,'') ELSE ltp.Serie END
-	, AnioEmisionDuaDsi = ISNULL(ltp.AnioEmisionDuaDsi,'')
-	, ltp.Numero
-	, ImporteTotalSinCreditoFiscal = CASE WHEN t10.Codigo IN ('00','03','05','06','07','08','11','12','13','14','15','16','18','19','23','26','28','30','34','35','36','37','55','56','87','88') THEN '0' ELSE '' END
-	-- Proveedore
-	, TipoDocumento = RTRIM(e.IdTipoEntidad)
-	, NumeroDocumento = RTRIM(e.NroFiscal)
-	, NombreRazonSocial = RTRIM(e.NombreRazonSocial)
-	-- Montos
-	, BaseImponible = CONVERT(VARCHAR, CONVERT(DECIMAL(12,2), ltp.TotalMonedaBase)) -- CAMPO 14
-	, Impuesto = CONVERT(VARCHAR, CONVERT(DECIMAL(12,2), '0.00'))
-	, BaseImponibleGravada = CONVERT(VARCHAR, CONVERT(DECIMAL(12,2), '0.00'))
-	, ImpuestoGravada = CONVERT(VARCHAR, CONVERT(DECIMAL(12,2), '0.00'))
-	, BaseImponibleExporta = CONVERT(VARCHAR, CONVERT(DECIMAL(12,2), '0.00'))
-	, ImpuestoExporta = CONVERT(VARCHAR, CONVERT(DECIMAL(12,2), '0.00'))
-	, ValorNoGravada = CONVERT(VARCHAR, CONVERT(DECIMAL(12,2), '0.00'))
-	, ISC = CONVERT(VARCHAR, CONVERT(DECIMAL(12,2), '0.00'))
-	, ICBP = CASE WHEN t10.Codigo IN ('01','03','07','08','12','87','88') THEN '0.00' ELSE '' END
-	, OtrosTributos = CONVERT(VARCHAR, CONVERT(DECIMAL(12,2), '0.00'))
-	, ImporteTotal = CONVERT(VARCHAR, CONVERT(DECIMAL(12,2), ltp.TotalMonedaBase))
-	-- Cambio
-	, CodigoMoneda = m.CodigoISO
-	, TipoCambio = CASE WHEN m.CodigoISO = 'PEN' THEN '1.000' ELSE CONVERT(VARCHAR, CONVERT(DECIMAL(12,3), ltp.ImporteCambio)) END
-	-- NC / ND
-	, ModificaFechaEmision = CASE WHEN t10.Codigo IN ('07','08','87','88','97','98') THEN CONVERT(VARCHAR, altp.FechaDocumento, 103) ELSE '' END
-	, ModificaTipoComprobante = CASE WHEN t10.Codigo IN ('07','08','87','88','97','98') THEN at10.Codigo ELSE '' END
-	, ModificaSerie = CASE WHEN t10.Codigo IN ('07','08','87','88','97','98') THEN altp.Serie ELSE '' END
-	, ModificaCodigoDependenciaAduana = ISNULL(at11.Codigo,'')
-	, ModificaNumero = CASE WHEN t10.Codigo IN ('07','08','87','88','97','98') THEN altp.Numero ELSE '' END
-	-- Detraccion
-	, FechaConstanciaDetraccion = CASE WHEN ltp.IdRegimen = 2 THEN ISNULL(CONVERT(VARCHAR, ltp.FechaConstanciaDetraccion, 103),'') ELSE '' END 
-	, ConstanciaDetraccion = CASE WHEN ltp.IdRegimen = 2 THEN ISNULL(ltp.ConstanciaDetraccion,'') ELSE '' END 
-	-- Retencion
-	, Retencion = CASE WHEN ltp.IdRegimen = 1 THEN '1' ELSE '' END
-	, BienServicio = at30.Codigo
-	, Contrato = ''
-	-- Error
-	, ErrorTipo1 = ''
-	, ErrorTipo2 = ''
-	, ErrorTipo3 = ''
-	, ErrorTipo4 = ''
-	-- Ultimo
-	, IndicadorComprobante = CASE WHEN ltp.IdFormaPago = 1 THEN '1' ELSE '' END 
-	, Estado = '1'
+	--Periodo = RTRIM(lds.DescripcionAnioPeriodo + '31'),
+	Cuo = RTRIM(ld.Lote),
+	Correlativo = 'M' + RTRIM(ld.Detalle),
+	TipoDocumento = ld.TipoDocumentoID,
+	NumeroDocumento = ld.CodigoEntidad,
+	NombreRazonSocial = ld.DescripcionEntidad,
+	FechaEmision = CONVERT(VARCHAR, ld.FechaDocumento, 103),
+	--Saldo = lds.Saldo,
+	Estado = '1',
+	ld.IdCompania
+FROM
+(
+	SELECT 
+		vld.*
+		--, Saldo = SUM(DebeBase - HaberBase) OVER (PARTITION BY vld.idCompania, vld.idCuenta, vld.idEntidadOficial, vld.Documento
+		--											ORDER BY vld.DescripcionAnioPeriodo ASC)
+		, Fila = ROW_NUMBER() OVER (PARTITION BY vld.idCompania, vld.idCuenta, vld.idEntidadOficial, vld.Documento
+													ORDER BY vld.DescripcionAnioPeriodo ASC)
+	FROM [Financiero].[ViewLoteDetalle] as vld
+	WHERE (LEFT(vld.CodigoCuenta,2) = '12' OR LEFT(vld.CodigoCuenta,2) = '13')
+) AS ld 
 
-	-- Dependencia Aduanera
-FROM Financiero.LoteTransaccionPorPagar AS ltp 
-INNER JOIN Financiero.Lote AS l ON  ltp.IdLote = l.Id 
-INNER JOIN Financiero.AnioPeriodo AS ap ON l.IdPeriodo = ap.id 
-INNER JOIN Financiero.Anio AS a ON ap.IdAnio = a.Id
-INNER JOIN Sunat.T10TipoComprobante AS t10 ON  ltp.IdT10TipoComprobante = t10.Id AND t10.Codigo NOT IN ('91','97','98')
-LEFT JOIN Sunat.T11CodigoAduana AS t11 ON  ltp.IdT11CodigoAduana = t11.id
-INNER JOIN Maestros.Entidad AS e ON e.IdEntidad = ltp.IdEntidadOficial
-INNER JOIN Maestros.Moneda as m ON ltp.IdMonedaBase = m.IdMoneda
+--INNER JOIN (
+--	SELECT 
+--		vld.*
+--		, Saldo = SUM(DebeBase - HaberBase) OVER (PARTITION BY vld.idCompania, vld.idCuenta, vld.idEntidadOficial, vld.Documento
+--													ORDER BY vld.DescripcionAnioPeriodo ASC)
+--	FROM [Financiero].[ViewLoteDetalle] as vld
+--	WHERE (LEFT(vld.CodigoCuenta,2) = '12' OR LEFT(vld.CodigoCuenta,2) = '13')
+--) AS lds ON ld.idCompania = lds.idCompania
+--	AND ld.idCuenta = lds.idCuenta
+--	AND ld.idEntidadOficial = lds.idEntidadOficial
+--	AND ld.Documento = lds.Documento
 
-INNER JOIN Financiero.LoteTransaccionPorPagarDetalle AS ltpd ON ltp.Id = ltpd.IdTransaccion AND ltpd.IdLoteTrazable IS NOT NULL
-INNER JOIN Financiero.LoteTransaccionPorPagar as altp ON ltpd.IdLoteTrazable = altp.IdLote
-INNER JOIN Sunat.T10TipoComprobante AS at10 ON altp.IdT10TipoComprobante = at10.Id -- AND at10.Codigo NOT IN ('91','97','98')
-LEFT JOIN Sunat.T11CodigoAduana AS at11 ON altp.IdT11CodigoAduana = at11.Id
-LEFT JOIN Sunat.T30ClasificacionBienServicio AS at30 ON ltp.IdT30ClasificacionBienServicio = at30.Id
+WHERE ld.Fila = 1
+	AND ld.idCompania = 16
+	AND ld.DescripcionAnioPeriodo <= '202112'
+	-- AND lds.DescripcionAnioPeriodo = ('202112')
+	-- AND lds.Saldo != 0
 
 
 
-------------------------------------------------------------------------------------------------------------------
-------------------------------------------------------------------------------------------------------------------
--- 8.2 REGISTRO DE COMPRAS - INFORMACIÃ“N DE OPERACIONES CON SUJETOS NO DOMICILIADOS
 SELECT 
-	TXT = RTRIM(a.codigo) + RTRIM(ap.codigo) + '00'
-		+ '|' + RTRIM(ltp.Id)
-		+ '|' + 'M' + RTRIM(ltp.Id)
-		+ '|' + CONVERT(VARCHAR, ltp.FechaDocumento, 103)
-		+ '|' + CONVERT(varchar, t10.Codigo)
-		+ '|' + RTRIM(ltp.Serie)
-		+ '|' + CONVERT(varchar,ltp.Numero)
-		-- Montos
-		+ '|' + CONVERT(VARCHAR, CONVERT(DECIMAL(12,2), ltp.TotalMonedaBase))
-		+ '|' + CONVERT(VARCHAR, CONVERT(DECIMAL(12,2), ltp.TotalMonedaBase))
-		+ '|' + CONVERT(VARCHAR, CONVERT(DECIMAL(12,2), ltp.TotalMonedaBase))
-		-- Conprobante vinculada
-		+ '|' + ''
-		+ '|' + ''
-		+ '|' + ''
-		+ '|' + ''
+	vld.*
+	, Saldo = SUM(DebeBase - HaberBase) OVER (PARTITION BY vld.idCompania, vld.idCuenta, vld.idEntidadOficial, vld.Documento
+												ORDER BY vld.DescripcionAnioPeriodo ASC)
+	, Fila = ROW_NUMBER() OVER (PARTITION BY vld.idCompania, vld.idCuenta, vld.idEntidadOficial, vld.Documento
+												ORDER BY vld.DescripcionAnioPeriodo ASC)
+FROM [Financiero].[ViewLoteDetalle] as vld
+WHERE (LEFT(vld.CodigoCuenta,2) = '12' OR LEFT(vld.CodigoCuenta,2) = '13')
+	AND vld.idCompania = 16
+	AND vld.DescripcionAnioPeriodo <= '202112'
 
-	, Periodo = RTRIM(a.codigo) + RTRIM(ap.codigo) + '00'
-	, Cuo = ltp.Id
-	, Correlativo = 'M' + RTRIM(ltp.Id)
-	, FechaEmision = CONVERT(VARCHAR, ltp.FechaDocumento, 103)
-	, TipoComprobante = t10.Codigo
-	, Serie = ltp.Serie
-	, ltp.Numero
-	-- Montos
-	, ValorAdquisision = CONVERT(VARCHAR, CONVERT(DECIMAL(12,2), ltp.TotalMonedaBase))
-	, OtrosConceptos = CONVERT(VARCHAR, CONVERT(DECIMAL(12,2), ltp.TotalMonedaBase))
-	, ImporteTotal = CONVERT(VARCHAR, CONVERT(DECIMAL(12,2), ltp.TotalMonedaBase))
-	-- Conprobante vinculada
-	, TipoComprobanteCF = ''
-	, SerieComprobanteDUADSI = ''
-	, AnoDua = ''
-	, NumeroComprobanteCF = ''
-	-- 
-	, ImpuestoRetenido = ltp.RetencionMonedaBase
-	, CodigoMoneda = m.CodigoISO
-	, TipoCambio = CASE WHEN m.CodigoISO = 'PEN' THEN '1.000' ELSE CONVERT(VARCHAR, CONVERT(DECIMAL(12,3), ltp.ImporteCambio)) END
-	-- Proveedore
-	, CodigoPais = RTRIM(p.CodLibroElectronico)
-	, Denominacion = RTRIM(e.NombreRazonSocial)
-	, Domicilio = RTRIM(e.Direccion1)
-	, NumeroDocumento = RTRIM(e.IdEntidad)
-	, NumeroDocumentoFiscal = RTRIM(e.NroFiscal)
-	, Beneficiario = ''
-	, CodigoPaisBeneficiario = ''
-	, TipoVinculacion = t27.Codigo
-	-- , TipoDocumento = RTRIM(t02.Codigo)
+
+/*************************************************************************************************/
+/***************************************** CONTA *************************************************/
+/*************************************************************************************************/
+select 
+			Tipo						
+		,	DescripcionCompania		
+		,	DescripcionAnioPeriodo = max(DescripcionAnioPeriodo)
+		,	CodigoCuenta				
+		,	DescripcionCuenta			
+		,	DescripcionMoneda			
+		,	CodigoNivel1				
+		,	CodigoNivel2				
+		,	CodigoNivel3				
+		,	CodigoNivel4				
+		,	DescripcionNivel1			
+		,	DescripcionNivel2			
+		,	DescripcionNivel3			
+		,	DescripcionNivel4			
+		,	CodigoSunat				
+		,	m01 = sum(m01)
+		,	m02 = sum(m02)
+		,	m03 = sum(m03)
+		,	m04 = sum(m04)
+		,	m05 = sum(m05)
+		,	m06 = sum(m06)
+		,	m07 = sum(m07)
+		,	m08 = sum(m08)
+		,	m09 = sum(m09)
+		,	m10 = sum(m10)
+		,	m11 = sum(m11)
+		,	m12 = sum(m12)
+		,	IdCompania
+		,	Libro				
+		,	Moneda				
+		,	Compania			
+		,	Periodo = max(Periodo)
+		,	IdLibro
+from Reporte.CTB108 
+where DescripcionNivel4 not in (
+			'Ventas netas                           -'
+		,'Total Costo de Ventas                  -'
+		,'UTILIDAD DE OPERACION                  -'
+		,'RESULTADO ANTES DE IMPTO RENTA         -'
+		,'UTILIDAD BRUTA                         -'
+		,'RESULTADO DEL EJERCICIO                -')
+	and IdCompania in (15)  and ( (Periodo <= '202112') and (Periodo like '%2021%') and (Moneda like '%PEN%') )
 	
-	-- Otros
-	, RentaBruta = ltp.NdRentaBruta
-	, DeduccionCosto = ltp.NdDeduccionCostoEnajenacion
-	, RentaNeta = ltp.NdRentaNeta
-	, TasaRetencion = ltp.NdTasaRetencion
-	, ImpuestoRetenido = ltp.NdImpuestoRetenido
-	-- Convenidos
-	, Convenio = t25.Codigo
-	, Exoneracion = t33.Codigo
-	, TipoRenta = t31.Codigo
-	, ModalidadServicio = t32.Codigo
-	, LeyImpuestoRenta = ''
-	, Estado = '0'
+group by Tipo						
+		,	DescripcionCompania		
+		,	CodigoCuenta				
+		,	DescripcionCuenta			
+		,	DescripcionMoneda			
+		,	CodigoNivel1				
+		,	CodigoNivel2				
+		,	CodigoNivel3				
+		,	CodigoNivel4				
+		,	DescripcionNivel1			
+		,	DescripcionNivel2			
+		,	DescripcionNivel3			
+		,	DescripcionNivel4			
+		,	CodigoSunat				
+		,	IdCompania
+		,	Libro				
+		,	Moneda				
+		,	Compania			
+		,	IdLibro
+order by 1,2,3,4,5,6 
 
-FROM Financiero.LoteTransaccionPorPagar AS ltp 
-INNER JOIN Financiero.Lote AS l ON  ltp.IdLote = l.Id 
-INNER JOIN Financiero.AnioPeriodo AS ap ON l.IdPeriodo = ap.id 
-INNER JOIN Financiero.Anio AS a ON ap.IdAnio = a.Id
-INNER JOIN Sunat.T10TipoComprobante AS t10 ON  ltp.IdT10TipoComprobante = t10.Id AND t10.Codigo IN ('00','91','97','98')
-LEFT JOIN Sunat.T11CodigoAduana AS t11 ON  ltp.IdT11CodigoAduana = t11.id
-INNER JOIN Maestros.Moneda AS m ON ltp.IdMonedaBase = m.IdMoneda
+SELECT DISTINCT Reporte FROM Configuracion.ViewTablaPLE;
+SELECT * FROM Configuracion.ViewTablaPLE WHERE Reporte = 'ESTADO DE FLUJOS EFECTIVO - PLE';
 
-INNER JOIN Maestros.Entidad AS e ON e.IdEntidad = ltp.IdEntidadOficial
-INNER JOIN Sunat.T02TipoDocumentoIdentidad AS t02 ON e.IdTipoEntidad = t02.Id
-INNER JOIN Maestros.Pais AS p ON e.IdPais = p.IdPais
-INNER JOIN Sunat.T27TipoVinculacion AS t27 ON ltp.IdT27TipoVinculacion = t27.Id
-
-INNER JOIN Sunat.T25ConvenioTributacion AS t25 ON ltp.IdT25ConvenioTributacion = t25.Id
-INNER JOIN Sunat.T33ExoneracionNoDomiciliado AS t33 ON ltp.IdT33ExoneracionNoDomiciliado = t33.Id
-INNER JOIN Sunat.T31TipoRenta AS t31 ON ltp.IdT31TipoRenta = t31.Id
-INNER JOIN Sunat.T32ModalidadNoDomiciliado as t32 ON ltp.IdT32ModalidadNoDomiciliado = t32.Id
+-- SELECT FORMAT(DATEADD(month, -1, '20210801'), 'MM') AS Result;
 
 
-
-------------------------------------------------------------------------------------------------------------------
-------------------------------------------------------------------------------------------------------------------
--- 8.3 REGISTRO DE COMPRAS SIMPLIFICADO
-SELECT TOP 100
-	TXT = RTRIM(a.codigo) + RTRIM(ap.codigo) + '00'
-		+ '|' + RTRIM(ltp.Id)
-		+ '|' + 'M' + RTRIM(ltp.Id)
-		+ '|' + CONVERT(VARCHAR, ltp.FechaDocumento, 103)
-		+ '|' + CONVERT(VARCHAR, ltp.FechaVencimiento, 103)
-		+ '|' + CONVERT(varchar,t10.Codigo)
-		+ '|' + ISNULL(CASE WHEN t10.Codigo IN ('50', '52') THEN t11.Codigo ELSE ltp.Serie END,'')
-		+ '|' + CONVERT(VARCHAR,ltp.Numero)
-		+ '|' + CASE WHEN t10.Codigo IN ('00','03','05','06','11','12','13','14','15','16','18','19','23','26','28','30','36','37','55','56') THEN '0' ELSE '' END
-        -- Proveedore
-		+ '|' + RTRIM(e.IdTipoEntidad)
-		+ '|' + RTRIM(e.NroFiscal)
-		+ '|' + RTRIM(e.NombreRazonSocial)
-		-- Montos
-		+ '|' + '0'
-		+ '|' + '0'
-		+ '|' + CASE WHEN t10.Codigo IN ('01','03','07','08','12','87','88') THEN '0.00' ELSE '' END
-		+ '|' + '0'
-		+ '|' + CONVERT(VARCHAR, CONVERT(DECIMAL(12,2), ltp.TotalMonedaBase))
-		-- Cambio
-		+ '|' + m.CodigoISO				-- CAMPO 18
-		+ '|' + CASE WHEN m.CodigoISO = 'PEN' THEN '1.000' ELSE CONVERT(VARCHAR, CONVERT(DECIMAL(12,3), ltp.ImporteCambio)) END
-		-- NC / ND
-		+ '|' + CASE WHEN t10.Codigo IN ('07','08','87','88') THEN CONVERT(VARCHAR, altp.FechaDocumento, 103) ELSE '' END
-		+ '|' + CASE WHEN t10.Codigo IN ('07','08','87','88') THEN at10.Codigo ELSE '' END
-		+ '|' + CASE WHEN t10.Codigo IN ('07','08','87','88') THEN altp.Serie ELSE '' END
-		+ '|' + CASE WHEN t10.Codigo IN ('07','08','87','88') THEN altp.Numero ELSE '' END
-		-- Detraccion
-		+ '|' + CASE WHEN ltp.IdRegimen = 2 THEN ISNULL(CONVERT(VARCHAR, ltp.FechaConstanciaDetraccion, 103),'') ELSE '' END 
-		+ '|' + CASE WHEN ltp.IdRegimen = 2 THEN ISNULL(ltp.ConstanciaDetraccion,'') ELSE '' END 
-		-- Retencion
-		+ '|' + CASE WHEN ltp.IdRegimen = 1 THEN '1' ELSE '' END
-		+ '|' + t30.Codigo
-		-- Error
-		+ '|' + ''
-		+ '|' + ''
-		+ '|' + ''
-		-- Ultimo
-		+ '|' + CASE WHEN ltp.IdFormaPago = 1 THEN '1' ELSE '' END 
-		+ '|' + '1' + '|'
-
-	, Periodo = RTRIM(a.codigo) + RTRIM(ap.codigo) + '00'
-	, Cuo = ltp.Id
-	, Correlativo = 'M' + RTRIM(ltp.Id)
-	, FechaEmision = CONVERT(VARCHAR, ltp.FechaDocumento, 103)
-	, FechaVencimiento = CONVERT(VARCHAR, ltp.FechaVencimiento, 103)
-	, TipoComprobante = t10.Codigo
-	, Serie = CASE WHEN t10.Codigo IN ('50', '52') THEN t11.Codigo ELSE ltp.Serie END
-	, ltp.Numero
-	, ImporteTotalSinCreditoFiscal = 0
-	, Numero2 = CASE WHEN t10.Codigo IN ('00','03','05','06','11','12','13','14','15','16','18','19','23','26','28','30','36','37','55','56') THEN '0' ELSE '' END
-	-- Proveedore
-	, TipoDocumento = RTRIM(e.IdTipoEntidad)
-	, NumeroDocumento = RTRIM(e.NroFiscal)
-	, NombreRazonSocial = RTRIM(e.NombreRazonSocial)
-	-- Montos
-	, BaseImponibleGravada = 0
-	, ImpuestoGravada = 0
-	, ICBP = CASE WHEN t10.Codigo IN ('01','03','07','08','12','87','88') THEN '0.00' ELSE '' END
-	, OtrosTributos = '0.00'
-	, ImporteTotal = CONVERT(VARCHAR, CONVERT(DECIMAL(12,2), ltp.TotalMonedaBase))
-	-- Cambio
-	, CodigoMoneda = m.CodigoISO
-	, TipoCambio = CASE WHEN m.CodigoISO = 'PEN' THEN '1.000' ELSE CONVERT(VARCHAR, CONVERT(DECIMAL(12,3), ltp.ImporteCambio)) END
-	-- NC / ND
-	, ModificaFechaEmision = CASE WHEN t10.Codigo IN ('07','08','87','88') THEN CONVERT(VARCHAR, altp.FechaDocumento, 103) ELSE '' END --  '07' o '08' o '87' o '88'
-	, ModificaTipoComprobante = CASE WHEN t10.Codigo IN ('07','08','87','88') THEN at10.Codigo ELSE '' END
-	, ModificaSerie = CASE WHEN t10.Codigo IN ('07','08','87','88') THEN altp.Serie ELSE '' END
-	, ModificaNumero = CASE WHEN t10.Codigo IN ('07','08','87','88') THEN altp.Numero ELSE '' END
-	-- Detraccion
-	, FechaConstanciaDetraccion = CASE WHEN ltp.IdRegimen = 2 THEN ISNULL(CONVERT(VARCHAR, ltp.FechaConstanciaDetraccion, 103),'') ELSE '' END 
-	, ConstanciaDetraccion = CASE WHEN ltp.IdRegimen = 2 THEN ISNULL(ltp.ConstanciaDetraccion,'') ELSE '' END 
-	-- Retencion
-	, Retencion = CASE WHEN ltp.IdRegimen = 1 THEN '1' ELSE '' END
-	, BienServicio = t30.Codigo
-	-- Error
-	, ErrorTipo1 = ''
-	, ErrorTipo2 = ''
-	, ErrorTipo3 = ''
-	-- Ultimo
-	, IndicadorComprobante = CASE WHEN ltp.IdFormaPago = 1 THEN '1' ELSE '' END 
-	, CreditoFiscal = '1'
-	, ltpd.IdLoteTrazable
-FROM Financiero.LoteTransaccionPorPagar AS ltp 
-INNER JOIN Financiero.Lote AS l ON  ltp.IdLote = l.Id 
-INNER JOIN Financiero.AnioPeriodo AS ap ON l.IdPeriodo = ap.id 
-INNER JOIN Financiero.Anio AS a ON ap.IdAnio = a.Id
-INNER JOIN Sunat.T10TipoComprobante AS t10 ON  ltp.IdT10TipoComprobante = t10.Id
-LEFT JOIN Sunat.T11CodigoAduana AS t11 ON  ltp.IdT11CodigoAduana = t11.id
-INNER JOIN Maestros.Entidad AS e ON e.IdEntidad = ltp.IdEntidadOficial
--- INNER JOIN Sunat.T02TipoDocumentoIdentidad AS t02 ON e.IdTipoEntidad = t02.Codigo
-INNER JOIN Maestros.Moneda as m ON ltp.IdMonedaBase = m.IdMoneda
-
-INNER JOIN Financiero.LoteTransaccionPorPagarDetalle AS ltpd ON ltp.Id = ltpd.IdTransaccion AND ltpd.IdLoteTrazable IS NOT NULL 
-INNER JOIN Financiero.LoteTransaccionPorPagar as altp ON ltpd.IdLoteTrazable = altp.IdLote
-INNER JOIN Sunat.T10TipoComprobante AS at10 ON  altp.IdT10TipoComprobante = at10.Id
-
-LEFT JOIN Sunat.T30ClasificacionBienServicio AS t30 ON ltp.IdT30ClasificacionBienServicio = t30.Id
-
-
-
-
-
-
-
-------------------------------------------------------------------------------------------------------------------
-------------------------------------------------------------------------------------------------------------------
--- 14.1 REGISTRO DE VENTAS
-SELECT
-	TXT = RTRIM(a.codigo) + RTRIM(ap.codigo) + '00'
-		+ '|' + CONVERT(VARCHAR,ltc.Id)
-		+ '|' + 'M' + RTRIM(ltc.Id)
-		+ '|' + CONVERT(VARCHAR, ltc.FechaDocumento, 103)
-		+ '|' + CONVERT(VARCHAR, ltc.FechaVencimiento, 103)
-        + '|' + CONVERT(varchar,ltc.Serie)
-		+ '|' + CONVERT(varchar,ltc.Numero)
-		+ '|' + ''
-		-- Cliente
-		+ '|' + RTRIM(t02.Codigo)
-		+ '|' + RTRIM(e.NroFiscal)
-		+ '|' + RTRIM(e.NombreRazonSocial)
-		-- Montos
-		+ '|' + '0'
-		+ '|' + '0'
-		+ '|' + '0'
-		+ '|' + '0'
-		+ '|' + '0'
-		+ '|' + '0'
-		+ '|' + '0'
-		+ '|' + '0'
-		+ '|' + '0'
-		+ '|' + '0'
-		+ '|' + '0'
-		+ '|' + '0'
-		-- Cambio
-		+ '|' + m.CodigoISO
-		+ '|' + ''
-		-- NC / ND
-		+ '|' + CASE WHEN t10.Codigo IN ('07','08','87','88') THEN CONVERT(VARCHAR, altc.FechaDocumento, 103) ELSE '' END --  '07' o '08' o '87' o '88'
-	    + '|' + CASE WHEN t10.Codigo IN ('07','08','87','88') THEN at10.Codigo ELSE '' END
-	    + '|' + CASE WHEN t10.Codigo IN ('07','08','87','88') THEN altc.Serie ELSE '' END
-	    + '|' + CASE WHEN t10.Codigo IN ('07','08','87','88') THEN altc.Numero ELSE '' END
-		-- Error
-		+ '|' + ''
-		+ '|' + ''
-		-- Otros
-		+ '|' +  CASE WHEN ltc.IdFormaPago = 1 THEN '1' ELSE '' END 
-		+ '|' +  '0'
-
-	, Periodo = RTRIM(a.codigo) + RTRIM(ap.codigo) + '00'
-	, Cuo = ltc.Id
-	, Correlativo = 'M' + RTRIM(ltc.Id)
-	, FechaEmision =  CONVERT(VARCHAR, ltc.FechaDocumento, 103)
-	, FechaVencimiento = CONVERT(VARCHAR, ltc.FechaVencimiento, 103)
-	, TipoComprobante = t10.Codigo
-	, ltc.Serie
-	, ltc.Numero
-	, Numero2 = ''
-	-- Cliente
-	, TipoDocumento = RTRIM(t02.Codigo)
-	, NumeroDocumento = RTRIM(e.NroFiscal)
-	, Denominacion = RTRIM(e.NombreRazonSocial)
-	-- Montos
-	, Exportacion = 0
-	, Gravada = 0
-	, BaseImponible = 0
-	, ImpuestoGeneral = 0
-	, DescuentoImpuesto = 0
-	, TotalExonerada = 0
-	, TotalInafecta = 0
-	, ISC = 0
-	, BaseImponibleArroz = 0
-	, ImpuestoArroz = 0
-	, OtroImpuesto = 0
-	, Total = 0
-	-- Cambio
-	, CodigoMoneda = m.CodigoISO
-	, TipoCambio = ''
-	-- NC / ND
-	, ModificaFechaEmision = CASE WHEN t10.Codigo IN ('07','08','87','88') THEN CONVERT(VARCHAR, altc.FechaDocumento, 103) ELSE '' END --  '07' o '08' o '87' o '88'
-	, ModificaTipoComprobante = CASE WHEN t10.Codigo IN ('07','08','87','88') THEN at10.Codigo ELSE '' END
-	, ModificaSerie = CASE WHEN t10.Codigo IN ('07','08','87','88') THEN altc.Serie ELSE '' END
-	, ModificaNumero = CASE WHEN t10.Codigo IN ('07','08','87','88') THEN altc.Numero ELSE '' END
-	-- Error
-	, Contrato = ''
-	, Error1 = ''
-	-- Otros
-    , IndicadorComprobante = CASE WHEN ltc.IdFormaPago = 1 THEN '1' ELSE '' END 
-	, Estado = '0'
-
-FROM Financiero.LoteTransaccionPorCobrar AS ltc
-INNER JOIN Financiero.Lote AS l ON  ltc.IdLote = l.Id 
-INNER JOIN Financiero.AnioPeriodo AS ap ON l.IdPeriodo = ap.id 
-INNER JOIN Financiero.Anio AS a ON ap.IdAnio = a.Id
-INNER JOIN Sunat.T10TipoComprobante as t10 ON  ltc.IdT10TipoComprobante = t10.Id
-INNER JOIN Maestros.Entidad AS e ON e.IdEntidad = ltc.IdEntidadOficial
-INNER JOIN Sunat.T02TipoDocumentoIdentidad AS t02 ON e.IdTipoEntidad = t02.Id
-INNER JOIN Maestros.Moneda as m ON ltc.IdMonedaBase = m.IdMoneda
-
-INNER JOIN Financiero.LoteTransaccionPorCobrarDetalle AS ltcd ON ltc.Id = ltcd.IdTransaccion AND  ltcd.IdLoteTrazable IS NOT NULL
-INNER JOIN Financiero.LoteTransaccionPorCobrar AS altc ON ltcd.IdLoteTrazable = altc.IdLote
-INNER JOIN Sunat.T10TipoComprobante AS at10 ON altc.IdT10TipoComprobante = at10.Id
-
-
-------------------------------------------------------------------------------------------------------------------
-------------------------------------------------------------------------------------------------------------------
--- 14.2 REGISTRO DE VENTAS SIMPLIFICADO
-SELECT
-	TXT = RTRIM(a.codigo) + RTRIM(ap.codigo) + '00'
-		+ '|' + CONVERT(VARCHAR,ltc.Id)
-		+ '|' + 'M' + RTRIM(ltc.Id)
-		+ '|' + CONVERT(VARCHAR, ltc.FechaDocumento, 103)
-		+ '|' + CONVERT(VARCHAR, ltc.FechaVencimiento, 103)
-        + '|' + CONVERT(varchar,ltc.Serie)
-		+ '|' + CONVERT(varchar,ltc.Numero)
-		+ '|' + ''
-		-- Cliente
-		+ '|' + RTRIM(t02.Codigo)
-		+ '|' + RTRIM(e.NroFiscal)
-		+ '|' + RTRIM(e.NombreRazonSocial)
-		-- Montos
-		+ '|' + '0'
-		+ '|' + '0'
-		+ '|' + '0'
-		+ '|' + '0'
-		-- Cambio
-		+ '|' + m.CodigoISO
-		+ '|' + ''
-		-- NC / ND
-		+ '|' + CASE WHEN t10.Codigo IN ('07','08') THEN CONVERT(VARCHAR, altc.FechaDocumento, 103) ELSE '' END --  '07' o '08' o '87' o '88'
-	    + '|' + CASE WHEN t10.Codigo IN ('07','08') THEN at10.Codigo ELSE '' END
-	    + '|' + CASE WHEN t10.Codigo IN ('07','08') THEN altc.Serie ELSE '' END
-	    + '|' + CASE WHEN t10.Codigo IN ('07','08') THEN altc.Numero ELSE '' END
-		-- Error
-		+ '|' + ''
-		-- Otros
-		+ '|' +  CASE WHEN ltc.IdFormaPago = 1 THEN '1' ELSE '' END 
-		+ '|' +  '0' + '|'
-
-	, Periodo = RTRIM(a.codigo) + RTRIM(ap.codigo) + '00'
-	, Cuo = ltc.Id
-	, Correlativo = 'M' + RTRIM(ltc.Id)
-	, FechaEmision =  CONVERT(VARCHAR, ltc.FechaDocumento, 103)
-	, FechaVencimiento = CONVERT(VARCHAR, ltc.FechaVencimiento, 103)
-	, TipoComprobante = t10.Codigo
-	, ltc.Serie
-	, ltc.Numero
-	, Numero2 = ''
-	-- Cliente
-	, TipoDocumento = RTRIM(t02.Codigo)
-	, NumeroDocumento = RTRIM(e.NroFiscal)
-	, Denominacion = RTRIM(e.NombreRazonSocial)
-	-- Montos
-	, BaseImponible = 0
-	, Impuesto = 0
-	, OtroImpuesto = 0
-	, Total = 0
-	-- Cambio
-	, CodigoMoneda = m.CodigoISO
-	, TipoCambio = ''
-	-- NC / ND
-	, ModificaFechaEmision = CASE WHEN t10.Codigo IN ('07','08') THEN CONVERT(VARCHAR, altc.FechaDocumento, 103) ELSE '' END --  '07' o '08' o '87' o '88'
-	, ModificaTipoComprobante = CASE WHEN t10.Codigo IN ('07','08') THEN at10.Codigo ELSE '' END
-	, ModificaSerie = CASE WHEN t10.Codigo IN ('07','08') THEN altc.Serie ELSE '' END
-	, ModificaNumero = CASE WHEN t10.Codigo IN ('07','08') THEN altc.Numero ELSE '' END
-	-- Error
-	, Error1 = ''
-	-- Otros
-    , IndicadorComprobante = CASE WHEN ltc.IdFormaPago = 1 THEN '1' ELSE '' END 
-	, Estado = '0'
-
-FROM Financiero.LoteTransaccionPorCobrar AS ltc
-INNER JOIN Financiero.Lote AS l ON  ltc.IdLote = l.Id 
-INNER JOIN Financiero.AnioPeriodo AS ap ON l.IdPeriodo = ap.id 
-INNER JOIN Financiero.Anio AS a ON ap.IdAnio = a.Id
-INNER JOIN Sunat.T10TipoComprobante as t10 ON  ltc.IdT10TipoComprobante = t10.Id
-INNER JOIN Maestros.Entidad AS e ON e.IdEntidad = ltc.IdEntidadOficial
-INNER JOIN Sunat.T02TipoDocumentoIdentidad AS t02 ON e.IdTipoEntidad = t02.Id
-INNER JOIN Maestros.Moneda as m ON ltc.IdMonedaBase = m.IdMoneda
-
-INNER JOIN Financiero.LoteTransaccionPorCobrarDetalle AS ltcd ON ltc.Id = ltcd.IdTransaccion AND  ltcd.IdLoteTrazable IS NOT NULL
-INNER JOIN Financiero.LoteTransaccionPorCobrar AS altc ON ltcd.IdLoteTrazable = altc.IdLote
-INNER JOIN Sunat.T10TipoComprobante AS at10 ON altc.IdT10TipoComprobante = at10.Id;
 
 /*
-sp_helptext 'Financiero.usp_GeneraPleTxt';
 
-SELECT Vista, * FROM Configuracion.DiccionarioConsulta WHERE Id = 141
-SELECT Codigo, * FROM Sunat.LibroElectronico WHERE Id  = 9
+	SELECT
+			ctbl.DescripcionCompania		
+			,	ctbl.CodigoCuenta				
+			,	ctbl.DescripcionCuenta			
+			,	ctbl.DescripcionMoneda			
+			,	ctbl.CodigoNivel1				
+			,	ctbl.CodigoNivel2				
+			,	ctbl.CodigoNivel3				
+			,	ctbl.CodigoNivel4				
+			,	ctbl.DescripcionNivel1			
+			,	ctbl.DescripcionNivel2			
+			,	ctbl.DescripcionNivel3			
+			,	ctbl.DescripcionNivel4			
+			,	ctbl.CodigoSunat				
+			,	ctbl.IdCompania
+			,	ctbl.Libro				
+			,	ctbl.Moneda				
+			,	ctbl.Compania			
+			,	ctbl.IdLibro
+			,	m01 = sum(m01)
+			,	m02 = sum(m02)
+			,	m03 = sum(m03)
+			,	m04 = sum(m04)
+			,	m05 = sum(m05)
+			,	m06 = sum(m06)
+			,	m07 = sum(m07)
+			,	m08 = sum(m08)
+			,	m09 = sum(m09)
+			,	m10 = sum(m10)
+			,	m11 = sum(m11)
+			,	m12 = sum(m12)			
+			
+			,	Periodo = max(Periodo)
+	FROM (
+		SELECT Tipo      = tp.Reporte  
+		  ,DescripcionCompania  = ec.Descripcion  
+		  ,DescripcionAnioPeriodo  = ap.Descripcion  
+		  ,CodigoCuenta    = tp.n5Codigo  
+		  ,DescripcionCuenta   = c.Descripcion  
+		  ,DescripcionMoneda   = mo.CodigoISO  
+		  ,CodigoNivel1    = tp.n1Codigo  
+		  ,CodigoNivel2    = tp.n2Codigo  
+		  ,CodigoNivel3    = tp.n3Codigo  
+		  ,CodigoNivel4    = tp.n4Codigo  
+		  ,DescripcionNivel1   = tp.n1Descripcion  
+		  ,DescripcionNivel2   = tp.n2Descripcion  
+		  ,DescripcionNivel3   = tp.n3Descripcion  
+		  ,DescripcionNivel4   = tp.n4Descripcion  
+		  ,CodigoSunat    = ''  
+  
+		  --,SaldoMes     = sacp.MesSaldo  
+		  --,SaldoAcumulado    = sacp.FinalSaldo  
+  
+		  ,m01 = sum( iif( right(ap.Descripcion,2) = '01' , sacp.MesSaldo , 0.00 ) )  
+		  ,m02 = sum( iif( right(ap.Descripcion,2) = '02' , sacp.MesSaldo , 0.00 ) )  
+		  ,m03 = sum( iif( right(ap.Descripcion,2) = '03' , sacp.MesSaldo , 0.00 ) )  
+		  ,m04 = sum( iif( right(ap.Descripcion,2) = '04' , sacp.MesSaldo , 0.00 ) )  
+		  ,m05 = sum( iif( right(ap.Descripcion,2) = '05' , sacp.MesSaldo , 0.00 ) )  
+		  ,m06 = sum( iif( right(ap.Descripcion,2) = '06' , sacp.MesSaldo , 0.00 ) )  
+		  ,m07 = sum( iif( right(ap.Descripcion,2) = '07' , sacp.MesSaldo , 0.00 ) )  
+		  ,m08 = sum( iif( right(ap.Descripcion,2) = '08' , sacp.MesSaldo , 0.00 ) )  
+		  ,m09 = sum( iif( right(ap.Descripcion,2) = '09' , sacp.MesSaldo , 0.00 ) )  
+		  ,m10 = sum( iif( right(ap.Descripcion,2) = '10' , sacp.MesSaldo , 0.00 ) )  
+		  ,m11 = sum( iif( right(ap.Descripcion,2) = '11' , sacp.MesSaldo , 0.00 ) )  
+		  ,m12 = sum( iif( right(ap.Descripcion,2) = '12' , sacp.MesSaldo , 0.00 ) )  
 
--- Id Consulta
--- Filtro Sql
--- Id Moneda
--- Periodo
--- Id Libro Electronico
-
-
-sp_helptext '[Financiero].[usp_GeneraPleTxt]'
-
-EXEC [Financiero].[usp_GeneraPleTxt] 141, '', 15, '001', '202101', 9        -- Libro 3.7
-EXEC [Financiero].[usp_GeneraPleTxt] 146, '', 15, '001', '202101', 10        -- Libro 3.8
-EXEC [Financiero].[usp_GeneraPleTxt] 142, '', 15, '001', '202101', 11        -- Libro 3.9
-EXEC [Financiero].[usp_GeneraPleTxt] 143, '', 15, '001', '202101', 12        -- Libro 3.11
-EXEC [Financiero].[usp_GeneraPleTxt] 141, '', 15, '001', '202101', 13        -- Libro 3.12
-EXEC [Financiero].[usp_GeneraPleTxt] 141, '', 15, '001', '202101', 14        -- Libro 3.13
-EXEC [Financiero].[usp_GeneraPleTxt] 144, '', 15, '001', '202101', 15        -- Libro 3.14
-EXEC [Financiero].[usp_GeneraPleTxt] 145, '', 15, '001', '202101', 16        -- Libro 3.15
-
-LE2052456126420220131030700011111.TXT
-
-EXEC [Financiero].[usp_GeneraPleTxt] 148, '', 15, '001', '202109', 36        -- REGISTRO DE COMPRAS
-EXEC [Financiero].[usp_GeneraPleTxt] 152, '', 15, '001', '202109', 37		-- REGISTRO DE COMPRAS NO DOMICILIADO
-EXEC [Financiero].[usp_GeneraPleTxt] 149, '', 15, '001', '202109', 38        -- REGISTRO DE COMPRAS SIMPLIFICADO
-EXEC [Financiero].[usp_GeneraPleTxt] 150, '', 15, '001', '202109', 47		-- REGISTRO DE VENTAS E INGRESOS
-EXEC [Financiero].[usp_GeneraPleTxt] 151, '', 15, '001', '202109', 48		-- REGISTRO DE VENTAS E INGRESOS SIMPLIFICADO
-
-
+		  ,	MesAnterior = sum( iif( right(ap.Descripcion,2) = FORMAT(DATEADD(month, -1, CONCAT(ap.Descripcion,'01')), 'MM') , sacp.MesSaldo , 0.00 ))
+		  , DelMes = SUM(sacp.MesSaldo)
+  
+		  ,sacp.IdCompania  
+  
+		  ,Libro    = l.Descripcion  
+		  ,Moneda    = mo.CodigoISO  
+		  ,Compania   = ec.Descripcion  
+		  ,Periodo   = ap.Descripcion  
+		  ,sacp.IdLibro  
+  
+		from Configuracion.viewTablaPLE tp  
+		  inner join Financiero.Cuenta c  
+		  on c.codigo = tp.n5Codigo  
+		  inner join Financiero.ViewSaldoAnioCuentaxPeriodo sacp  
+			left join Maestros.EntidadCompania ec  
+			on ec.Id = sacp.IdCompania  
+			left join Financiero.AnioPeriodo ap  
+			on ap.Id = sacp.IdAnioPeriodo  
+			left join Maestros.Moneda mo  
+			on mo.IdMoneda = sacp.IdMoneda  
+			left join Configuracion.Libro l  
+			on l.id = sacp.IdLibro  
+		  on sacp.IdCuenta = c.Id  
+		  --and (sacp.MesSaldo != 0 or sacp.FinalSaldo != 0)  
+		where   
+		  tp.Reporte = 'ESTADO DE GANANCIAS Y PERDIDAS - CONCAR'  
+		group by  
+		   tp.Reporte  
+		  ,ec.Descripcion  
+		  ,ap.Descripcion  
+		  ,tp.n5Codigo  
+		  ,c.Descripcion  
+		  ,mo.CodigoISO  
+		  ,tp.n1Codigo  
+		  ,tp.n2Codigo  
+		  ,tp.n3Codigo  
+		  ,tp.n4Codigo  
+		  ,tp.n1Descripcion  
+		  ,tp.n2Descripcion  
+		  ,tp.n3Descripcion  
+		  ,tp.n4Descripcion  
+		  ,sacp.IdCompania  
+		  ,l.Descripcion  
+		  ,mo.CodigoISO  
+		  ,ec.Descripcion  
+		  ,ap.Descripcion  
+		  ,sacp.IdLibro  
+	) as ctbl
+	where ctbl.DescripcionNivel4 not in (
+				'Ventas netas                           -'
+			,'Total Costo de Ventas                  -'
+			,'UTILIDAD DE OPERACION                  -'
+			,'RESULTADO ANTES DE IMPTO RENTA         -'
+			,'UTILIDAD BRUTA                         -'
+			,'RESULTADO DEL EJERCICIO                -')
+		and ctbl.IdCompania in (15)  and ( (ctbl.Periodo <= '202112') and (ctbl.Moneda like '%PEN%') )
+		
+	group by ctbl.Tipo						
+			,	ctbl.DescripcionCompania		
+			,	ctbl.CodigoCuenta				
+			,	ctbl.DescripcionCuenta			
+			,	ctbl.DescripcionMoneda			
+			,	ctbl.CodigoNivel1				
+			,	ctbl.CodigoNivel2				
+			,	ctbl.CodigoNivel3				
+			,	ctbl.CodigoNivel4				
+			,	ctbl.DescripcionNivel1			
+			,	ctbl.DescripcionNivel2			
+			,	ctbl.DescripcionNivel3			
+			,	ctbl.DescripcionNivel4			
+			,	ctbl.CodigoSunat				
+			,	ctbl.IdCompania
+			,	ctbl.Libro				
+			,	ctbl.Moneda				
+			,	ctbl.Compania			
+			,	ctbl.IdLibro
 */
 
-SELECT * FROM Maestros.Entidad
+
+-- EXEC [Financiero].[usp_rpt_CTB112] '( (Periodo = ''202112'') )','Admin',15
+
+
+-- Financiero.usp_rpt_CTB112
+-- ( (Periodo = '202112') )
+
+
+
+-- =================================================================================================
+-- =================================== BALANCE COMPROBACION SOLES DOLARES ==========================
+-- =================================================================================================
+/*
+SELECT * FROM (
+	SELECT
+		mn.Compania
+		, mn.Periodo
+		, mn.Libro
+		, mn.Cuenta
+		, mn.DescripcionCuenta
+		, mn.RucCompania
+
+		, IniMn = mn.INIdeb + mn.INIhab
+		, MesMn = mn.MESdeb + mn.MEShab
+		, FinMn = mn.FINdeb + mn.FINhab
+
+		, IniMe = me.INIdeb + me.INIhab
+		, MesMe = me.MESdeb + me.MEShab
+		, FinMe = me.FINdeb + me.FINhab
+
+		,	mn.IdCompania
+		,	mn.IdAnio
+		,	mn.IdAnioPeriodo
+		,	mn.IdLibro
+		,	mn.IdCuenta
+
+	FROM Reporte.CTB100 as mn (nolock)
+	LEFT JOIN Reporte.CTB100 as me (nolock)
+		ON mn.IdCompania = me.IdCompania
+		AND mn.IdLibro = me.IdLibro
+		AND mn.IdAnio = me.IdAnio
+		AND mn.IdAnioPeriodo = me.IdAnioPeriodo
+		AND mn.IdCuenta = me.IdCuenta
+		AND me.Moneda = 'USD'
+	WHERE mn.Moneda = 'PEN'
+) as ctb
+
+WHERE ( (Periodo like '%202203%') and (Libro like '%OFICIAL%')) AND IdCompania = 18
+*/
 
 
 
@@ -1106,186 +523,349 @@ SELECT * FROM Maestros.Entidad
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
--- // COBRAR
+-- ===============================================================================================
+-- I N G R E S O
+-- ===============================================================================================
+-- 1.1.	INGRESOS DEL MES - DISPONIBLE
 SELECT
-	ltc.id, t10.Descripcion,ltc.Serie, ltc.Numero, ltc.IdLote, ltc.IdLoteTrazable, ltc.IdLoteTransaccionTrazable,
-	de.IdLoteTrazable AS DE_IdLoteTrazable, de.IdLoteTransaccionTrazable as DE_IdLoteTransaccionTrazable,
-	de.IdLoteTransaccionDetalleTrazable as DE_IdLoteTransaccionDetalleTrazable
-FROM Financiero.LoteTransaccionPorCobrar as ltc
-INNER JOIN Sunat.T10TipoComprobante as t10 ON  ltc.IdT10TipoComprobante = t10.Id
-INNER JOIN Financiero.LoteTransaccionPorCobrarDetalle as de ON de.IdTransaccion = ltc.id
-WHERE t10.Codigo IN ('01','02')
--- WHERE t10.Codigo IN ('07','08')
+	vld.idCompania
+	, vld.DescripcionCompania
+	, Ingreso = SUM(vld.DebeBase)
+FROM Financiero.ViewLoteDetalle as vld
+WHERE LEFT(vld.CodigoCuenta,3) IN ('101','102','104') AND vld.CodigoAnio = '2022'
+GROUP BY vld.idCompania, vld.DescripcionCompania
 
--- // PAGAR
-SELECT
-	ltp.id, t10.Descripcion,ltp.Serie, ltp.Numero, ltp.IdLote, ltp.IdLoteTrazable, ltp.IdLoteTransaccionTrazable,
-	de.IdLoteTrazable AS DE_IdLoteTrazable, de.IdLoteTransaccionTrazable as DE_IdLoteTransaccionTrazable,
-	de.IdLoteTransaccionDetalleTrazable as DE_IdLoteTransaccionDetalleTrazable
-FROM Financiero.LoteTransaccionPorPagar as ltp
-INNER JOIN Sunat.T10TipoComprobante as t10 ON  ltp.IdT10TipoComprobante = t10.Id
-INNER JOIN Financiero.LoteTransaccionPorPagarDetalle as de ON de.IdTransaccion = ltp.id
---WHERE t10.Codigo IN ('01','02')
-WHERE t10.Codigo IN ('07','08')
---WHERE ltp.IdLote IN (1457780,1465539,1457789,1468973,1469001)
+-- 1.2.	INGRESO COMERCIAL  - DETALLE POR CLIENTE  - MES ACTUAL VS MES AÑO ANTERIOR
+SELECT vld.idCompania, vld.DescripcionCompania, SUM(vld.DebeBase) FROM Financiero.ViewLoteDetalle as vld
+WHERE LEFT(vld.CodigoCuenta,2) = '104' AND vld.CodigoAnio <= '202211'
+GROUP BY vld.idCompania, vld.DescripcionCompania
 
+SELECT IdCompania, * FROM Financiero.ViewDimension WHERE IdTipoDimension = 2
+AND Descripcion LIKE '%back%'
 
-SELECT TOP 10
-	lt.TotalMonedaBase
-	, lt.TotalMonedaSistema
-	, lt.TotalMonedaTransaccion
-	, SUM(ltd.TotalMonedaBase) AS D_TotalMonedaBase
-	, SUM(ltd.TotalMonedaSistema) AS D_TotalMonedaSistema
-	, SUM(ltd.TotalMonedaTransaccion) AS D_TotalMonedaTransaccion
-	, SUM(ltd.ImpuestoMonedaBase) AS TotalImpuestoB
-FROM Financiero.LoteTransaccionPorPagar as lt
-INNER JOIN Financiero.LoteTransaccionPorPagarDetalle as ltd ON lt.id = ltd.IdTransaccion AND ltd.IdLoteTrazable IS NOT NULL
-WHERE lt.Id = '5234'
-GROUP BY lt.Id, lt.TotalMonedaBase, lt.TotalMonedaSistema, lt.TotalMonedaTransaccion
+SELECT IdCompania, * FROM Financiero.ViewDimension WHERE IdTipoDimension = 1
+AND Descripcion LIKE '%back%'
+SELECT IdLote, CodigoModulo, * FROM Financiero.ViewLoteDetalle WHERE CodigoCuenta LIKE '79%' AND idCompania = 18
+SELECT DISTINCT idCompania FROM Financiero.ViewLoteDetalle
+
+SELECT idCompania, CodigoModulo, IdLote, CodigoCuenta, DescripcionCuenta, DebeBase, HaberBase, Descripcion, FechaContable, FechaDocumento, FechaVencimiento FROM Financiero.ViewLoteDetalle
+WHERE IdLote IN (SELECT IdLote FROM Financiero.ViewLoteDetalle WHERE CodigoCuenta LIKE '59%')
 
 
+-- ==========================================================================================================
+-- 3:        P O S I S I O N       C A J A       D I S P O N I B L E
+-- ==========================================================================================================
+/*SELECT
+			Diario = md.DSUBDIA
+			, Compro = md.DCOMPRO
+			, Secuencia = md.DSECUE
+			, Periodo = md.DFECCOM
+			, Cuenta = md.DCUENTA
+			, Anexo = md.DCODANE
+			, md.DCENCOS
+			, Moneda = md.DCODMON
+			, DH = md.DDH
+			, Importe = md.DIMPORT
+			, TipoDocumento = md.DTIPDOC
+			, NumeroDocumento = md.DNUMDOC
+			, FechaDocumento = md.DFECDOC
+			, FechaVencimiento = md.DFECVEN
+			, Area = md.DAREA
+			, md.DFLAG
+			, md.DDATE
+			, Glosa = md.DXGLOSA
+			, ImporteUSA = md.DUSIMPOR
+			, ImportePEN = md.DMNIMPOR
+		FROM rsconcar.[dbo].[CT0082COMD21] as md*/
+-- ===================================================================
+-- 3.1 SALDO EN CUENTAS CORRIENTES - DOLARES
+	-- BACKOFFICE
+		-- Reporte.CTB270_03010
+	-- CONCAR
+		SELECT
+			Empresa = CASE WHEN md.empresa = '0084' THEN 'PCH' WHEN md.empresa = '0001' THEN 'MINEX' WHEN md.empresa = '0002' THEN 'ENPROYEC' WHEN md.empresa = '0003' THEN 'MINCORP' WHEN md.empresa = '0004' THEN 'MINERCOBRE' ELSE '' END
+			, EmpresaCodigo = md.empresa
+			, Cuenta = DCUENTA
+			, Banco = ban.ct_cnomban
+			-- , SaldoSoles = SUM(IIF(DDH = 'D', DMNIMPOR, DMNIMPOR * -1))
+			, SaldoDolares = SUM(IIF(DDH = 'D', DUSIMPOR, DUSIMPOR * -1))
+		FROM produccion.enproyecdb.dbo.asientos_det as md
+		LEFT JOIN produccion.enproyecdb.dbo.view_bancos_cuentas AS ban ON ban.empresa = md.empresa AND md.DCUENTA = ban.ct_ccuenta
+		WHERE md.DCUENTA LIKE '104%'
+		AND md.empresa IN ('0084','0001','0002','0003', '0004')
+		AND md.PERIODO_DET = '2022' 
+		AND LEFT(md.DCOMPRO, 2) <= '06'
+		AND ban.ct_ccodmon = 'US'
+		GROUP BY md.empresa, md.DCUENTA, ban.ct_cnomban
+		ORDER BY 1,3 -- EN DOLARES
+
+		-- BANOCS         E N P R O Y E C
+		-- 104112 -- BCP LIMA		-- US
+		-- 104118 -- BCP RP			-- US
+		-- 104122 -- BBVA			-- US
+		-- 104132 -- INTERBANCK		-- US
+		-- 104142 -- BANBIF			-- US
+		-- 104152 -- SANTANDER		-- US
+
+		SELECT
+			Empresa = CASE WHEN md.empresa = '0084' THEN 'PCH' WHEN md.empresa = '0001' THEN 'MINEX' WHEN md.empresa = '0002' THEN 'ENPROYEC' WHEN md.empresa = '0003' THEN 'MINCORP' WHEN md.empresa = '0004' THEN 'MINERCOBRE' ELSE '' END
+			, EmpresaCodigo = md.empresa
+			, Cuenta = DCUENTA
+			, Banco = ban.ct_cnomban
+			, SaldoSoles = SUM(IIF(DDH = 'D', DMNIMPOR, DMNIMPOR * -1))
+			-- , SaldoDolares = SUM(IIF(DDH = 'D', DUSIMPOR, DUSIMPOR * -1))
+		FROM produccion.enproyecdb.dbo.asientos_det as md
+		LEFT JOIN produccion.enproyecdb.dbo.view_bancos_cuentas AS ban ON ban.empresa = md.empresa AND md.DCUENTA = ban.ct_ccuenta
+		WHERE md.DCUENTA LIKE '104%'
+		AND md.empresa IN ('0084','0001','0002','0003','0004')
+		AND md.PERIODO_DET = '2022' 
+		AND LEFT(md.DCOMPRO, 2) <= '06'
+		AND ban.ct_ccodmon = 'MN'
+		GROUP BY md.empresa, md.DCUENTA, ban.ct_cnomban
+		ORDER BY 1,3 -- EN SOLES
+
+-- ===================================================================
+-- 3.3 DEPOSITOS A PLAZO
+	-- BACKOFFICE
+		-- [Financiero].[usp_rpt_CTB270_0303]
+
+	-- CONCAR:
+		SELECT DIMPORT, DXGLOSA, * FROM rsconcar.[dbo].[CT0082COMD21]
+		WHERE DCUENTA LIKE '106%' 
+		AND DFECCOM LIKE '2101%'
+		AND DSUBDIA != '00'
+		AND DCODMON = 'US'
+		AND DDH = 'D'
+
+		SELECT
+			Empresa = CASE WHEN md.empresa = '0084' THEN 'PCH' WHEN md.empresa = '0001' THEN 'MINEX' WHEN md.empresa = '0002' THEN 'ENPROYEC' WHEN md.empresa = '0003' THEN 'MINCORP' WHEN md.empresa = '0004' THEN 'MINERCOBRE' ELSE '' END
+			, EmpresaCodigo = md.empresa
+			, Cuenta = DCUENTA
+			, md.DIMPORT
+			, md.DUSIMPOR
+			, md.DMNIMPOR
+			, DSUBDIA
+			, DCOMPRO
+		FROM produccion.enproyecdb.dbo.asientos_det as md
+		-- LEFT JOIN produccion.enproyecdb.dbo.view_bancos_cuentas AS ban ON ban.empresa = md.empresa AND md.DCUENTA = ban.ct_ccuenta
+		WHERE md.DCUENTA LIKE '106%'
+		AND md.empresa IN ('0084','0001','0002','0003','0004')
+		AND md.PERIODO_DET = '2021' 
+		AND LEFT(md.DCOMPRO, 2) = '01'
+		AND DSUBDIA != '00'
+		AND md.DDH = 'D'
+		AND DCODMON = 'US'
+		-- AND ban.ct_ccodmon = 'US'
+
+-- ===================================================================
+-- 3.4 FINANCIAMIENTOS BANCARIOS DEL MES
+	-- BACKOFFICE
+		-- [Financiero].[usp_rpt_CTB270_03040]  
+		-- EXEC [Financiero].[usp_rpt_CTB270_03040]   '', '',''
+	-- CONCAR:
+		SELECT DIMPORT, DXGLOSA, * FROM rsconcar.[dbo].[CT0082COMD21]
+		WHERE DCUENTA LIKE '451%' -- AND DIMPORT = '1000000'
+		AND DFECCOM LIKE '2101%'
+		--AND DSUBDIA != '00'
+		AND DCODMON = 'US'
+		AND DSUBDIA = '21'
+
+		SELECT
+			Empresa = CASE WHEN md.empresa = '0084' THEN 'PCH' WHEN md.empresa = '0001' THEN 'MINEX' WHEN md.empresa = '0002' THEN 'ENPROYEC' WHEN md.empresa = '0003' THEN 'MINCORP' WHEN md.empresa = '0004' THEN 'MINERCOBRE' ELSE '' END
+			, EmpresaCodigo = md.empresa
+			, Cuenta = DCUENTA
+			, md.DIMPORT
+			, md.DUSIMPOR
+			, md.DMNIMPOR
+			, md.DXGLOSA
+		FROM produccion.enproyecdb.dbo.asientos_det as md
+		WHERE md.DCUENTA LIKE '451%'
+		AND md.empresa IN ('0084','0001','0002','0003','0004')
+		AND md.PERIODO_DET = '2022' 
+		AND LEFT(md.DCOMPRO, 2) = '06'
+		-- AND DSUBDIA != '00'
+		AND DSUBDIA = '21'
+
+
+
+-- ===============================================================================================
+--  4:      D E T R A C C I O N
+-- ===============================================================================================
+
+
+
+-- ===================================================================
+-- 4.1.	SALDO DE CUENTAS CORRIENTES - BANCO DE LA NACION   ---------------------------- O J O --  AUN NO CUADRA CON MINEX
+	-- BACKOFFICE
+		-- Financiero.usp_rpt_CTB270_04010
+
+	-- CONCAR
+		-- SALDO ANTERIOR
+		SELECT
+			Empresa = CASE WHEN md.empresa = '0084' THEN 'PCH' WHEN md.empresa = '0001' THEN 'MINEX' WHEN md.empresa = '0002' THEN 'ENPROYEC' WHEN md.empresa = '0003' THEN 'MINCORP' WHEN md.empresa = '0004' THEN 'MINERCOBRE' ELSE '' END
+			, EmpresaCodigo = md.empresa
+			-- , Cuenta = DCUENTA
+			, SaldoInicialSoles = SUM(IIF(DDH = 'D', DMNIMPOR, DMNIMPOR * -1))
+		FROM produccion.enproyecdb.dbo.asientos_det as md
+		WHERE md.DCUENTA LIKE '107301%'
+		AND md.empresa IN ('0084','0001','0002','0003','0004')
+		AND md.PERIODO_DET = '2022' 
+		AND LEFT(md.DCOMPRO, 2) < '06'
+		-- AND md.DSUBDIA = '00'
+		GROUP BY md.empresa
+
+		-- INGRESO - EGRESO
+		SELECT
+			Empresa = CASE WHEN md.empresa = '0084' THEN 'PCH' WHEN md.empresa = '0001' THEN 'MINEX' WHEN md.empresa = '0002' THEN 'ENPROYEC' WHEN md.empresa = '0003' THEN 'MINCORP' WHEN md.empresa = '0004' THEN 'MINERCOBRE' ELSE '' END
+			-- , EmpresaCodigo = md.empresa
+			-- , Cuenta = DCUENTA
+			, Ingreso = SUM(IIF(md.DDH ='D', DMNIMPOR, 0))
+			, Egreso = SUM(IIF(md.DDH ='H', DMNIMPOR, 0))
+		FROM produccion.enproyecdb.dbo.asientos_det as md
+		WHERE md.DCUENTA LIKE '107301%'
+		AND md.empresa IN ('0084','0001','0002','0003','0004')
+		AND md.PERIODO_DET = '2022' 
+		AND LEFT(md.DCOMPRO, 2) = '06'
+		AND md.DSUBDIA != '00'
+		GROUP BY md.empresa	
+
+
+-- ===================================================================
+-- 4.2.	INGRESOS DEL MES - DETALLE
+	-- BACKOFFICE
+		-- 
+			-- POR MODULO EFECTIVO, AUTODETRACCION
+			-- COBRANZA:    -- CLIENTE    Y    VINCULADA
+
+	-- CONCAR
+	-- IO8,IE8                      Cliente
+	-- VI8     Vinculada
+		SELECT
+			Empresa = CASE WHEN md.empresa = '0084' THEN 'PCH' WHEN md.empresa = '0001' THEN 'MINEX' WHEN md.empresa = '0002' THEN 'ENPROYEC' WHEN md.empresa = '0003' THEN 'MINCORP' WHEN md.empresa = '0004' THEN 'MINERCOBRE' ELSE '' END
+			, EmpresaCodigo = md.empresa
+			-- , Cuenta = DCUENTA
+			, md.DNUMDO2
+			, Ingreso = SUM(IIF(md.DDH ='D', DMNIMPOR, 0))
+			, Cliente = SUM(IIF(TRIM(md.DNUMDO2) IN ('IO8','IE8'),IIF(md.DDH ='D', DMNIMPOR, 0), 0))
+			, Vinculada = SUM(IIF(TRIM(md.DNUMDO2) IN ('VI8'),IIF(md.DDH ='D', DMNIMPOR, 0), 0))
+			, AutoDetraccion = SUM(IIF(TRIM(md.DNUMDO2) NOT IN ('IO8','IE8','VI8'),IIF(md.DDH ='D', DMNIMPOR, 0), 0))
+			-- , Egreso = SUM(IIF(md.DDH ='H', DMNIMPOR, 0))
+		FROM produccion.enproyecdb.dbo.asientos_det as md
+		WHERE md.DCUENTA LIKE '107301%'
+		AND md.empresa IN ('0084','0001','0002','0003','0004')
+		AND md.PERIODO_DET = '2022' 
+		AND LEFT(md.DCOMPRO, 2) = '06'
+		AND md.DSUBDIA != '00'
+		GROUP BY md.empresa, md.DNUMDO2	
+		ORDER BY 1,2
+
+
+
+-- ===================================================================
+-- 4.2.	INGRESOS DEL MES - DETALLE
+	-- BACKOFFICE
+	-- CONCAR
+
+-- ===================================================================
+-- 4.3.	EGRESOS DEL MES - DETALLE
+	-- BACKOFFICE
+	-- CONCAR
+
+-- ===================================================================
+-- 4.4.	RECUPERACION DE DETRACCIONES - MES ACTUAL VS MES AÑO ANTERIOR
+	-- BACKOFFICE
+	-- CONCAR
+
+
+		-- EGRESO POR = LIBERACION - PAGO IMPUESTOS
+		-- Cuando Su contrapartida es la 104 = Liberacion de fondos
+		-- Cuando su contrapartida es la 40 pago de impuesto
+		SELECT DXGLOSA, DIMPORT, DNUMDO2,  * FROM rsconcar.[dbo].[CT0082COMD21] WHERE DCUENTA LIKE '107%' AND DSUBDIA != '00' AND DDH = 'H' AND DFECCOM LIKE '2101%' AND DCODMON = 'MN'
+		GROUP BY DNUMDO2
 
 
 
 
-
-
-
-
+--  18636 
+--	18645.74
+/*
 SELECT 
-	lt.Id
-	, lt.TotalMonedaBase
-	, lt.TotalMonedaSistema
-	, lt.TotalMonedaTransaccion
-	, SUM(ltd.TotalMonedaBase + ltd.ImpuestoMonedaBase) AS D_TotalMonedaBase
-	, SUM(ltd.TotalMonedaSistema) AS D_TotalMonedaSistema
-	, SUM(ltd.TotalMonedaTransaccion) AS D_TotalMonedaTransaccion
-	, SUM(ltd.ImpuestoMonedaBase) AS TotalImpuestoB
-FROM Financiero.LoteTransaccionPorPagarDetalle as ltd
-INNER JOIN Financiero.LoteTransaccionPorPagar as lt ON ltd.IdTransaccion = lt.Id
-WHERE ltd.ImpuestoMonedaBase>0
-GROUP BY lt.Id, lt.TotalMonedaBase, lt.TotalMonedaSistema, lt.TotalMonedaTransaccion
+	-- Egreso = SUM(DUSIMPOR)
+	*
+FROM produccion.enproyecdb.dbo.asientos_det AS md (NOLOCK)
+WHERE (DSUBDIA + DCOMPRO) IN (SELECT DSUBDIA + DCOMPRO FROM produccion.enproyecdb.dbo.asientos_det WITH (NOLOCK) WHERE empresa = '0004' AND DCUENTA LIKE '104%')
+-- AND md.DCUENTA LIKE '107301%'
+AND md.empresa = '0004'
+AND md.PERIODO_DET = '2021' 
+AND LEFT(md.DCOMPRO, 2) = '01'
+AND md.DSUBDIA != '00'
+--
+AND md.DCUENTA NOT LIKE '104%'
+AND md.DCUENTA LIKE '421220%'
+AND md.DTIPDOC = 'DR'
+AND md.DDH = 'D'
+*/
+
+
+/*
+'0084' => 'PCH'
+'0001' => 'MINEX'
+'0002' => 'ENPROYEC'
+'0003' => 'MINCORP'
+'0004' => 'MINERCOBRE'
+*/
+-- // 18636 // 18638.00
+
+-- ===============================================================================================
+--  2:      E G R E S O S
+-- ===============================================================================================
 
 
 
+-- ===================================================================
+-- 2.3.	PAGO DE DETRACCIONES TERCEROS - MES ACTUAL VS MES AÑO ANTERIOR
+	-- BACKOFFICE
+		-- [Financiero].[usp_rpt_CTB270_02030]
+
+	-- CONCAR
+		SELECT 
+			Egreso = SUM(DUSIMPOR)
+			-- *
+		FROM produccion.enproyecdb.dbo.asientos_det AS md (NOLOCK)
+		WHERE (DSUBDIA + DCOMPRO) IN (SELECT DSUBDIA + DCOMPRO FROM produccion.enproyecdb.dbo.asientos_det WITH (NOLOCK) WHERE empresa = '0003' AND DCUENTA LIKE '104%')
+		AND md.empresa = '0003'
+		AND md.PERIODO_DET = '2022' 
+		AND LEFT(md.DCOMPRO, 2) = '06'
+		-- AND md.DSUBDIA != '00'
+		AND md.DCUENTA NOT LIKE '104%'
+		-- AND md.DCUENTA LIKE '421220%'
+		AND md.DTIPDOC = 'DR'
+		AND md.DDH = 'D'
+		AND md.DSUBDIA = '22'
+		-- 
+		AND md.DCODANE NOT IN ('20100030595','00517031624','10175243661','10105132846','10455751646','10439568467','10453766247','10453880414','10013181379','10463794567','10447489231','20604033404','20604033536','20330791170','20517031624','20518915119','20524561264','10072781193','20602345573','10062823581','20517347184','20545870585','20554452907','20554397299')
 
 
 
+-- ===================================================================
+-- 2.4.	PLANILLA DE SUELDOS - MES AACTUAL VS MES AÑO ANTERIOR
+	-- BACKOFFICE
+		-- EXEC [Financiero].[usp_rpt_CTB270_02040] '','',''
+	-- CONCAR
+		SELECT 
+			Egreso = SUM(DUSIMPOR)
+			-- *
+		FROM produccion.enproyecdb.dbo.asientos_det AS md (NOLOCK)
+		WHERE (DSUBDIA + DCOMPRO) IN (SELECT DSUBDIA + DCOMPRO FROM produccion.enproyecdb.dbo.asientos_det WITH (NOLOCK) WHERE empresa = '0003' AND DCUENTA LIKE '104%')
+		AND md.empresa = '0003'
+		AND md.PERIODO_DET = '2022' 
+		AND LEFT(md.DCOMPRO, 2) = '06'
+		-- AND md.DSUBDIA != '00'
+		AND md.DCUENTA NOT LIKE '104%'
+		AND md.DCUENTA LIKE '411101%'
+		AND md.DDH = 'D'
+		AND md.DSUBDIA = '22'
+		-- 
 
 
 
-
-SELECT * FROM [Configuracion].[DiccionarioPantallaTabla] WHERE Pantalla LIKE '%Provision%Pagar%' 
-sp_helptext 'Financiero.usp_PorPagar_insert_total'
-
-
-
-SELECT ImpuestoMonedaBase, TotalMonedaBase FROM Financiero.LoteTransaccionPorPagarDetalle
-WHERE CASE WHEN IdMonedaBase = IdMonedaTransaccion THEN 'Igual' ELSE 'NO' END = 'NO'
-SELECT TOP  10 * FROM Financiero.ViewLoteTransaccionPorPagar
-sp_helptext 'Financiero.ViewLoteTransaccionPorPagar'
-
-SELECT TOP 10 * FROM Maestros.Moneda
-
-
-
-------------------------------------------------------------------------------------------------------------------
-------------------------------------------------------------------------------------------------------------------
--- SABANA DE DIARIO
-SELECT TOP 100
-  vld.CodigoCompania
-  ,vld.DescripcionCompania
-
-  ,vld.CodigoLibro
-  ,vld.DescripcionLibro
-
-  ,vld.CodigoDiario
-  ,vld.DescripcionDiario
-
-  ,vld.CodigoModulo
-  ,vld.DescripcionModulo
-
-  ,vld.CodigoAnio
-  ,vld.DescripcionAnio
-
-  ,vld.CodigoAnioPeriodo
-  ,vld.DescripcionAnioPeriodo
-
-  ,vld.CodigoCuenta
-  ,vld.DescripcionCuenta
-
-  ,vld.CodigoDimensionBase
-  ,vld.DescripcionDimensionBase
-
-  ,vld.CodigoDimensionOperativa
-  ,vld.DescripcionDimensionOperativa
-
-  ,vld.CodigoEntidad
-  ,vld.DescripcionEntidad
-
-  ,vld.CodigoTipoCambio
-  ,vld.CodigoMonedaTransaccion
-
-  ,vld.DebeBase
-  ,vld.HaberBase
-  ,vld.SaldoBase
-    
-  ,vld.DebeSistema
-  ,vld.HaberSistema
-  ,vld.SaldoSistema
-
-  ,vld.ImporteCambio    
-      
-  ,vld.Lote  
-  ,vld.Transaccion
-  ,vld.Detalle 
-  ,vld.DetalleTrazable 
-        
-  ,vld.FechaDocumento 
-  ,vld.FechaVencimiento 
-      
-  ,vld.Serie        
-  ,vld.Numero  
-  ,vld.CodigoTipoComprobante 
-  ,vld.Documento 
-        
-  ,vld.IdMonedaBase        
-  ,vld.IdMonedaTransaccion    
-  ,vld.IdT04TipoMoneda        
-  ,vld.IdTipoCuentaContable        
-  ,vld.DebeTransacion 
-  ,vld.HaberTransacion 
-    
-  ,vld.MonedaOrigen
-  ,vld.CodigoT04TipoMoneda
-  ,vld.TipoDocumentoID
-  ,vld.TipoComprobante
-  ,vld.Descripcion    
-  ,vld.Estado 
-  ,vld.IdT10TipoComprobante    
-  ,vld.idtipotransaccionsistema    
-  ,vld.idestadolote    
-  ,vld.IdArticulo  
-  ,vld.IdUnidadMedida   
-  ,vld.Cantidad    
-  ,vld.idlote 
-
-FROM Financiero.ViewLoteDetalle AS vld
-
--- ////////////////////////////////////////////////////////////////////////////////////////
--- //////////////////////////////////////// TEST //////////////////////////////////////////
-
-SELECT * FROM  [PRODUCCION].ENPROYECDB.DBO.SALDOXCOBRAR 
