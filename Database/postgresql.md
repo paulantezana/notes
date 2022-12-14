@@ -22,3 +22,5 @@ Ejecutar consultas SQL desde un archivos
 \i archivo.extencion
 ```
 
+mysqldump --compatible=postgresql --user=root --password= --host=localhost yarys --result-file=filename.sql 2>&1
+mysqldump --compatible=postgresql --user=root --host=localhost capon --result-file=filename.sql 2>&1
