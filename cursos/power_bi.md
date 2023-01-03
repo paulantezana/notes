@@ -13,3 +13,8 @@ usa el lenguaje DAX
 
 # Mode Import And Direact Query Limitaciones Y ventajas (comparacion)
 https://spgeeks.devoworx.com/switch-import-to-directquery-mode-powerbi/#import-mode-limitations-in-power-bi
+
+
+# Contextos
+* Contexto de fila: ejemplo funcion SUMX
+* contexto de filtro: ejemplo funcion SUM
