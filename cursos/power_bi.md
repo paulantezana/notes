@@ -18,3 +18,11 @@ https://spgeeks.devoworx.com/switch-import-to-directquery-mode-powerbi/#import-m
 # Contextos
 * Contexto de fila: ejemplo funcion SUMX
 * contexto de filtro: ejemplo funcion SUM
+
+
+
+
+API REST POWER BI
+
+https://learn.microsoft.com/es-es/rest/api/power-bi
+https://community.powerbi.com/t5/Developer/Data-Refresh-by-using-API-Need-Steps/td-p/208928
