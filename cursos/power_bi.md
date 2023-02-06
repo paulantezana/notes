@@ -48,3 +48,9 @@ https://community.powerbi.com/t5/Developer/Data-Refresh-by-using-API-Need-Steps/
 
 # Flujo de datos
 -- https://learn.microsoft.com/es-es/power-bi/guidance/power-query-referenced-queries
+
+
+
+# ¿QUE ES DATAMART?
+Generalmente, los datos están estructurados en modelos estrellas o copo de nieve.
+https://tableauperu.com/data-mart/
