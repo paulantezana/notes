@@ -67,6 +67,12 @@ CREATE TABLE cargos(
     idArea INT NOT NULL FOREIGN KEY REFERENCES areas(idArea)
 );
 
+GO
+CREATE TABLE idiomas(
+    idIdioma  INT NOT NULL IDENTITY PRIMARY KEY,
+    descripcion  VARCHAR(64) NOT NULL
+);
+
 
 
 
@@ -98,145 +104,150 @@ CREATE TABLE usuarios(
 );
 
 GO
-CREATE TABLE usuarioRecupera(
+CREATE TABLE usuarioRecuperaciones(
     idUsuarioRecupera INT NOT NULL IDENTITY PRIMARY KEY,
-    fechaPeticion TIMESTAMP NOT NULL,
-    fechaVencimiento TIMESTAMP NOT NULL,
-    fechaRecuperacion  TIMESTAMP DEFAULT NULL,
+    fechaPeticion datetime NOT NULL,
+    fechaVencimiento datetime NOT NULL,
+    fechaRecuperacion  datetime DEFAULT NULL,
     recuperado BIT DEFAULT 0,
-    habilitado  BIT DEFAULT 1
+    habilitado  BIT DEFAULT 1,
+    idUsuario INT NOT NULL FOREIGN KEY REFERENCES usuarios(idUsuario)
 );
 
 GO
 CREATE TABLE usuarioIdiomas(
-    idIdioma
-    idUsuario
+    idIdioma INT NOT NULL FOREIGN KEY REFERENCES idiomas(idIdioma),
+    idUsuario INT NOT NULL FOREIGN KEY REFERENCES usuarios(idUsuario)
 );
 
 GO
-CREATE TABLE usuarioExperiencia(
+CREATE TABLE usuarioExperiencias(
     idUsuarioExperiencia INT NOT NULL IDENTITY PRIMARY KEY,
-    NombreEmpresa
-    desdeFecha
-    hastaFecha
-    funcionesLogros
-    idUsuario
-    idCargo
+    nombreEmpresa VARCHAR(128) NOT NULL,
+    desdeFecha datetime NOT NULL,
+    hastaFecha datetime NOT NULL,
+    funcionesLogros VARCHAR(500) DEFAULT '',
+    idUsuario  INT NOT NULL FOREIGN KEY REFERENCES usuarios(idUsuario),
+    idCargo  INT NOT NULL FOREIGN KEY REFERENCES cargos(idCargo)
 );
 
 GO
-CREATE TABLE usuarioEducacion(
+CREATE TABLE usuarioEducaciones(
     idUsuarioEducacion INT NOT NULL IDENTITY PRIMARY KEY,
-    centroEducativo
-    idUsuario
-    idProfecion
-    idNivelDeEstudio
-    desdeFecha
-    hastaFecha
+    centroEducativo VARCHAR(128) NOT NULL,
+    idUsuario  INT NOT NULL FOREIGN KEY REFERENCES usuarios(idUsuario),
+    idProfecion  INT NOT NULL FOREIGN KEY REFERENCES profeciones(idProfecion),
+    idNivelDeEstudio  INT NOT NULL FOREIGN KEY REFERENCES nivelDeEstudios(idNivelDeEstudio),
+    desdeFecha datetime NOT NULL,
+    hastaFecha datetime NOT NULL
 );
 
 GO
 CREATE TABLE usuarioHabilidades(
-    idHabilidad
-    idUsuario
+    idHabilidad  INT NOT NULL FOREIGN KEY REFERENCES habilidades(idHabilidad),
+    idUsuario  INT NOT NULL FOREIGN KEY REFERENCES usuarios(idUsuario)
 );
 
 GO
-CREATE TABLE usuarioCompetencia(
-    idHabilidad
-    idUsuario
+CREATE TABLE usuarioCompetencias(
+    idCompetencia   INT NOT NULL FOREIGN KEY REFERENCES competencias(idCompetencia),
+    idUsuario  INT NOT NULL FOREIGN KEY REFERENCES usuarios(idUsuario)
 );
 
 GO-- ADMIN
-CREATE TABLE usuarioCargo(
-    idCargo
-    idUsuario
+CREATE TABLE usuarioCargos(
+    idCargo  INT NOT NULL FOREIGN KEY REFERENCES cargos(idCargo),
+    idUsuario  INT NOT NULL FOREIGN KEY REFERENCES usuarios(idUsuario)
 );
 
 GO
 CREATE TABLE vacantes(
     idVacante INT NOT NULL IDENTITY PRIMARY KEY,
-	titulo
-	descripcion
+	titulo VARCHAR(128) DEFAULT '',
+	descripcion VARCHAR(128) DEFAULT '',
 
-    dispoNibilidadViajar
-    cambioRecidencia
-    discapacidad
-    licenciaDeConducir
-    pehiculoPropio
+    dispoNibilidadViajar BIT DEFAULT 0,
+    cambioRecidencia BIT DEFAULT 0,
+    discapacidad BIT DEFAULT 0,
+    licenciaDeConducir VARCHAR(32) DEFAULT '',
+    pehiculoPropio BIT DEFAULT 0,
 
-    salario
-    experienciaMeses
+    salario DECIMAL NOT NULL,
+    experienciaMeses INT NOT NULL,
 
-    idIdiomaRequerido
-	idArea
+	idArea INT NOT NULL FOREIGN KEY REFERENCES areas(idArea)
 );
 
 GO
 CREATE TABLE vacanteHabilidades(
-	idVacante
-    idHabilidad
+    idHabilidad  INT NOT NULL FOREIGN KEY REFERENCES habilidades(idHabilidad),
+    idVacante  INT NOT NULL FOREIGN KEY REFERENCES vacantes(idVacante)
 );
 
 GO
 CREATE TABLE vacanteCompetencias(
-	idVacante
-    idCompetencia
+    idCompetencia   INT NOT NULL FOREIGN KEY REFERENCES competencias(idCompetencia),
+    idVacante  INT NOT NULL FOREIGN KEY REFERENCES vacantes(idVacante)
 );
 
 GO
 CREATE TABLE vacanteIdiomas(
-    idIdioma
-    idVacante
+    idIdioma INT NOT NULL FOREIGN KEY REFERENCES idiomas(idIdioma),
+    idVacante  INT NOT NULL FOREIGN KEY REFERENCES vacantes(idVacante)
 );
 
 GO
 CREATE TABLE postulaciones(
     idPostulacion  INT NOT NULL IDENTITY PRIMARY KEY,
-    idUsuario
-    idVacante
-    idPostulacionEstado
-    postulacionFecha
+    idUsuario  INT NOT NULL FOREIGN KEY REFERENCES usuarios(idUsuario),
+    idVacante  INT NOT NULL FOREIGN KEY REFERENCES vacantes(idVacante),
+    idPostulacionEstado  INT NOT NULL FOREIGN KEY REFERENCES postulacionEstados(idPostulacionEstado),
+    postulacionFecha datetime NOT NULL
 );
 
 GO
-CREATE TABLE postulacionDetalle(
+CREATE TABLE postulacionDetalles(
     idPostulacionDetalle INT NOT NULL IDENTITY PRIMARY KEY,
-    idPostulacion
-    idPostulacionEstado
-    descripcion
-    fechaAccion
-    esUltimo
+    idPostulacion INT NOT NULL FOREIGN KEY REFERENCES postulaciones(idPostulacion),
+    idPostulacionEstado INT NOT NULL FOREIGN KEY REFERENCES postulacionEstados(idPostulacionEstado),
+    descripcion VARCHAR(128) DEFAULT '',
+    fechaAccion datetime NOT NULL,
+    esUltimo BIT DEFAULT 1
 );
+
+
+
+
+
 
 GO
 CREATE TABLE programaciones(
     idProgramacion INT NOT NULL IDENTITY PRIMARY KEY,
-    idPostulacion
-    fecha
-    observacion
-    recordatorio
+    idPostulacion  INT NOT NULL FOREIGN KEY REFERENCES postulaciones(idPostulacion),
+    fecha datetime NOT NULL,
+    observacion VARCHAR(255) DEFAULT '',
+    recordatorio INT NOT NULL
 );
 
 GO
 CREATE TABLE ayudas(
     idAyuda INT NOT NULL IDENTITY PRIMARY KEY,
-    pregunta
-    respuesta
+    pregunta VARCHAR(128) NOT NULL,
+    respuesta TEXT
 );
 
 go
 CREATE TABLE chatMensages(
     idChatMensage INT NOT NULL IDENTITY PRIMARY KEY,
-    asunto
-    cuerpo
-    idRemitente
+    asunto VARCHAR(128) DEFAULT '',
+    cuerpo VARCHAR(255) NOT NULL,
+    idRemitente INT NOT NULL FOREIGN KEY REFERENCES usuarios(idUsuario)
 );
 
 GO
 CREATE TABLE chatMensageReceptores(
     idChatMensageReceptor INT NOT NULL IDENTITY PRIMARY KEY,
-    fueLeido
-    idChatMensage
-    idDestinatario
+    fueLeido BIT NOT NULL,
+    idChatMensage  INT NOT NULL FOREIGN KEY REFERENCES chatMensages(idChatMensage),
+    idDestinatario INT NOT NULL FOREIGN KEY REFERENCES usuarios(idUsuario)
 );
