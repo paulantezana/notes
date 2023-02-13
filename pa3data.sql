@@ -1,3 +1,10 @@
+GO
+CREATE DATABASE Academico;
+
+GO
+USE Academico;
+
+GO
 CREATE TABLE Alumno(
     ID_Alu INT NOT NULL IDENTITY PRIMARY KEY,
     Nom_alu VARCHAR(128) DEFAULT '', 
@@ -10,46 +17,47 @@ CREATE TABLE Alumno(
 );
 
 GO
-CREATE TABLE Matricula(
-ID_Alu
-ID_Sec
-Fec_mat
-Repite
-);
-
-GO
-CREATE TABLE Nota(
-ID_Alu
-ID_Sec
-ID_Cur
-Nota
-);
-
-GO
-CREATE TABLE Curso(
-ID_Cur INT NOT NULL IDENTITY PRIMARY KEY,
-Nom_cur
-ID_Prof
-);
-
-GO
 CREATE TABLE Seccion(
-ID_Sec INT NOT NULL IDENTITY PRIMARY KEY,
-Grado
-Tutor
+    ID_Sec INT NOT NULL IDENTITY PRIMARY KEY,
+    Grado INT NOT NULL,
+    Tutor VARCHAR(64) DEFAULT '',
+);
+
+GO
+CREATE TABLE Matricula(
+    ID_Alu INT NOT NULL FOREIGN KEY REFERENCES Alumno(ID_Alu),
+    ID_Sec INT NOT NULL FOREIGN KEY REFERENCES Seccion(ID_Sec),
+    Fec_mat DATETIME NOT NULL,
+    Repite BIT DEFAULT 0
 );
 
 GO
 CREATE TABLE Profesor(
-ID_Prof INT NOT NULL IDENTITY PRIMARY KEY,
-Nom_pro
-Ape_pro
-Dir_pro
-Tel_pro
-FN_pro
-Grad_pro
-FC_pro
-Foto
+    ID_Prof INT NOT NULL IDENTITY PRIMARY KEY,
+    Nom_pro VARCHAR(128) DEFAULT '', 
+    Ape_pro VARCHAR(128) DEFAULT '', 
+    Dir_pro VARCHAR(128) DEFAULT '', 
+    Tel_pro VARCHAR(128) DEFAULT '', 
+    FN_pro VARCHAR(128) DEFAULT '', 
+    Grad_pro VARCHAR(128) DEFAULT '', 
+    FC_pro VARCHAR(128) DEFAULT '', 
+    Foto VARCHAR(128) DEFAULT ''
+);
+
+GO
+CREATE TABLE Curso(
+    ID_Cur INT NOT NULL IDENTITY PRIMARY KEY,
+    Nom_cur VARCHAR(128) DEFAULT '', 
+    ID_Prof INT NOT NULL FOREIGN KEY REFERENCES Profesor(ID_Prof) 
+);
+
+-- ERROR
+GO
+CREATE TABLE Nota(
+    ID_Alu INT NOT NULL FOREIGN KEY REFERENCES Matricula(ID_Alu),
+    ID_Sec INT NOT NULL FOREIGN KEY REFERENCES Matricula(ID_Sec),
+    ID_Cur INT NOT NULL FOREIGN KEY REFERENCES Curso(ID_Cur),
+    Nota DECIMAL NOT NULL
 );
 
 
@@ -66,85 +74,93 @@ Foto
 
 
 
+
+GO
+CREATE DATABASE Ventas;
+
+GO
+USE Ventas;
+
+GO
 CREATE TABLE Distrito(
-IdDistrito INT NOT NULL IDENTITY PRIMARY KEY,
-Distrito
-Provincia
-Departamento
+    IdDistrito INT NOT NULL IDENTITY PRIMARY KEY,
+    Distrito VARCHAR(128) DEFAULT '', 
+    Provincia VARCHAR(128) DEFAULT '', 
+    Departamento VARCHAR(128) DEFAULT ''
 );
 
 GO
 CREATE TABLE Cliente(
-IdCliente INT NOT NULL IDENTITY PRIMARY KEY,
-Apellido
-Nombres
-NroRUC
-Direccion
-IdDistrito
-Telefono
-Foto
-E_mail
+    IdCliente INT NOT NULL IDENTITY PRIMARY KEY,
+    Apellido VARCHAR(128) DEFAULT '', 
+    Nombres VARCHAR(128) DEFAULT '', 
+    NroRUC VARCHAR(128) DEFAULT '', 
+    Direccion VARCHAR(128) DEFAULT '', 
+    IdDistrito INT NOT NULL FOREIGN KEY REFERENCES Distrito(IdDistrito),
+    Telefono VARCHAR(128) DEFAULT '', 
+    Foto VARCHAR(128) DEFAULT '', 
+    E_mail VARCHAR(128) DEFAULT ''
 );
 
 GO
 CREATE TABLE Empleado(
-IdEmpleado INT NOT NULL IDENTITY PRIMARY KEY,
-Nombre
-Apellido
-Direccion
-Ciudad
-Estado_civil
-Fecha_nac
-Cargo
-Fecha_Contrato
-Telefono
-Foto
-);
-
-GO
-CREATE TABLE Periodo(
-NroPed
-Fecha_pedido
-Fecha_entrega
-Id_Cliente
-IdEmpleado
-);
-
-GO
-CREATE TABLE DetallePedido(
-NroPedido
-IdProducto
-Cantidad
-Descuento
+    IdEmpleado INT NOT NULL IDENTITY PRIMARY KEY,
+    Nombre VARCHAR(128) DEFAULT '',
+    Apellido VARCHAR(128) DEFAULT '',
+    Direccion VARCHAR(128) DEFAULT '',
+    Ciudad VARCHAR(128) DEFAULT '',
+    Estado_civil VARCHAR(128) DEFAULT '',
+    Fecha_nac DATETIME DEFAULT NULL,
+    Cargo VARCHAR(128) DEFAULT '',
+    Fecha_Contrato DATETIME DEFAULT NULL,
+    Telefono  VARCHAR(128) DEFAULT '',
+    Foto VARCHAR(128) DEFAULT ''
 );
 
 GO
 CREATE TABLE Proveedor(
-IdProveedor INT NOT NULL IDENTITY PRIMARY KEY,
-NombreCompania
-NombreContacto
-Cargo
-Direccion
-Ciudad
-Telefono
-Pais
-Foto
+    IdProveedor INT NOT NULL IDENTITY PRIMARY KEY,
+    NombreCompania VARCHAR(128) DEFAULT '',
+    NombreContacto VARCHAR(128) DEFAULT '',
+    Cargo VARCHAR(128) DEFAULT '',
+    Direccion VARCHAR(128) DEFAULT '',
+    Ciudad VARCHAR(128) DEFAULT '',
+    Telefono VARCHAR(128) DEFAULT '',
+    Pais VARCHAR(128) DEFAULT '',
+    Foto VARCHAR(128) DEFAULT ''
 );
 
 GO
 CREATE TABLE Categoria(
-IdCategoria INT NOT NULL IDENTITY PRIMARY KEY,
-Nombre
-Desc_cate
+    IdCategoria INT NOT NULL IDENTITY PRIMARY KEY,
+    Nombre VARCHAR(128) DEFAULT '',
+    Desc_cate VARCHAR(128) DEFAULT ''
 );
 
 GO
 CREATE TABLE Producto(
-IdProducto INT NOT NULL IDENTITY PRIMARY KEY,
-NomProducto
-PrecioUnit
-Stock
-Foto
-IdCategoria
-IdProveedor
+    IdProducto INT NOT NULL IDENTITY PRIMARY KEY,
+    NomProducto VARCHAR(128) DEFAULT '',
+    PrecioUnit DECIMAL DEFAULT 0.00,
+    Stock DECIMAL DEFAULT 0.00,
+    Foto VARCHAR(128) DEFAULT '',
+    IdCategoria INT NOT NULL FOREIGN KEY REFERENCES Categoria(IdCategoria),
+    IdProveedor INT NOT NULL FOREIGN KEY REFERENCES Proveedor(IdProveedor)
+);
+
+GO
+CREATE TABLE Periodo(
+    NroPed VARCHAR(12) NOT NULL PRIMARY KEY,
+    Fecha_pedido DATETIME DEFAULT NULL,
+    Fecha_entrega DATETIME DEFAULT NULL,
+    Id_Cliente INT NOT NULL FOREIGN KEY REFERENCES Cliente(IdCliente),
+    IdEmpleado INT NOT NULL FOREIGN KEY REFERENCES Empleado(IdEmpleado)
+);
+
+GO
+CREATE TABLE DetallePedido(
+    NroPedido VARCHAR(12) FOREIGN KEY REFERENCES Periodo(NroPed),
+    IdProducto INT NOT NULL FOREIGN KEY REFERENCES Producto(IdProducto),
+    Cantidad DECIMAL NOT NULL,
+    Descuento DECIMAL DEFAULT 0.00
 );
