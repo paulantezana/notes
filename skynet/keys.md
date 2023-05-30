@@ -218,23 +218,27 @@ http://gimnasio.pe/cpanel
 cPanel username	gimnicig
 cPanel password	m5HCNzV0zwVc
 
-
+===========================
 | Domain: saskaboutiquehotel.com
 | UserName: saskaboutiquehot
 | PassWord: bs4G5w!55ZQc
 
-
+===========================
 | Domain: skynetcorp.pe
 | UserName: skynetcorp
 | PassWord: 2^MBCBOYeOqu
 
-
+===========================
 facturacionelectronicaperu.com
 facturacione
 m5HCNzV0zwVc
 
-
-
+===========================
 saskaboutiquehotel.com
 | UserName: saskaboutiquehot
 | PassWord: bs4G5w!55ZQc
+
+===========================
+http://linktravelpay.com/cpanel
+cPanel username	linkrqxi
+cPanel password	jUVLs8DhhWhv

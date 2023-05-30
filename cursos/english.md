@@ -8,3 +8,11 @@ i tell you when i was seven years old, my mother sell me a radio, on this is tim
 --
 Yesterday i went to the supermaker while listened my favorite music, two girls aproched me offering to travel around the world, i was very exited, then i met two other girls using agresive marketing to try to seel me their services.
 --
+
+Corrigeme, estoy aprendiendo ingles.
+
+hello good morgin everbody, My name is paul yoel antezana, i have 27 yeras old, at the moment i am study software enginer in continental university. about my tacnical skills, i worked in code peru wich tecnologies in php, javascript, go, then, i worked in skynet corp when i building a lot of softwares by example: saller system, hotel system, electronic billing invoice, etc. at the moment work in enproyect company whe we build erp software. 
+
+About my soft skill i can help you in build the best softwares, an on clock time. beside, i am very empatic with my workmates, i am good in team works.
+
+About my expectacion about this company is increce my soft skills and hard skill becasuse  i want to increce my income and i live beter in future, i would like travel around of the wold. i would like had a beautifull girlfriend. those are my dreams
