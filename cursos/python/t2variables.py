@@ -47,3 +47,25 @@ print("feliz" not in ANIMAL) # Buscar
 # Escape a caracteres
 SEGUNDO_CURSO = "Nombre del curso es \"python\""
 print(SEGUNDO_CURSO)
+
+
+# ==========================================================================
+# Trabajando con numeros
+print('==========================================================================')
+print('numeros')
+
+NUMERO = 5
+DECIMAL = 1.2
+IMAGINARIO = 2 + 2j # donde "j" indica que es un numero imaginario
+
+print(1 + 3)
+print(4 + 2)
+print(1 / 3)
+print(1 // 3) # El resultado sale solo el numero entero
+print(1 % 3) # Modulo
+print(2 * 3)
+print(2 ** 3) # Potencia
+
+NUMERO += 5
+
+print(NUMERO)

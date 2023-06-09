@@ -112,6 +112,7 @@ begin
 	left join dictionary.screen_entities as sen on tbl.schema_name = sen.schema_name and tbl.table_name = sen.table_name and tbl.multiple = sen.multiple
    	where sen.id is null;
 
+    -- I N S E R T
     insert into dictionary.screen_entity_fields (
 	  field_name,
 	  field_title,
@@ -152,58 +153,70 @@ begin
 		inner join dictionary.screen_entities as se on se.id = sef.screen_entity_id and se.schema_name = _schema_name and se.table_name = _table_name
 	) as dsef on dsef.field_name = isc.column_name and dsef.schema_name = isc.table_schema and dsef.table_name = isc.table_name
 	where dsef.id is null;
+
+	-- U P D A T E
+	update dictionary.screen_entity_fields AS sef_update
+	set data_type = col.data_type,
+	    is_nullable = case when col.is_nullable='YES' then true else false end,
+	    character_maximum_length = col.character_maximum_length,
+	    col_index = col.ordinal_position
+	from dictionary.screen_entity_fields AS sef
+	inner join dictionary.screen_entities AS se ON se.id = sef.screen_entity_id AND se.schema_name = _schema_name AND se.table_name = _table_name
+	inner join information_schema.columns AS col ON col.table_schema = se.schema_name AND col.table_name = se.table_name AND col.column_name = sef.field_name;
+
+	-- D E L E T E
+	delete from dictionary.screen_entity_fields where id in (
+		select sef.id from dictionary.screen_entity_fields as sef
+		inner join dictionary.screen_entities as se on se.id = sef.screen_entity_id and se.schema_name = _schema_name and se.table_name = _table_name
+		left join information_schema.columns as col on col.table_schema = se.schema_name and col.table_name = se.table_name and col.column_name = sef.field_name
+		where col.column_name is null
+	);
 end;
 $$;
 
-call dictionary.us_build_base_entity('maintenance', 'categories');
-select * from dictionary.screen_entities;
+-- call dictionary.us_build_base_entity('maintenance', 'categories');
+-- select * from dictionary.screen_entities;
 
-select * from dictionary.screen_entity_fields where screen_entity_id = 1
+-- p a g i n a t e         h e a d e r
+select field_name, field_title, filterable, sortable, visible, col_index from dictionary.screen_entity_fields as dsef
+inner join dictionary.screen_entities as se on dsef.screen_entity_id = se.id
+where se.multiple = true
 
- /*
-	
-	end;
+-- f o r m
+select field_name, field_title, field_placeholder, character_maximum_length, col_index, row_index, col_span, row_span from dictionary.screen_entity_fields as dsef
+inner join dictionary.screen_entities as se on dsef.screen_entity_id = se.id
+where se.multiple = false
+
+
+call paginacion(1,3,"maintenance.categories");
+
+CREATE OR REPLACE FUNCTION paginacion(pagina INTEGER, tamaño INTEGER, tabla_name TEXT)
+RETURNS TABLE (
+    total_registros INTEGER,
+    total_paginas INTEGER,
+    registro RECORD
+) AS $$
+DECLARE
+    offset_val INTEGER;
+    query_str TEXT;
+    column_list TEXT;
+BEGIN
+    -- Calcula el desplazamiento
+    offset_val := (pagina - 1) * tamaño;
+    
+    query_str := format('SELECT column_name FROM information_schema.columns WHERE table_name = %L;', tabla_name);
+    EXECUTE query_str INTO column_list;
+    
+
+    query_str := format('SELECT COUNT(*) FROM %I;', tabla_name);
+    EXECUTE query_str INTO total_registros;
+    
    
-   	select * from dictionary.screen_entities as se
-   	cross join information_schema.columns as c
-		on c.table_schema = se.schema_name and c.table_name = se.table_name 
-		and 
-   	
-   	select * from information_schema.columns
-   
- select
-		column_name,
-		column_name,
-		column_name,
-		column_name,
-		data_type,
-		'input',
-		case when is_nullable='YES' then true else false end,
-		character_maximum_length,
-		true,
-		true,
-		true,
-		ordinal_position
-	from information_schema.columns
-	where table_schema = 'maintenance' and table_name = 'categories'
-
-
+    total_paginas := CEIL(total_registros::NUMERIC / tamaño);
+    query_str := format('SELECT * FROM %I ORDER BY columna1 LIMIT %s OFFSET %s;', tabla_name, tamaño, offset_val);
+    
+    RETURN QUERY EXECUTE query_str;
 END;
-$$;
-
-call dictionary.us_build_base_entity('maintenance', 'categories');
-select * from dictionary.screen_entities;
-
-SELECT * FROM (
-    VALUES
-        ('Valor1', 'Valor2'),
-        ('Valor3', 'Valor4')
-) AS tabla(columna1, columna2);
-
-
-CREATE TABLE dictionary.screens (
-  id serial primary key,
-  name varchar(128) NOT NULL,
-  type varchar(12) DEFAULT 'TABLE' CHECK (type IN ('TABLE', 'LIST', 'FORM', 'CUSTOM')),
+$$ LANGUAGE plpgsql;
 
 
