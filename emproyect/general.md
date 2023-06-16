@@ -57,3 +57,29 @@ exec [dbo].[up_ValorizadorPenalizable_Sellst] @contrato_lote_id, @liquidacion_id
 ```
 
 
+# TAREAS
+Revisar los reportes, segun los siguientes pasos:
+
+1. Emitir reporte
+2. Si no sale: Corregir, Si sale dato Verificar que se correcto
+3. Indicar status del reporte
+
+Reportes:
+
+- Reporte balance de saldos                             ✅
+- Plan de cuentas                                       ⚠️ Muy lento
+- Reporte balance de comprobacion                       ✅
+- Reporte balance de comprobacion 12 meses              ⚠️ SOLO PIVOT
+- Analisis de cuenta                                    ✅
+- Comprobantes contables                                ✅
+- Reporte estados financieros                           ✅
+- Reporte situacion financiera (CTB105)                 ✅
+- Reporte situacion financiera analitico (CTB106)       ✅
+- Reporte situacion financiera x meses (CTB110)         ✅
+- Libros electronicos
+- Reporte de estado de resultados                       ✅
+- Reporte de estado de resultados x dimension           ✅
+- Reporte de estado de resultados mensual               ✅
+- Reporte de estado de resultados mensual analitico     ✅
+- Reporte de diario resumen                             ✅
+- Flujo de efectivo                                     ⚠️ falta migrar el modelo
