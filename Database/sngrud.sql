@@ -131,7 +131,8 @@ insert into app.screen_entities (name, description, schema_name, table_name, scr
 			('Roles', 'Roles tabla', 'app','user_roles',2,true),
 			('Usuario', 'Usuario formulario', 'app','users',3,false),
 			('Usuario', 'Usuario tabla', 'app','users',4,true);
-select * from app.screen_entities
+		
+
 DROP TABLE IF EXISTS app.screen_entities;
 CREATE TABLE app.screen_entities (
   id serial primary key,
