@@ -1,6 +1,7 @@
 /*
-docker run --name sncrud -e POSTGRES_PASSWORD=newdata -d postgres
 docker run --name postgresql -e POSTGRES_USER=yoel -e POSTGRES_PASSWORD=newdata -p 5432:5432 -d postgres
+docker exec -it postgresql psql -U yoel
+CREATE DATABASE nombre_de_la_base_de_datos;
 */
 
 
@@ -92,7 +93,7 @@ CREATE TABLE app.users (
   user_name varchar(64) NOT NULL,
   password varchar(64) NOT NULL,
   full_name varchar(255) NOT NULL,
-  last_name varchar(255) NOT NULL,
+  last_name varchar(255) default '',
   gender varchar(1) DEFAULT '2' CHECK (gender IN ('0', '1', '2')),
   avatar varchar(64) DEFAULT '',
   email varchar(64) DEFAULT '',
@@ -115,25 +116,6 @@ CREATE TABLE app.screen_action_roles (
   screen_action_id int NOT null REFERENCES app.screen_actions(id) ON DELETE RESTRICT ON UPDATE RESTRICT
 );
 
-insert into app.menus (title, description, icon, url_path, parent_id, sort_order)
-	values ('Manteminiento','Manteminiento','','maintenance',null,2),
-			('Usuario','Usuario','','maintenance/user',1,1),
-			('Roles','Roles','','maintenance/userRole',1,2);
-
-insert into app.screens (name, description, type, menu_id, url_path, help_url)
-	values ('Roles', 'Roles formulario', 'FORM',3,'maintenance/userRole/form',''),
-			('Roles', 'Roles tabla', 'TABLE',3,'maintenance/userRole',''),
-			('Usuario', 'Usuario formulario', 'FORM',2,'maintenance/user/form',''),
-			('Usuario', 'Usuario tabla', 'TABLE',2,'maintenance/user','');
-		
-insert into app.screen_entities (name, description, schema_name, table_name, screen_id, multiple)
-	values ('Roles', 'Roles formulario', 'app','user_roles',1,false),
-			('Roles', 'Roles tabla', 'app','user_roles',2,true),
-			('Usuario', 'Usuario formulario', 'app','users',3,false),
-			('Usuario', 'Usuario tabla', 'app','users',4,true);
-		
-
-DROP TABLE IF EXISTS app.screen_entities;
 CREATE TABLE app.screen_entities (
   id serial primary key,
   name varchar(128) NOT NULL,
@@ -156,7 +138,6 @@ CREATE TABLE app.screen_entities (
   updated_user varchar(64) DEFAULT ''
 );
 
-DROP TABLE IF EXISTS app.screen_entity_groups;
 CREATE TABLE app.screen_entity_groups (
   id serial primary key,
   name varchar(128) NOT NULL,
@@ -171,7 +152,6 @@ CREATE TABLE app.screen_entity_groups (
   updated_user varchar(64) DEFAULT ''
 );
 
-DROP TABLE IF EXISTS app.screen_entity_fields;
 CREATE TABLE app.screen_entity_fields (
   id serial primary key,
   field_name varchar(128) NOT NULL,
@@ -206,49 +186,49 @@ CREATE TABLE app.screen_entity_fields (
 );
 
 
+insert into app.user_roles (description) values ('APP');
+insert into app.users (user_name, password, full_name, last_name, user_role_id) values ('app','app','app','app',1);
+
+insert into app.menus (title, description, icon, url_path, parent_id, sort_order)
+	values ('Manteminiento','Manteminiento','','maintenance',null,2),
+			('Usuario','Usuario','','maintenance/user',1,1),
+			('Roles','Roles','','maintenance/userRole',1,2);
+
+insert into app.screens (name, description, type, menu_id, url_path, help_url)
+	values ('Roles', 'Roles formulario', 'FORM',3,'maintenance/userRole/form',''),
+			('Roles', 'Roles tabla', 'TABLE',3,'maintenance/userRole',''),
+			('Usuario', 'Usuario formulario', 'FORM',2,'maintenance/user/form',''),
+			('Usuario', 'Usuario tabla', 'TABLE',2,'maintenance/user','');
+		
+insert into app.screen_entities (name, description, schema_name, table_name, screen_id, multiple)
+	values ('Roles', 'Roles formulario', 'app','user_roles',1,false),
+			('Roles', 'Roles tabla', 'app','user_roles',2,true),
+			('Usuario', 'Usuario formulario', 'app','users',3,false),
+			('Usuario', 'Usuario tabla', 'app','users',4,true);
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 
 
 
 
-
-
-
-
-CREATE SCHEMA maintenance;
-CREATE TABLE maintenance.categories (
-  id serial primary key,
-  
-  description varchar(128) NOT NULL,
-
-  state smallint DEFAULT 1,
-  updated_at timestamp(6) DEFAULT NULL,
-  created_at timestamp(6) DEFAULT NULL,
-  created_user varchar(64) DEFAULT '',
-  updated_user varchar(64) DEFAULT ''
-);
-
-
-CREATE OR REPLACE PROCEDURE dictionary.us_build_base_entity(
+CREATE OR REPLACE PROCEDURE app.usp_build_base_entity_fields(
  	in _schema_name VARCHAR(64),	
-    in _table_name VARCHAR(64)
-    in _screen_id int
+    in _table_name VARCHAR(64),
+    in _screen_entity_id int
 )
 LANGUAGE plpgsql
 AS $$
 begin
-	insert into dictionary.screen_entities (name, schema_name, table_name, multiple, screen_id)
-	select _table_name, tbl.schema_name, tbl.table_name, tbl.multiple, tbl.screen_id  from (
-															VALUES(_schema_name, _table_name, true, _screen_id),
-																(_schema_name, _table_name, false, _screen_id)
-													) as tbl(schema_name, table_name, multiple, screen_id)
-	left join dictionary.screen_entities as sen on tbl.schema_name = sen.schema_name
-												and tbl.table_name = sen.table_name
-												and tbl.multiple = sen.multiple
-												and tbl.screen_id = sen.screen_id
-   	where sen.id is null;
-
     -- I N S E R T
-    insert into dictionary.screen_entity_fields (
+    insert into app.screen_entity_fields (
 	  field_name,
 	  field_title,
 	  field_description,
@@ -276,19 +256,15 @@ begin
 		true,
 		true,
 		isc.ordinal_position,
-		dse.id
-	from (
-		select id, schema_name, table_name, multiple from dictionary.screen_entities where schema_name = _schema_name and table_name = _table_name and screen_id = _screen_id
-	) as dse
-	cross join (
-		select * from information_schema.columns as sc where sc.table_schema = _schema_name and sc.table_name = _table_name
-	) as isc
+		_screen_entity_id
+	from information_schema.columns as isc
 	left join (
-		select sef.id, se.schema_name, se.table_name, sef.field_name from dictionary.screen_entity_fields as sef
-		inner join dictionary.screen_entities as se on se.id = sef.screen_entity_id and se.schema_name = _schema_name and se.table_name = _table_name and se.screen_id = _screen_id
+		select sef.id, se.schema_name, se.table_name, sef.field_name from app.screen_entity_fields as sef
+		inner join app.screen_entities as se on se.id = sef.screen_entity_id and se.id = _screen_entity_id
 	) as dsef on dsef.field_name = isc.column_name and dsef.schema_name = isc.table_schema and dsef.table_name = isc.table_name
-	where dsef.id is null;
+	where isc.table_schema = _schema_name and isc.table_name = _table_name and dsef.id is null;
 
+/*
 	-- U P D A T E
 	update dictionary.screen_entity_fields AS sef_update
 	set data_type = col.data_type,
@@ -306,11 +282,14 @@ begin
 		left join information_schema.columns as col on col.table_schema = se.schema_name and col.table_name = se.table_name and col.column_name = sef.field_name
 		where col.column_name is null
 	);
+	*/
 end;
 $$;
 
--- call dictionary.us_build_base_entity('maintenance', 'categories');
--- select * from dictionary.screen_entities;
+
+call app.usp_build_base_entity_fields('app', 'users', 4); -- user TABLE
+select * from app.screen_entities;
+select * from app.screen_entity_fields
 
 -- p a g i n a t e         h e a d e r
 select field_name, field_title, filterable, sortable, visible, col_index from dictionary.screen_entity_fields as dsef
@@ -357,5 +336,27 @@ $$ LANGUAGE plpgsql;
 
 call paginacion(1,10,"screens")
 
+
+
+    select
+		isc.column_name,
+		isc.column_name,
+		isc.column_name,
+		isc.column_name,
+		isc.data_type,
+		'input',
+		case when is_nullable='YES' then true else false end,
+		isc.character_maximum_length,
+		true,
+		true,
+		true,
+		isc.ordinal_position,
+		1
+	from information_schema.columns as isc
+	left join (
+		select sef.id, se.schema_name, se.table_name, sef.field_name from app.screen_entity_fields as sef
+		inner join app.screen_entities as se on se.id = sef.screen_entity_id and se.id = 1
+	) as dsef on dsef.field_name = isc.column_name and dsef.schema_name = isc.table_schema and dsef.table_name = isc.table_name
+	where isc.table_schema = 'app' and isc.table_name = 'users' and dsef.id is null;
 
 
