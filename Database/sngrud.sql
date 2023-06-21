@@ -15,8 +15,8 @@ CREATE TABLE app.actions (
   icon varchar(64) DEFAULT '',
   event_name varchar(64) NOT NULL,
   event_name_prefix varchar(64) DEFAULT NULL,
-  parent_id int NOT NULL,
-  sort_order int NOT NULL,
+  parent_id int default NULL,
+  sort_order int default NULL,
   position varchar(12) DEFAULT 'TABLE' CHECK (position IN ('TABLE', 'TOOLBAR', 'FILTER', 'FOOTER')),
   class_names varchar(24) NOT NULL DEFAULT '',
   type varchar(24) DEFAULT 'button',
@@ -206,14 +206,18 @@ insert into app.screen_entities (name, description, schema_name, table_name, scr
 			('Usuario', 'Usuario formulario', 'app','users',3,false),
 			('Usuario', 'Usuario tabla', 'app','users',4,true);
 		
-		
-		
-		
-		
-		
-		
-		
-		
+insert into app.actions (title, description, icon, event_name, position)
+values ('Refrescar','Refrescar','','refresh', 'TOOLBAR'),
+		('Nuevo','Nuevo','','new','TOOLBAR'),
+		('Aditar','Aditar','','edit','TABLE'),
+		('Eliminar','Eliminar','','delete','TABLE'),
+		('Guardar','Guardar','','submit','TOOLBAR'),
+		('Listar','Listar','','list','TOOLBAR');
+	
+insert into app.screen_actions (action_id, screen_id)
+	values (1,4), (2,4), (3,4), (4,4);
+
+
 		
 
 
