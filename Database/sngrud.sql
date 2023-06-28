@@ -29,7 +29,6 @@ CREATE TABLE app.actions (
   updated_user varchar(64) DEFAULT ''
 );
 
-
 CREATE TABLE app.menus (
   id serial primary key,
   title varchar(64) NOT NULL,
@@ -307,6 +306,8 @@ where se.multiple = false
 
 
 call paginacion(1,3,"maintenance.categories");
+
+-- select * from app.users
 
 CREATE OR REPLACE FUNCTION paginacion(pagina INTEGER, tamaño INTEGER, tabla_name TEXT)
 RETURNS TABLE (
