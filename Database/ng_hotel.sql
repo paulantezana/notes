@@ -73,3 +73,15 @@ CREATE TABLE maintenance_room_type_categories(
     CONSTRAINT fk_room_type_categories_categories FOREIGN KEY (category_id) REFERENCES maintenance_categories (id)
         ON UPDATE CASCADE ON DELETE CASCADE
 ) ENGINE=InnoDB;
+
+-- Tarifas de temporada y cambios de tarifa temporales
+-- prices-seasonal-price
+
+-- Listas de precios alternativos 
+-- price-list
+
+-- Descuento para estadías más largas
+
+
+-- Códigos de cupón 
+-- prices-coupon-code

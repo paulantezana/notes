@@ -186,7 +186,15 @@ CREATE TABLE app.screen_entity_fields (
 
 
 insert into app.user_roles (description) values ('APP');
-insert into app.users (user_name, password, full_name, last_name, user_role_id) values ('app','app','app','app',1);
+insert into app.users (user_name, password, full_name, last_name, user_role_id)
+	values ('app','app','app','app',1),
+			('lima','lima','lima','lima',1),
+			('trujillo','trujillo','trujillo','trujillo',1),
+			('tumbes','tumbes','tumbes','tumbes',1),
+			('tacna','tacna','tacna','tacna',1),
+			('cusco','cusco','cusco','cusco',1),
+			('puno','puno','puno','puno',1),
+			('moquegua','moquegua','moquegua','moquegua',1);
 
 insert into app.menus (title, description, icon, url_path, parent_id, sort_order)
 	values ('Manteminiento','Manteminiento','','maintenance',null,2),
@@ -293,7 +301,7 @@ $$;
 call app.usp_build_base_entity_fields('app', 'users', 4); -- user TABLE
 select * from app.screen_entities;
 select * from app.screen_entity_fields
-
+select * from app.users
 -- p a g i n a t e         h e a d e r
 select field_name, field_title, filterable, sortable, visible, col_index from dictionary.screen_entity_fields as dsef
 inner join dictionary.screen_entities as se on dsef.screen_entity_id = se.id
