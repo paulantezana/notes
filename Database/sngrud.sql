@@ -2,6 +2,11 @@
 docker run --name postgresql -e POSTGRES_USER=yoel -e POSTGRES_PASSWORD=newdata -p 5432:5432 -d postgres
 docker exec -it postgresql psql -U yoel
 CREATE DATABASE nombre_de_la_base_de_datos;
+
+
+CREATE ROLE sn_crud_user LOGIN PASSWORD 'cascadesheet';
+CREATE DATABASE sn_crud OWNER sn_crud_user;
+
 */
 
 
@@ -52,6 +57,7 @@ CREATE TABLE app.screens (
   name varchar(128) NOT NULL,
   description varchar(64) DEFAULT '',
   type varchar(12) DEFAULT 'TABLE' CHECK (type IN ('TABLE', 'LIST', 'FORM', 'CUSTOM')),
+  is_primary bool default false,
 
   menu_id int DEFAULT null REFERENCES app.menus(id) ON DELETE RESTRICT ON UPDATE RESTRICT,
   url_path varchar(128) DEFAULT '',
@@ -168,6 +174,7 @@ CREATE TABLE app.screen_entity_fields (
   row_index int DEFAULT null,
   col_span int default null,
   row_span int default null,
+  col_width numeric(6,2) default 0.00,
   
   sp_load varchar(128) default '',
   sp_validate varchar(128) default '',
@@ -201,11 +208,11 @@ insert into app.menus (title, description, icon, url_path, parent_id, sort_order
 			('Usuario','Usuario','','maintenance/user',1,1),
 			('Roles','Roles','','maintenance/userRole',1,2);
 
-insert into app.screens (name, description, type, menu_id, url_path, help_url)
-	values ('Roles', 'Roles formulario', 'FORM',3,'maintenance/userRole/form',''),
-			('Roles', 'Roles tabla', 'TABLE',3,'maintenance/userRole',''),
-			('Usuario', 'Usuario formulario', 'FORM',2,'maintenance/user/form',''),
-			('Usuario', 'Usuario tabla', 'TABLE',2,'maintenance/user','');
+insert into app.screens (name, description, type, menu_id, url_path, help_url, is_primary)
+	values ('Roles', 'Roles formulario', 'FORM',3,'maintenance/userRole/form','',false),
+			('Roles', 'Roles tabla', 'TABLE',3,'maintenance/userRole','',true),
+			('Usuario', 'Usuario formulario', 'FORM',2,'maintenance/user/form','',false),
+			('Usuario', 'Usuario tabla', 'TABLE',2,'maintenance/user','',true);
 		
 insert into app.screen_entities (name, description, schema_name, table_name, screen_id, multiple)
 	values ('Roles', 'Roles formulario', 'app','user_roles',1,false),
@@ -223,10 +230,6 @@ values ('Refrescar','Refrescar','','refresh', 'TOOLBAR'),
 	
 insert into app.screen_actions (action_id, screen_id)
 	values (1,4), (2,4), (3,4), (4,4);
-
-
-		
-
 
 
 
@@ -256,8 +259,8 @@ begin
 	)
     select
 		isc.column_name,
-		isc.column_name,
-		isc.column_name,
+		initcap(replace(isc.column_name, '_', ' ')),
+		initcap(replace(isc.column_name, '_', ' ')),
 		isc.column_name,
 		isc.data_type,
 		'input',
@@ -265,7 +268,7 @@ begin
 		isc.character_maximum_length,
 		true,
 		true,
-		true,
+		case when isc.column_name in ('updated_at','created_at','created_user','updated_user') then false else true end,
 		isc.ordinal_position,
 		_screen_entity_id
 	from information_schema.columns as isc
@@ -275,7 +278,8 @@ begin
 	) as dsef on dsef.field_name = isc.column_name and dsef.schema_name = isc.table_schema and dsef.table_name = isc.table_name
 	where isc.table_schema = _schema_name and isc.table_name = _table_name and dsef.id is null;
 
-/*
+
+	/*
 	-- U P D A T E
 	update dictionary.screen_entity_fields AS sef_update
 	set data_type = col.data_type,
@@ -297,79 +301,26 @@ begin
 end;
 $$;
 
+truncate table app.screen_entity_fields
 
-call app.usp_build_base_entity_fields('app', 'users', 4); -- user TABLE
-select * from app.screen_entities;
-select * from app.screen_entity_fields
-select * from app.users
--- p a g i n a t e         h e a d e r
-select field_name, field_title, filterable, sortable, visible, col_index from dictionary.screen_entity_fields as dsef
-inner join dictionary.screen_entities as se on dsef.screen_entity_id = se.id
-where se.multiple = true and screen_id = 1
-
--- f o r m
-select field_name, field_title, field_placeholder, character_maximum_length, col_index, row_index, col_span, row_span from dictionary.screen_entity_fields as dsef
-inner join dictionary.screen_entities as se on dsef.screen_entity_id = se.id
-where se.multiple = false
+call app.usp_build_base_entity_fields('app', 'users', 4); -- user table
+call app.usp_build_base_entity_fields('app', 'user_roles', 2); -- user table
 
 
-call paginacion(1,3,"maintenance.categories");
+select am.id, am.title, am.description, am.icon, am.parent_id, am.sort_order, sc.id as screen_id, sc."type" as screen_type FROM app.menus as am
+left join app.screens as sc on am.id = sc.menu_id and sc.state = true and sc.is_primary = true
+where am.state = true
 
--- select * from app.users
+-- and sc."type"  = 'TABLE'
 
-CREATE OR REPLACE FUNCTION paginacion(pagina INTEGER, tamaño INTEGER, tabla_name TEXT)
-RETURNS TABLE (
-    total_registros INTEGER,
-    total_paginas INTEGER,
-    registro RECORD
-) AS $$
-DECLARE
-    offset_val INTEGER;
-    query_str TEXT;
-    column_list TEXT;
-BEGIN
-    -- Calcula el desplazamiento
-    /*offset_val := (pagina - 1) * tamaño;
-    
-    query_str := format('SELECT column_name FROM information_schema.columns WHERE table_name = %L;', tabla_name);
-    EXECUTE query_str INTO column_list;
-    
+select * from app.menus
 
-    query_str := format('SELECT COUNT(*) FROM %I;', tabla_name);
-    EXECUTE query_str INTO total_registros;
-    
-   
-    total_paginas := CEIL(total_registros::NUMERIC / tamaño);
-    query_str := format('SELECT * FROM %I ORDER BY columna1 LIMIT %s OFFSET %s;', tabla_name, tamaño, offset_val);
-    
-    RETURN QUERY EXECUTE query_str;*/
-	select * from "dictionary".screens;
-END;
-$$ LANGUAGE plpgsql;
+alter table app.screen_entity_fields add column col_width numeric(6,2) default 0.00;
+alter table app.screen_entity_fields drop column col_width;
 
-call paginacion(1,10,"screens")
+select dsef.field_name, dsef.field_title, dsef.filterable, dsef.sortable, dsef.visible, dsef.col_index, dsef.col_width
+from app.screen_entity_fields as dsef
+inner join app.screen_entities as se on dsef.screen_entity_id = se.id
+where se.multiple = true
 
-
-
-    select
-		isc.column_name,
-		isc.column_name,
-		isc.column_name,
-		isc.column_name,
-		isc.data_type,
-		'input',
-		case when is_nullable='YES' then true else false end,
-		isc.character_maximum_length,
-		true,
-		true,
-		true,
-		isc.ordinal_position,
-		1
-	from information_schema.columns as isc
-	left join (
-		select sef.id, se.schema_name, se.table_name, sef.field_name from app.screen_entity_fields as sef
-		inner join app.screen_entities as se on se.id = sef.screen_entity_id and se.id = 1
-	) as dsef on dsef.field_name = isc.column_name and dsef.schema_name = isc.table_schema and dsef.table_name = isc.table_name
-	where isc.table_schema = 'app' and isc.table_name = 'users' and dsef.id is null;
-
-
+select initcap('como')
