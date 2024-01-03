@@ -47,6 +47,9 @@ ACCESO CONCAR:
 user: WPP
 pass: WPP
 
+CONCAR GRATIS
+user: SIST
+pass: NORTON
 
 SUAGGER
 http://192.168.33.206:8085/swagger/index.html
