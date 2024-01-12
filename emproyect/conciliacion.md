@@ -48,6 +48,10 @@ CREATE TABLE Financiero.LoteTransaccionConciliacion(
 
 GO
 
+ALTER TABLE Financiero.LoteTransaccionConciliacion ADD TotalMonedaSistema decimal(18, 6) NULL
+
+GO
+
 CREATE TABLE Financiero.LoteTransaccionConciliacionDetalle (
     Id int IDENTITY(1,1) NOT NULL PRIMARY KEY,
     IdTransaccion INT NOT NULL,
