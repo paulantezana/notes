@@ -40,9 +40,11 @@ EXEC [Maestros].[usp_ObtenerViewPaginado]
  @Page   = 1,
  @Rows    =15,
  @OrderBy  = 'desc',
- @SortColumn =  'id'  ,  
- @Table    ='LoteTransaccionInventarioRecepcion'  ,
- @FiltrosAdicionales =''
+ @SortColumn =  'id',
+ @Pantalla = 'FIN.CTB.007',
+ @FiltrosAdicionales ='',
+ @Usuario = 'Admin',
+ @IdCompanias = '27'
  */
 -- =================================================================================================
 -- =================================== GENERA DICCIONARIO VISTAS ===================================

@@ -1,0 +1,5 @@
+-- ==============================================================================
+-- P R O C E S A R        I N S E R T A       A S I E N T O       D I A R I O
+-- [Financiero].[usp_Procesa_DistribucionCostosPorPeriodo]
+-- [Financiero].[usp_Genera_DistribucionCostosAsientoContableCabecera]
+-- [Financiero].[usp_Genera_DistribucionCostosAsientoContableDetalle]
