@@ -1,0 +1,466 @@
+[
+    {
+        "title": "Setup del proyecto Clean Architecture - Importante",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cmqoc90noeps72qfa5mg?autoplay=true&time=3&crosstime=334"
+    },
+    {
+        "title": "Instalación de Herramientas",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cmqoct4hnk6s72tgu62g?autoplay=true&time=4&crosstime=334"
+    },
+    {
+        "title": "Compilación de Proyectos Clean Architecture",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cmqodbaq9n7s72sd38e0?enable-playbar=true&verify=x68Thgi_JJ08CKlGBLIvVnh8enn66ICFV_osmn5kyJU&autoplay=true&crosstime=334"
+    },
+    {
+        "title": "Identificadores Strong ID en DDD",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cmqolugnoeps72qfa5u0?autoplay=true&time=1&crosstime=334"
+    },
+    {
+        "title": "Creación de Identificadores",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cmqomop0fiac72v5l1o0?autoplay=true&crosstime=648"
+    },
+    {
+        "title": "Eventos en Domain",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cmqon0chnk6s72tgu6bg?autoplay=true&time=1&crosstime=284"
+    },
+    {
+        "title": "Modelando Ids en Entidades",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cmqonkaq9n7s72sd38pg?autoplay=true&crosstime=1067"
+    },
+    {
+        "title": "Infrastructure y Configuración de Entidades",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cmqonth0fiac72v5l1p0?autoplay=true&crosstime=414"
+    },
+    {
+        "title": "Conversión para Strong Type Id",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cmqooaqq9n7s72sd38r0?autoplay=true&time=18&crosstime=943"
+    },
+    {
+        "title": "Modelos de Authenticacion en Clean Architecture",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cmqpmhchnk6s72tgu77g?autoplay=true&time=24&crosstime=739"
+    },
+    {
+        "title": "Encriptación y JWT",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cmqpn0p0fiac72v5l2k0?autoplay=true&crosstime=445"
+    },
+    {
+        "title": "Creando Object Value HashPassword",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cmqpnb4hnk6s72tgu79g?autoplay=true&crosstime=314"
+    },
+    {
+        "title": "Handler Login y Metodo Repository",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cmqpo3aq9n7s72sd39r0?autoplay=true&crosstime=852"
+    },
+    {
+        "title": "Creando Json Web Tokens",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cmqpqo4hnk6s72tgu7d0?autoplay=true&crosstime=450"
+    },
+    {
+        "title": "Lógica de Json Web Tokens",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/coaklav25h5s72rt6dd0?autoplay=true&crosstime=993"
+    },
+    {
+        "title": "Handler de Login",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cmqpraqq9n7s72sd39t0?autoplay=true&crosstime=132"
+    },
+    {
+        "title": "Controller y Acceso con JWT",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cmqprq90fiac72v5l2ng?autoplay=true&crosstime=1707"
+    },
+    {
+        "title": "Registro de Usuarios",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cmqpsr10fiac72v5l2p0?autoplay=true&crosstime=590"
+    },
+    {
+        "title": "Repository User - Busqueda de Usuario",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cmqpt5aq9n7s72sd39u0?autoplay=true&crosstime=739"
+    },
+    {
+        "title": "Controllers de Registro",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cmqpte0noeps72qfa730?autoplay=true&crosstime=580"
+    },
+    {
+        "title": "Creacion de Usuarios y Migracion a Database",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cmqptugnoeps72qfa74g?autoplay=true&crosstime=832"
+    },
+    {
+        "title": "Docker Containers",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cmqpvf90fiac72v5l2tg?autoplay=true&crosstime=83"
+    },
+    {
+        "title": "Docker Compose para proyectos",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cmqpvn90fiac72v5l2u0?autoplay=true&crosstime=247"
+    },
+    {
+        "title": "Creación de Dockerfile",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cmqq02aq9n7s72sd3a1g?autoplay=true&crosstime=1194"
+    },
+    {
+        "title": "Creación de Docker Compose",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cmqq0fp0fiac72v5l2v0?autoplay=true&crosstime=1512"
+    },
+    {
+        "title": "Configuración de Cadena de Conexión a Postgres Container",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cmqq0op0fiac72v5l2vg?autoplay=true&crosstime=534"
+    },
+    {
+        "title": "Ejecutando Docker Compose en Dev Environment",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cmqq10iq9n7s72sd3a20?autoplay=true&crosstime=700"
+    },
+    {
+        "title": "Authorization en Clean Architecture",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cmqq1qiq9n7s72sd3a30?autoplay=true&crosstime=467"
+    },
+    {
+        "title": "Clases abstractas y genericas para authorization",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cmqq252q9n7s72sd3a40?autoplay=true&crosstime=1373"
+    },
+    {
+        "title": "Configuración de Entidad Role",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cmqq2d0noeps72qfa770?autoplay=true&crosstime=590"
+    },
+    {
+        "title": "Roles y Users - relacion de muchos a muchos",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cmqq2m90fiac72v5l300?autoplay=true&crosstime=528"
+    },
+    {
+        "title": "Creacion de Modelo Permission",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cmqq2uchnk6s72tgu7ig?autoplay=true&crosstime=472"
+    },
+    {
+        "title": "Configuracion en DDD de Permissions",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cmqq3b8noeps72qfa77g?autoplay=true&crosstime=1149"
+    },
+    {
+        "title": "Migracion con nuevo modelo de Authorization",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cmqq3l8noeps72qfa780?autoplay=true&crosstime=573"
+    },
+    {
+        "title": "Authorization en Controllers y Endpoints",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cnqf036sovvc72gu8u0g?autoplay=true&crosstime=551"
+    },
+    {
+        "title": "Creación de notación Permission",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cnqf0e1m8ijs72rgep3g?autoplay=true&crosstime=1151"
+    },
+    {
+        "title": "Registro de Permissions y Policies",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cnqf0nd9s21c72sejjj0?autoplay=true&crosstime=539"
+    },
+    {
+        "title": "Generacion de Token con Permissions",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cnqf1859s21c72sejjjg?autoplay=true&crosstime=1217"
+    },
+    {
+        "title": "Controllers y Authorization Avanzado en Clean Architecture",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cnqf2ai2muoc72qem2i0?autoplay=true&crosstime=1167"
+    },
+    {
+        "title": "Serilog en Clean Architecture",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cnqtbdhm8ijs72rgf020?autoplay=true&crosstime=358"
+    },
+    {
+        "title": "Implementando Serilog en .NET",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cnqtbm9m8ijs72rgf02g?autoplay=true&crosstime=949"
+    },
+    {
+        "title": "Instalando Serilog en Docker Container",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cnqtc4a2muoc72qem9ag?autoplay=true&crosstime=896"
+    },
+    {
+        "title": "Extendiendo Funcionalidades de Serilog para .NET",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cnqtce59s21c72sejqqg?autoplay=true&crosstime=1215"
+    },
+    {
+        "title": "Configuracion de proyecto con multiples environments",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cnqtcli2muoc72qem9c0?autoplay=true&crosstime=891"
+    },
+    {
+        "title": "Ejecutando Serilog para Multiples .NET Apps",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cnqtcul9s21c72sejqr0?autoplay=true&crosstime=721"
+    },
+    {
+        "title": "Paginacion en Clean Architecture",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cnr0676sovvc72gu96e0?autoplay=true&crosstime=250"
+    },
+    {
+        "title": "Paginacion con Interfaces",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cnr06gusovvc72gu96eg?autoplay=true&crosstime=967"
+    },
+    {
+        "title": "Implementacion de Specification Generic",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cnr06npm8ijs72rgf2dg?autoplay=true&crosstime=685"
+    },
+    {
+        "title": "Evaluator de Query y Specification",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cnr070l9s21c72sejt2g?autoplay=true&crosstime=751"
+    },
+    {
+        "title": "Agregar Specification en Repository",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cnr07822muoc72qembjg?autoplay=true&crosstime=634"
+    },
+    {
+        "title": "Record como input de pagination",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cnr07d22muoc72qembkg?autoplay=true&crosstime=413"
+    },
+    {
+        "title": "Pagination en Application y CQRS",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cnr07jd9s21c72sejt30?autoplay=true&crosstime=563"
+    },
+    {
+        "title": "Handler y construccion de Paginacion por Vehiculos",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cnr081q2muoc72qemblg?autoplay=true&crosstime=1490"
+    },
+    {
+        "title": "Integracion con Controller y Test",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cnr089l9s21c72sejt4g?autoplay=true&crosstime=512"
+    },
+    {
+        "title": "Paginacion con Genericos",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cnr0ait9s21c72sejt60?autoplay=true&crosstime=840"
+    },
+    {
+        "title": "Creacion de Extensiones",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cnr0b1pm8ijs72rgf2gg?autoplay=true&crosstime=1251"
+    },
+    {
+        "title": "Implementando logica en Contenedor de depedencias",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cnr0bbpm8ijs72rgf2hg?autoplay=true&crosstime=840"
+    },
+    {
+        "title": "Paginación en Controllers",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cnr0btpm8ijs72rgf2i0?autoplay=true&crosstime=709"
+    },
+    {
+        "title": "Taller de Codigo - Paginacion de Vehiculos",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cns5md22muoc72qen450?autoplay=true&crosstime=986"
+    },
+    {
+        "title": "Paginacion con Dapper",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cnr0ni59s21c72sejtj0?autoplay=true&crosstime=353"
+    },
+    {
+        "title": "Creación de Lógica de Paginación",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cnr0nvd9s21c72sejtjg?autoplay=true&crosstime=1074"
+    },
+    {
+        "title": "Dapper y Paginacion en CQRS",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cnr0odpm8ijs72rgf300?autoplay=true&crosstime=1464"
+    },
+    {
+        "title": "Dapper Pagination Test",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cnr0ok9m8ijs72rgf31g?autoplay=true&crosstime=429"
+    },
+    {
+        "title": "Versiones para API",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cnr0pdesovvc72gu96s0?autoplay=true&crosstime=532"
+    },
+    {
+        "title": "Implementando versiones para API",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cnr0pm1m8ijs72rgf35g?autoplay=true&crosstime=615"
+    },
+    {
+        "title": "Swagger para multiples versiones",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cnr0q76sovvc72gu96u0?autoplay=true&crosstime=1402"
+    },
+    {
+        "title": "Pattern outbox",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cnr0rfhm8ijs72rgf380?autoplay=true&crosstime=612"
+    },
+    {
+        "title": "Proceso de almacenamiento en outbox",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cnr0rqa2muoc72qemc6g?autoplay=true&crosstime=1115"
+    },
+    {
+        "title": "Logica de outbox con EF",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cnr0sfpm8ijs72rgf3ag?autoplay=true&crosstime=528"
+    },
+    {
+        "title": "Procesos en background con Quartz",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cnr0sva2muoc72qemc90?autoplay=true&crosstime=832"
+    },
+    {
+        "title": "Quartz y MediatR",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cnr0tf1m8ijs72rgf3dg?autoplay=true&crosstime=1433"
+    },
+    {
+        "title": "Agendando ejecucion de Quartz en Clean Architecture",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cnr0ubmsovvc72gu9760?autoplay=true&crosstime=682"
+    },
+    {
+        "title": "Ejecutando Outbox pattern",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cnr0uumsovvc72gu979g?autoplay=true&crosstime=1005"
+    },
+    {
+        "title": "Minimal Apis en Clean Architecture",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cnr10at9s21c72sejts0?autoplay=true&crosstime=374"
+    },
+    {
+        "title": "Minimal Apis - Definicion de Metodos",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cnr10hq2muoc72qemcfg?autoplay=true&crosstime=660"
+    },
+    {
+        "title": "Contenedor de dependencias para minimal Apis",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cnr10sl9s21c72sejtsg?autoplay=true&crosstime=416"
+    },
+    {
+        "title": "Seguridad y Versioning APIS en Minimal Apis",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cnr11ehm8ijs72rgf3g0?autoplay=true&crosstime=1613"
+    },
+    {
+        "title": "Unit Test en Clean Architecture",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cnr12tt9s21c72sejtvg?autoplay=true&crosstime=395"
+    },
+    {
+        "title": "Creacion de Proyectos de Test",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cnr13322muoc72qemci0?autoplay=true&crosstime=367"
+    },
+    {
+        "title": "Configuracion de Proyecto Dominio",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cnr1391m8ijs72rgf3h0?autoplay=true&crosstime=627"
+    },
+    {
+        "title": "Modelando Objetos de Dominio",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cnr13kd9s21c72seju0g?autoplay=true&crosstime=1077"
+    },
+    {
+        "title": "Unit Test en Domain",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cnr13u59s21c72seju10?autoplay=true&crosstime=973"
+    },
+    {
+        "title": "Domain Events en Unit Test",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cnr149i2muoc72qemcj0?autoplay=true&crosstime=651"
+    },
+    {
+        "title": "Unit Test Domain Integrado",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cnr14f59s21c72seju1g?autoplay=true&crosstime=308"
+    },
+    {
+        "title": "Unit Test en Domain Services",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cnr15jd9s21c72seju50?autoplay=true&crosstime=955"
+    },
+    {
+        "title": "Test de Condition en Services",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cns5ns9m8ijs72rgfqr0?autoplay=true&crosstime=1118"
+    },
+    {
+        "title": "Unit Test en Application",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cnr188hm8ijs72rgf3mg?autoplay=true&crosstime=547"
+    },
+    {
+        "title": "Testing Business Logic in Application",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cnr18gt9s21c72seju70?autoplay=true&crosstime=656"
+    },
+    {
+        "title": "Setting up Mock for Testing",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cnr18sesovvc72gu97dg?autoplay=true&crosstime=693"
+    },
+    {
+        "title": "Comparing logic for Assert",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cnr19hmsovvc72gu97e0?autoplay=true&crosstime=625"
+    },
+    {
+        "title": "Validacion de componentes de Error",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cnr19q22muoc72qemclg?autoplay=true&crosstime=676"
+    },
+    {
+        "title": "Trabajando Testing para Datetimes",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cnr1a2i2muoc72qemcm0?autoplay=true&crosstime=773"
+    },
+    {
+        "title": "Evaluando Testing para casos Success",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cnr1am9m8ijs72rgf3ng?autoplay=true&crosstime=743"
+    },
+    {
+        "title": "Pruebas de integracion",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cnr1d3q2muoc72qemcqg?autoplay=true&crosstime=507"
+    },
+    {
+        "title": "Configuracion de dependencias",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cnr1dii2muoc72qemcr0?autoplay=true&crosstime=1598"
+    },
+    {
+        "title": "Abstract class factory",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cnr1eaq2muoc72qemcrg?autoplay=true&crosstime=403"
+    },
+    {
+        "title": "Prueba de integracion workflow",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cnr1eshm8ijs72rgf3sg?autoplay=true&crosstime=1070"
+    },
+    {
+        "title": "Pruebas Funcionales",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cnr1fpq2muoc72qemct0?autoplay=true&crosstime=1432"
+    },
+    {
+        "title": "Nuevo Endpoint para Sesion de Usuario",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cnr1gcq2muoc72qemd00?autoplay=true&crosstime=2256"
+    },
+    {
+        "title": "Pruebas Funcionales WorkFlow",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cnr1gq9m8ijs72rgf3tg?autoplay=true&crosstime=1630"
+    },
+    {
+        "title": "Pruebas de Arquitectura",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cnr1i0hm8ijs72rgf3ug?autoplay=true&crosstime=1427"
+    },
+    {
+        "title": "Pruebas entre capas",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cnr1jbl9s21c72sejudg?autoplay=true&crosstime=1023"
+    },
+    {
+        "title": "Enviar Emails con Google en Clean Architecture",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cnr1kd59s21c72sejueg?autoplay=true&crosstime=1129"
+    },
+    {
+        "title": "Crear Reportes con PDF en Clean Architecture",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cnr1lb6sovvc72gu97n0?autoplay=true&crosstime=3021"
+    },
+    {
+        "title": "Que es Docker",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cmrssjqq9n7s72sd44g0?autoplay=true&crosstime=246"
+    },
+    {
+        "title": "Instalación de Docker",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cmrsthchnk6s72tgv24g?autoplay=true&crosstime=1011"
+    },
+    {
+        "title": "Como funciona Docker?",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cmrsu6vg0h0c72v8srsg?autoplay=true&crosstime=524"
+    },
+    {
+        "title": "Containers en Sistemas Operativos",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cmrsudiq9n7s72sd44j0?autoplay=true&crosstime=400"
+    },
+    {
+        "title": "Como se crea un Docker Container?",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cmrtgivg0h0c72v8ssv0?autoplay=true&crosstime=179"
+    },
+    {
+        "title": "Comandos en Docker Run",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cmrth04hnk6s72tgv37g?autoplay=true&crosstime=470"
+    },
+    {
+        "title": "Comandos para Listar Containers",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cmrthovg0h0c72v8st00?autoplay=true&crosstime=310"
+    },
+    {
+        "title": "Ciclo de vida de un container",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cmrthvblonqc72usep3g?autoplay=true&crosstime=487"
+    },
+    {
+        "title": "Stop y Kill Containers",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cmrti5chnk6s72tgv38g?autoplay=true&crosstime=348"
+    },
+    {
+        "title": "Laboratorio Redis y acceso a Shell",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cmrtic7g0h0c72v8st0g?autoplay=true&crosstime=561"
+    },
+    {
+        "title": "Acceso a shell con Docker Run",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cmrtih7g0h0c72v8st10?autoplay=true&crosstime=215"
+    },
+    {
+        "title": "Creación de imágenes con Docker",
+        "url": "https://platform.thinkific.com/videoproxy/v1/play/cmrtinfg0h0c72v8st1g?autoplay=true&crosstime=196"
+    }
+]
