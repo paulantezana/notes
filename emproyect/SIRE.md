@@ -152,243 +152,124 @@ Financiero.SE_txt_propuesta_reporte -->
 
 
 
-
-```sql
-CREATE TABLE Financiero.SireTxtGenerado (
-    Id INT IDENTITY(1,1) PRIMARY KEY,
-    Codigo VARCHAR(12) NOT NULL,
-
-    IdCompania INT NOT NULL,
-    IdSunatElectronicoPeriodo INT,
-    CodigoAnioPeriodo VARCHAR(12) NOT NULL,
-    CampoClave VARCHAR(64) NOT NULL,
-
-    TXT1 VARCHAR(MAX),   
-    TXT2 VARCHAR(MAX),   
-    TXT3 VARCHAR(MAX),   
-    TXT4 VARCHAR(MAX),   
-    TXT5 VARCHAR(MAX),   
-    TXT6 VARCHAR(MAX),
-    TXT7 VARCHAR(MAX),
-    TXT8 VARCHAR(MAX),
-    TXT9 VARCHAR(MAX),
-    TXT10 VARCHAR(MAX),
-    TXT11 VARCHAR(MAX),
-    TXT12 VARCHAR(MAX),
-    TXT13 VARCHAR(MAX),
-    TXT14 VARCHAR(MAX),
-    TXT15 VARCHAR(MAX),
-    TXT16 VARCHAR(MAX),
-    TXT17 VARCHAR(MAX),
-    TXT18 VARCHAR(MAX),
-    TXT19 VARCHAR(MAX),
-    TXT20 VARCHAR(MAX),
-    TXT21 VARCHAR(MAX),
-    TXT22 VARCHAR(MAX),
-    TXT23 VARCHAR(MAX),
-    TXT24 VARCHAR(MAX),
-    TXT25 VARCHAR(MAX),
-    TXT26 VARCHAR(MAX),
-    TXT27 VARCHAR(MAX),
-    TXT28 VARCHAR(MAX),
-    TXT29 VARCHAR(MAX),
-    TXT30 VARCHAR(MAX),
-    TXT31 VARCHAR(MAX),
-    TXT32 VARCHAR(MAX),
-    TXT33 VARCHAR(MAX),
-    TXT34 VARCHAR(MAX),
-    TXT35 VARCHAR(MAX),
-    TXT36 VARCHAR(MAX),
-    TXT37 VARCHAR(MAX),
-    TXT38 VARCHAR(MAX),
-    TXT39 VARCHAR(MAX),
-    TXT40 VARCHAR(MAX),
-    TXT41 VARCHAR(MAX),
-    TXT42 VARCHAR(MAX),
-    TXT43 VARCHAR(MAX),
-    TXT44 VARCHAR(MAX),
-    TXT45 VARCHAR(MAX),
-    TXT46 VARCHAR(MAX),
-    TXT47 VARCHAR(MAX),
-    TXT48 VARCHAR(MAX),
-    TXT49 VARCHAR(MAX),
-    TXT50 VARCHAR(MAX),
-    TXT51 VARCHAR(MAX),
-    TXT52 VARCHAR(MAX),
-    TXT53 VARCHAR(MAX),
-    TXT54 VARCHAR(MAX),
-    TXT55 VARCHAR(MAX),
-    TXT56 VARCHAR(MAX),
-    TXT57 VARCHAR(MAX),
-    TXT58 VARCHAR(MAX),
-    TXT59 VARCHAR(MAX),
-    TXT60 VARCHAR(MAX),
-    TXT61 VARCHAR(MAX),
-    TXT62 VARCHAR(MAX),
-    TXT63 VARCHAR(MAX),
-    TXT64 VARCHAR(MAX),
-    TXT65 VARCHAR(MAX),
-    TXT66 VARCHAR(MAX),
-    TXT67 VARCHAR(MAX),
-    TXT68 VARCHAR(MAX),
-    TXT69 VARCHAR(MAX),
-    TXT70 VARCHAR(MAX),
-    TXT71 VARCHAR(MAX),
-    TXT72 VARCHAR(MAX),
-    TXT73 VARCHAR(MAX),
-    TXT74 VARCHAR(MAX),
-    TXT75 VARCHAR(MAX),
-    TXT76 VARCHAR(MAX),
-    TXT77 VARCHAR(MAX),
-    TXT78 VARCHAR(MAX),
-    TXT79 VARCHAR(MAX),
-    TXT80 VARCHAR(MAX),
-    TXT81 VARCHAR(MAX),
-    TXT82 VARCHAR(MAX),
-    TXT83 VARCHAR(MAX),
-    TXT84 VARCHAR(MAX),
-    TXT85 VARCHAR(MAX),
-    TXT86 VARCHAR(MAX),
-    TXT87 VARCHAR(MAX),
-    TXT88 VARCHAR(MAX),
-    TXT89 VARCHAR(MAX),
-    TXT90 VARCHAR(MAX),
-    TXT91 VARCHAR(MAX),
-    TXT92 VARCHAR(MAX),
-    TXT93 VARCHAR(MAX),
-    TXT94 VARCHAR(MAX),
-    TXT95 VARCHAR(MAX),
-    TXT96 VARCHAR(MAX),
-    TXT97 VARCHAR(MAX),
-    TXT98 VARCHAR(MAX),
-    TXT99 VARCHAR(MAX),
-    TXT100 VARCHAR(MAX)
-)
-```
-
-
-
-
 ```sql
 
 -- SireTxtPropuesta
-CREATE TABLE Financiero.SireTxtPropuesta (
-    Id INT IDENTITY(1,1) PRIMARY KEY,
-    Codigo VARCHAR(12) NOT NULL,
+-- SireTxtDeclarado
+-- SireTxtGenerado
+CREATE TABLE Financiero.SunatElectronicoTxtGenerado (
+  Id INT IDENTITY(1,1) PRIMARY KEY,
+  Codigo VARCHAR(12) NOT NULL,
 
-    IdCompania INT NOT NULL,
-    IdSunatElectronicoPeriodo INT NOT NULL,
-    IdSunatElectronicoPeriodoVersion INT NOT NULL,
-    CodigoAnioPeriodoDeclarado VARCHAR(12) NOT NULL,
-    CampoClave VARCHAR(64),
+  IdCompania INT NOT NULL,
+  IdSunatElectronicoPeriodo INT,
+  IdSunatElectronicoPeriodoVersion INT,
+  CodigoAnioPeriodo VARCHAR(12) NOT NULL,
 
-    Col1 VARCHAR(MAX),   
-    Col2 VARCHAR(MAX),   
-    Col3 VARCHAR(MAX),   
-    Col4 VARCHAR(MAX),   
-    Col5 VARCHAR(MAX),   
-    Col6 VARCHAR(MAX),
-    Col7 VARCHAR(MAX),
-    Col8 VARCHAR(MAX),
-    Col9 VARCHAR(MAX),
-    Col10 VARCHAR(MAX),
-    Col11 VARCHAR(MAX),
-    Col12 VARCHAR(MAX),
-    Col13 VARCHAR(MAX),
-    Col14 VARCHAR(MAX),
-    Col15 VARCHAR(MAX),
-    Col16 VARCHAR(MAX),
-    Col17 VARCHAR(MAX),
-    Col18 VARCHAR(MAX),
-    Col19 VARCHAR(MAX),
-    Col20 VARCHAR(MAX),
-    Col21 VARCHAR(MAX),
-    Col22 VARCHAR(MAX),
-    Col23 VARCHAR(MAX),
-    Col24 VARCHAR(MAX),
-    Col25 VARCHAR(MAX),
-    Col26 VARCHAR(MAX),
-    Col27 VARCHAR(MAX),
-    Col28 VARCHAR(MAX),
-    Col29 VARCHAR(MAX),
-    Col30 VARCHAR(MAX),
-    Col31 VARCHAR(MAX),
-    Col32 VARCHAR(MAX),
-    Col33 VARCHAR(MAX),
-    Col34 VARCHAR(MAX),
-    Col35 VARCHAR(MAX),
-    Col36 VARCHAR(MAX),
-    Col37 VARCHAR(MAX),
-    Col38 VARCHAR(MAX),
-    Col39 VARCHAR(MAX),
-    Col40 VARCHAR(MAX),
-    Col41 VARCHAR(MAX),
-    Col42 VARCHAR(MAX),
-    Col43 VARCHAR(MAX),
-    Col44 VARCHAR(MAX),
-    Col45 VARCHAR(MAX),
-    Col46 VARCHAR(MAX),
-    Col47 VARCHAR(MAX),
-    Col48 VARCHAR(MAX),
-    Col49 VARCHAR(MAX),
-    Col50 VARCHAR(MAX),
-    Col51 VARCHAR(MAX),
-    Col52 VARCHAR(MAX),
-    Col53 VARCHAR(MAX),
-    Col54 VARCHAR(MAX),
-    Col55 VARCHAR(MAX),
-    Col56 VARCHAR(MAX),
-    Col57 VARCHAR(MAX),
-    Col58 VARCHAR(MAX),
-    Col59 VARCHAR(MAX),
-    Col60 VARCHAR(MAX),
-    Col61 VARCHAR(MAX),
-    Col62 VARCHAR(MAX),
-    Col63 VARCHAR(MAX),
-    Col64 VARCHAR(MAX),
-    Col65 VARCHAR(MAX),
-    Col66 VARCHAR(MAX),
-    Col67 VARCHAR(MAX),
-    Col68 VARCHAR(MAX),
-    Col69 VARCHAR(MAX),
-    Col70 VARCHAR(MAX),
-    Col71 VARCHAR(MAX),
-    Col72 VARCHAR(MAX),
-    Col73 VARCHAR(MAX),
-    Col74 VARCHAR(MAX),
-    Col75 VARCHAR(MAX),
-    Col76 VARCHAR(MAX),
-    Col77 VARCHAR(MAX),
-    Col78 VARCHAR(MAX),
-    Col79 VARCHAR(MAX),
-    Col80 VARCHAR(MAX),
-    Col81 VARCHAR(MAX),
-    Col82 VARCHAR(MAX),
-    Col83 VARCHAR(MAX),
-    Col84 VARCHAR(MAX),
-    Col85 VARCHAR(MAX),
-    Col86 VARCHAR(MAX),
-    Col87 VARCHAR(MAX),
-    Col88 VARCHAR(MAX),
-    Col89 VARCHAR(MAX),
-    Col90 VARCHAR(MAX),
-    Col91 VARCHAR(MAX),
-    Col92 VARCHAR(MAX),
-    Col93 VARCHAR(MAX),
-    Col94 VARCHAR(MAX),
-    Col95 VARCHAR(MAX),
-    Col96 VARCHAR(MAX),
-    Col97 VARCHAR(MAX),
-    Col98 VARCHAR(MAX),
-    Col99 VARCHAR(MAX),
-    Col100 VARCHAR(MAX)
+  Col1 VARCHAR(MAX),   
+  Col2 VARCHAR(MAX),   
+  Col3 VARCHAR(MAX),   
+  Col4 VARCHAR(MAX),   
+  Col5 VARCHAR(MAX),   
+  Col6 VARCHAR(MAX),
+  Col7 VARCHAR(MAX),
+  Col8 VARCHAR(MAX),
+  Col9 VARCHAR(MAX),
+  Col10 VARCHAR(MAX),
+  Col11 VARCHAR(MAX),
+  Col12 VARCHAR(MAX),
+  Col13 VARCHAR(MAX),
+  Col14 VARCHAR(MAX),
+  Col15 VARCHAR(MAX),
+  Col16 VARCHAR(MAX),
+  Col17 VARCHAR(MAX),
+  Col18 VARCHAR(MAX),
+  Col19 VARCHAR(MAX),
+  Col20 VARCHAR(MAX),
+  Col21 VARCHAR(MAX),
+  Col22 VARCHAR(MAX),
+  Col23 VARCHAR(MAX),
+  Col24 VARCHAR(MAX),
+  Col25 VARCHAR(MAX),
+  Col26 VARCHAR(MAX),
+  Col27 VARCHAR(MAX),
+  Col28 VARCHAR(MAX),
+  Col29 VARCHAR(MAX),
+  Col30 VARCHAR(MAX),
+  Col31 VARCHAR(MAX),
+  Col32 VARCHAR(MAX),
+  Col33 VARCHAR(MAX),
+  Col34 VARCHAR(MAX),
+  Col35 VARCHAR(MAX),
+  Col36 VARCHAR(MAX),
+  Col37 VARCHAR(MAX),
+  Col38 VARCHAR(MAX),
+  Col39 VARCHAR(MAX),
+  Col40 VARCHAR(MAX),
+  Col41 VARCHAR(MAX),
+  Col42 VARCHAR(MAX),
+  Col43 VARCHAR(MAX),
+  Col44 VARCHAR(MAX),
+  Col45 VARCHAR(MAX),
+  Col46 VARCHAR(MAX),
+  Col47 VARCHAR(MAX),
+  Col48 VARCHAR(MAX),
+  Col49 VARCHAR(MAX),
+  Col50 VARCHAR(MAX),
+  Col51 VARCHAR(MAX),
+  Col52 VARCHAR(MAX),
+  Col53 VARCHAR(MAX),
+  Col54 VARCHAR(MAX),
+  Col55 VARCHAR(MAX),
+  Col56 VARCHAR(MAX),
+  Col57 VARCHAR(MAX),
+  Col58 VARCHAR(MAX),
+  Col59 VARCHAR(MAX),
+  Col60 VARCHAR(MAX),
+  Col61 VARCHAR(MAX),
+  Col62 VARCHAR(MAX),
+  Col63 VARCHAR(MAX),
+  Col64 VARCHAR(MAX),
+  Col65 VARCHAR(MAX),
+  Col66 VARCHAR(MAX),
+  Col67 VARCHAR(MAX),
+  Col68 VARCHAR(MAX),
+  Col69 VARCHAR(MAX),
+  Col70 VARCHAR(MAX),
+  Col71 VARCHAR(MAX),
+  Col72 VARCHAR(MAX),
+  Col73 VARCHAR(MAX),
+  Col74 VARCHAR(MAX),
+  Col75 VARCHAR(MAX),
+  Col76 VARCHAR(MAX),
+  Col77 VARCHAR(MAX),
+  Col78 VARCHAR(MAX),
+  Col79 VARCHAR(MAX),
+  Col80 VARCHAR(MAX),
+  Col81 VARCHAR(MAX),
+  Col82 VARCHAR(MAX),
+  Col83 VARCHAR(MAX),
+  Col84 VARCHAR(MAX),
+  Col85 VARCHAR(MAX),
+  Col86 VARCHAR(MAX),
+  Col87 VARCHAR(MAX),
+  Col88 VARCHAR(MAX),
+  Col89 VARCHAR(MAX),
+  Col90 VARCHAR(MAX),
+  Col91 VARCHAR(MAX),
+  Col92 VARCHAR(MAX),
+  Col93 VARCHAR(MAX),
+  Col94 VARCHAR(MAX),
+  Col95 VARCHAR(MAX),
+  Col96 VARCHAR(MAX),
+  Col97 VARCHAR(MAX),
+  Col98 VARCHAR(MAX),
+  Col99 VARCHAR(MAX),
+  Col100 VARCHAR(MAX)
 )
 ```
-
-
-
-  DECLARE @IdSunatElectronicoPeriodo INT = 91980;   
-  DECLARE @PeriodoInicio VARCHAR(6) = '202201';
+  DECLARE @IdSunatElectronicoPeriodo INT = 91980; -- 202312
+  DECLARE @PeriodoInicio VARCHAR(6) = '202301';
   DECLARE @Usuario VARCHAR(6) = 'Admin';
   DECLARE @SistemaOrigen VARCHAR(30) = 'CONCAR';  
 
@@ -404,7 +285,10 @@ CREATE TABLE Financiero.SireTxtPropuesta (
   -- //
   DECLARE @i INT = 0;
   DECLARE @QuerySQL NVARCHAR(MAX) = '';
-  DECLARE @ColumnListSQL NVARCHAR(MAX) = '';
+  DECLARE @ColumnList NVARCHAR(MAX) = '';
+  DECLARE @ColumnListA NVARCHAR(MAX) = '';
+  DECLARE @ColumnListB NVARCHAR(MAX) = '';
+
   DECLARE @NumeroColumnas INT;
 
   -- SET LOCAL VARS
@@ -425,13 +309,23 @@ CREATE TABLE Financiero.SireTxtPropuesta (
   -- ==================================================================
   -- G E N E R A     L A S     C O L U M N A S
   SET @i = 1;
-  SET @ColumnListSQL = '';
+  SELECT @ColumnList = '', @ColumnListA = '', @ColumnListB = '';
   WHILE @i <= @NumeroColumnas
   BEGIN
-      SET @ColumnListSQL += 'Col' + CAST(@i AS NVARCHAR(3));
-      IF @i < @NumeroColumnas SET @ColumnListSQL += ', ';
+      SET @ColumnList += 'Col' + CAST(@i AS NVARCHAR(3));
+      SET @ColumnListA += 'Col' + CAST(@i AS NVARCHAR(3)) + '_A';
+      SET @ColumnListB += 'Col' + CAST(@i AS NVARCHAR(3)) + '_B';
+
+      IF @i < @NumeroColumnas SELECT @ColumnList += ', ', @ColumnListA += ', ', @ColumnListB += ', ';
       SET @i += 1;
   END
+
+
+  -- ==================================================================
+  -- ==================================================================
+  -- D A T A      D E C L A R A D O
+  -- ==================================================================
+  -- ==================================================================
 
   -- ==================================================================
   -- C R E A R     T A B L A    D E C L A R A D O
@@ -445,7 +339,7 @@ CREATE TABLE Financiero.SireTxtPropuesta (
   SET @QuerySQL = '';
   WHILE @i <= @NumeroColumnas
   BEGIN
-      SET @QuerySQL += 'ALTER TABLE #SeDeclarado ADD Col' + CAST(@i AS NVARCHAR(3)) + ' NVARCHAR(4000);';
+      SET @QuerySQL += 'ALTER TABLE #SeDeclarado ADD Col' + CAST(@i AS NVARCHAR(3)) + '_A NVARCHAR(4000);';
       SET @i += 1;
   END
   EXEC sp_executesql @QuerySQL;
@@ -453,8 +347,8 @@ CREATE TABLE Financiero.SireTxtPropuesta (
   -- ==================================================================
   -- O B T E N E R         D A T O S       D E C L A R A D O S
   SET @QuerySQL = '
-    INSERT INTO #SeDeclarado (IdCompania, CodigoAnioPeriodoDeclarado, ' + @ColumnListSQL + ')
-    SELECT IdCompania, CodigoAnioPeriodoDeclarado, ' + @ColumnListSQL + ' FROM Financiero.SireTxtDeclarado 
+    INSERT INTO #SeDeclarado (IdCompania, CodigoAnioPeriodoDeclarado, ' + @ColumnList + ')
+    SELECT IdCompania, CodigoAnioPeriodoDeclarado, ' + @ColumnList + ' FROM Financiero.SireTxtDeclarado 
     WHERE IdCompania = ' + CONVERT(varchar, @IdCompania) + '
       AND CodigoAnioPeriodoDeclarado >= ' + @PeriodoInicioLocal +'   
       AND CodigoAnioPeriodoDeclarado < ' + @PeriodoFin + '
@@ -482,56 +376,153 @@ CREATE TABLE Financiero.SireTxtPropuesta (
 
   -- ==================================================================
   -- G E N E R A R     C O R R E G I D O
-  DECLARE @ColumnClaveListSQL VARCHAR(200) = 'Col1, Col2';
-  DECLARE @ColumnPeriodoSQL VARCHAR(200) = 'Col1';
+  DECLARE @ColumnPeriodo VARCHAR(200) = 'Col1';
+  DECLARE @ColumnClaveList VARCHAR(200) = 'Col1, Col2';
+  DECLARE @ColumnDetalleClaveList VARCHAR(200) = 'Col1, Col2, Col3';
+  DECLARE @ColumnComparaList VARCHAR(200) = 'Col4, Col5, Col6, Col7, Col8, Col9, Col10, Col11, Col12, Col13, Col14, Col15, Col16, Col17, Col18';
 
   SET @QuerySQL = '
-    SELECT Fila, ' + @ColumnListSQL + '
-    FROM (   
+    INSERT INTO #SeCorregido (IdCompania, CodigoAnioPeriodoDeclarado, ' + @ColumnList + ')
+    SELECT IdCompania, CodigoAnioPeriodoDeclarado, ' + @ColumnList + '
+    FROM (
         SELECT
-          Fila = ROW_NUMBER() OVER(PARTITION BY ' + @ColumnClaveListSQL + ' ORDER BY ' + @ColumnClaveListSQL + ', CodigoAnioPeriodoDeclarado DESC)   
-          , ' + @ColumnListSQL + '
-        FROM #SeCorregido  
-        WHERE LEFT('+@ColumnPeriodoSQL+',6) BETWEEN @PeriodoInicioLocal AND @PeriodoFin
+          Fila = ROW_NUMBER() OVER(PARTITION BY ' + @ColumnClaveList + ' ORDER BY ' + @ColumnClaveList + ', CodigoAnioPeriodoDeclarado DESC)   
+          , IdCompania, CodigoAnioPeriodoDeclarado, ' + @ColumnList + '
+        FROM #SeDeclarado 
+        WHERE LEFT(' + @ColumnPeriodo + ',6) BETWEEN ' + @PeriodoInicioLocal + ' AND ' + @PeriodoFin + '
     ) t
     WHERE Fila = 1
   ';
 
-
-  -- ==================================================================
-  -- L I M P I A R   C O L U M N A S
-    SET @i = 1;
-  SET @QuerySQL = '';
-  WHILE @i <= @NumeroColumnas
-  BEGIN
-      SET @QuerySQL += 'ALTER TABLE #SeDeclarado ADD Col' + CAST(@i AS NVARCHAR(3)) + ' NVARCHAR(4000);';
-      SET @i += 1;
-  END
   EXEC sp_executesql @QuerySQL;
 
 
 
+  -- ==================================================================
+  -- ==================================================================
+  -- D A T A      E N     E L      S I S T E M A
+  -- ==================================================================
+  -- ==================================================================
 
 
+  -- ==================================================================
+  -- C R E A R     T A B L A    S I S T E M A
+  DROP TABLE IF EXISTS #SeSistema;
+  CREATE TABLE #SeSistema (
+    IdCompania INT NOT NULL,
+    CodigoAnioPeriodo VARCHAR(12) NOT NULL,
+  )
+
+  SET @i = 1;
+  SET @QuerySQL = '';
+  WHILE @i <= @NumeroColumnas
+  BEGIN
+      SET @QuerySQL += 'ALTER TABLE #SeSistema ADD Col' + CAST(@i AS NVARCHAR(3)) + ' NVARCHAR(4000);';
+      SET @i += 1;
+  END
+  EXEC sp_executesql @QuerySQL;
+
+  -- ==================================================================
+  -- O B T E N E R         D A T O S       A C T U A L E S
+  SET @QuerySQL = '
+    INSERT INTO #SeSistema (IdCompania, CodigoAnioPeriodo, ' + @ColumnList + ')
+    SELECT IdCompania, CodigoAnioPeriodo, ' + @ColumnList + ' FROM Financiero.SireTxtGenerado 
+    WHERE IdCompania = ' + CONVERT(varchar, @IdCompania) + '
+      AND CodigoAnioPeriodo >= ' + @PeriodoInicioLocal +'   
+      AND CodigoAnioPeriodo < ' + @PeriodoFin + '
+  '
+  EXEC sp_executesql @QuerySQL;
 
 
-  --WHERE IdCompania = @IdCompania
-  --AND SistemaOrigen = @SistemaOrigen
-  --;
+  -- ==================================================================
+  -- ==================================================================
+  -- C O M P A R A
+  -- ==================================================================
+  -- ==================================================================
+
+  DECLARE @FullJoinConditionSQL NVARCHAR(MAX) = '';
+  DECLARE @FullJoinColumnCompareListSQL NVARCHAR(MAX) = '';
+  DECLARE @FullJoinColumnClaveListSQL NVARCHAR(MAX) = '';
+  DECLARE @FullJoinColumnASQL NVARCHAR(MAX) = '';
+  DECLARE @FullJoinColumnBSQL NVARCHAR(MAX) = '';
+
+  DECLARE @FullJoinColumnValidateSQL NVARCHAR(MAX) = '';
+
+  -- Genera Full Join Condicion
+  SELECT
+    @FullJoinConditionSQL = @FullJoinConditionSQL +
+              CASE WHEN @FullJoinConditionSQL = '' THEN '' ELSE ' AND ' END +
+              'b.' + value + ' = a.' + value + CHAR(13) + CHAR(10)
+  FROM STRING_SPLIT(@ColumnDetalleClaveList, ',')
+  WHERE RTRIM(LTRIM(value)) <> '';
 
 
+  -- Columnas - A
+  SELECT
+    @FullJoinColumnASQL = @FullJoinColumnASQL +
+          CASE WHEN @FullJoinColumnASQL = '' THEN '' ELSE ', ' END +
+          value + '_A = a.' + value + CHAR(13) + CHAR(10)
+  FROM STRING_SPLIT(@ColumnComparaList, ',')
+  WHERE RTRIM(LTRIM(value)) <> '';
+
+  -- Columnas - B
+  SELECT
+    @FullJoinColumnBSQL = @FullJoinColumnBSQL +
+          CASE WHEN @FullJoinColumnBSQL = '' THEN '' ELSE ', ' END +
+          value + '_B = b.' + value + CHAR(13) + CHAR(10)
+  FROM STRING_SPLIT(@ColumnComparaList, ',')
+  WHERE RTRIM(LTRIM(value)) <> '';
+
+  -- Genera Full Join Campos a comparar
+  SELECT
+    @FullJoinColumnCompareListSQL = @FullJoinColumnCompareListSQL +
+          CASE WHEN @FullJoinColumnCompareListSQL = '' THEN '' ELSE ', ' END +
+          value + '_Dif = IIF(a.' + value + ' != b.' + value + ', ''S'', ''N'')' + CHAR(13) + CHAR(10)
+  FROM STRING_SPLIT(@ColumnComparaList, ',')
+  WHERE RTRIM(LTRIM(value)) <> '';
+
+  -- Genera Full Join Campos Clave
+  SELECT
+    @FullJoinColumnClaveListSQL = @FullJoinColumnClaveListSQL +
+        CASE WHEN @FullJoinColumnClaveListSQL = '' THEN '' ELSE ', ' END +
+        value + ' = ISNULL(a.' + value + ', b.' + value + ')' + CHAR(13) + CHAR(10)
+  FROM STRING_SPLIT(@ColumnDetalleClaveList, ',')
+  WHERE RTRIM(LTRIM(value)) <> '';
 
 
---    SET @QuerySQL = '
---    INSERT INTO ' + @DestinationTable + ' (Codigo, IdCompania, IdSunatElectronicoPeriodo, IdSunatElectronicoPeriodoVersion, CodigoAnioPeriodoDeclarado, ' + @ColumnListSQL + ')
---    SELECT ''' + @CodigoSunatElectronico + ''', ' +CONVERT(varchar, @IdCompania) + ', ' + CONVERT(varchar, @IdSunatElectronicoPeriodo) + ', ' + CONVERT(varchar, @IdSunatElectronicoPeriodoVersion) + ', ''' + @CodigoAnioPeriodo + ''', ' + @ColumnListSQL + '
---    FROM #TempoTxtExtraido
---    ';
+  -- Genera Full Validate Campos
+  SELECT
+    @FullJoinColumnValidateSQL = @FullJoinColumnValidateSQL +
+        CASE WHEN @FullJoinColumnValidateSQL = '' THEN '' ELSE 'OR ' END +
+        value + '_Dif = ''S''' + CHAR(13) + CHAR(10)
+  FROM STRING_SPLIT(@ColumnComparaList, ',')
+  WHERE RTRIM(LTRIM(value)) <> '';
 
+  --IdCompania              = ISNULL(a.IdCompania, b.IdCompania)  
+  
 
+  -- //
+  SET @QuerySQL = '
+  SELECT   
+    sec.*
+    , Valido = IIF(' + @FullJoinColumnValidateSQL + ',''N'',''S'')
+  FROM (   
+    SELECT   
+      ' + @FullJoinColumnASQL + '
+      , ' + @FullJoinColumnBSQL + '
+      , ' + @FullJoinColumnClaveListSQL + '
+      , ' + @FullJoinColumnCompareListSQL + '
 
+      , IdCompania              = ISNULL(a.IdCompania, b.IdCompania)
+      , ExisteEnTxt             = IIF(a.IdCompania IS NOT NULL, ''S'', ''N'')
+      , ExisteEnOrigen          = IIF(b.IdCompania IS NOT NULL, ''S'', ''N'')
 
+    FROM #SeCorregido a   
+    FULL JOIN #SeSistema b   
+      on  b.IdCompania = a.IdCompania
+      and ' + @FullJoinConditionSQL + '  
+  ) AS sec 
+    '
+  PRINT(@QuerySQL);
+  EXEC sp_executesql @QuerySQL;
 
-
-
---Financiero.SireTxtDeclarado
