@@ -14,6 +14,7 @@ pAntezana@grupoValor.com
 paan2021$
 
 
+
 admin
 123456
 
@@ -79,6 +80,9 @@ CLAVE -- SOL
 NTEMPARM
 Mi27012021
 
+20524561264
+pAntezana@grupoValor.com
+Nani$822B
 
 RUTA REPORTE
 \\192.168.33.206\ReportVisual
@@ -432,3 +436,143 @@ DEALLOCATE SunatElectronicoPeriodoVersion_Cursor;
 
 
 [Financiero].[usp_cargarTxtSunatElectronicoPeriodoVersion]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+SELECT
+  sa.idCompania
+ --  Compania  
+ --, Periodo  
+ --, Libro  
+ --, Moneda  
+ --, Cuenta  
+ --, DescripcionCuenta  
+ --, RucCompania
+ , cu.Codigo
+
+  , INIdeb = IIF(si.SUMDeb - si.SUMHab > 0, si.SUMDeb - si.SUMHab, 0)
+  , INIhab = IIF(si.SUMDeb - si.SUMHab < 0, si.SUMDeb - si.SUMHab, 0)
+
+ , MOVdeb = mo.SUMDeb 
+ , MOVhab = mo.SUMHab
+ --, MESdeb  
+ --, MEShab  
+ 	, SUMdeb = sa.SUMDeb
+	, SUMhab = sa.SUMHab
+  , FINdeb = IIF(sa.SUMDeb - sa.SUMHab > 0, sa.SUMDeb - sa.SUMHab, 0)
+  , FINhab = IIF(sa.SUMDeb - sa.SUMHab < 0, sa.SUMDeb - sa.SUMHab, 0)
+ ----, TRANATdeb  
+ ----, TRANAThab  
+ , ACT = CASE WHEN left(cu.Codigo,1) <= '5' THEN IIF(sa.SUMDeb - sa.SUMHab > 0, sa.SUMDeb - sa.SUMHab, 0) ELSE 0 END
+ , PAS = CASE WHEN left(cu.Codigo,1) <= '5' THEN IIF(sa.SUMDeb - sa.SUMHab < 0, sa.SUMDeb - sa.SUMHab, 0) ELSE 0 END
+
+ , PER = CASE WHEN left(cu.Codigo,1) >= '6' THEN IIF(sa.SUMDeb - sa.SUMHab > 0, sa.SUMDeb - sa.SUMHab, 0) ELSE 0 END
+ , GAN = CASE WHEN left(cu.Codigo,1) >= '6' THEN IIF(sa.SUMDeb - sa.SUMHab < 0, sa.SUMDeb - sa.SUMHab, 0) ELSE 0 END
+
+ , Saldo = sa.SUMDeb - sa.SUMHab
+
+ --, IdCompania  
+ --, IdAnio  
+ --, IdAnioPeriodo  
+ --, IdLibro  
+ --, IdMoneda  
+ --, IdCuenta  
+  
+ --, CuentaN1  
+ --, CuentaN2  
+ --, CuentaN3  
+ --, CuentaN4  
+ --, CuentaN5  
+  
+ --, CuentaDescripcionN1  
+ --, CuentaDescripcionN2  
+ --, CuentaDescripcionN3  
+ --, CuentaDescripcionN4  
+ --, CuentaDescripcionN5 
+
+
+
+FROM (
+  SELECT 
+	  vld.idCompania
+	  , vld.idCuenta
+	  , vld.idLibro
+
+	  , SUMDeb = SUM(DebeBase)
+	  , SUMHab = SUM(HaberBase)
+
+	  , SUMDebSis = SUM(DebeSistema)
+	  , SUMHabSis = SUM(HaberSistema)
+
+  FROM Financiero.ViewLoteDetalle AS vld
+  WHERE vld.FechaContable <= '2018-11-28' AND CodigoCuenta = '121102'
+  GROUP BY vld.idCompania, vld.idLibro, vld.idCuenta
+) AS sa
+LEFT JOIN (
+  SELECT 
+	  vld.idCompania
+	  , vld.idCuenta
+	  , vld.idLibro
+
+	  , SUMDeb = SUM(DebeBase)
+	  , SUMHab = SUM(HaberBase)
+
+	  , SUMDebSis = SUM(DebeSistema)
+	  , SUMHabSis = SUM(HaberSistema)
+
+  FROM Financiero.ViewLoteDetalle AS vld
+  WHERE vld.FechaContable < '2018-01-01' AND CodigoCuenta = '121102'
+  GROUP BY vld.idCompania, vld.idLibro, vld.idCuenta
+) AS si ON sa.idCompania = si.idCompania
+  AND sa.idCuenta = si.idCuenta
+  AND sa.idLibro = si.idLibro
+LEFT JOIN (
+  SELECT 
+	  vld.idCompania
+	  , vld.idCuenta
+	  , vld.idLibro
+
+	  , SUMDeb = SUM(DebeBase)
+	  , SUMHab = SUM(HaberBase)
+
+	  , SUMDebSis = SUM(DebeSistema)
+	  , SUMHabSis = SUM(HaberSistema)
+
+  FROM Financiero.ViewLoteDetalle AS vld
+  WHERE vld.FechaContable >= '2018-01-01' AND vld.FechaContable <= '2018-11-28' AND CodigoCuenta = '121102'
+  GROUP BY vld.idCompania, vld.idLibro, vld.idCuenta
+) AS mo ON sa.idCompania = mo.idCompania
+  AND sa.idCuenta = mo.idCuenta
+  AND sa.idLibro = mo.idLibro
+
+INNER JOIN Financiero.Cuenta AS cu ON sa.idCompania = cu.IdCompania
+  AND sa.idCuenta = cu.Id
+
+ORDER BY cu.Codigo

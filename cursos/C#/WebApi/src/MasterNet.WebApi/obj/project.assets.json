@@ -1,0 +1,131 @@
+{
+  "version": 3,
+  "targets": {
+    "net9.0": {
+      "MasterNet.Application/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v9.0",
+        "dependencies": {
+          "MasterNet.Domain": "1.0.0",
+          "MasterNet.Persistence": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/MasterNet.Application.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/MasterNet.Application.dll": {}
+        }
+      },
+      "MasterNet.Domain/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v9.0",
+        "compile": {
+          "bin/placeholder/MasterNet.Domain.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/MasterNet.Domain.dll": {}
+        }
+      },
+      "MasterNet.Persistence/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v9.0",
+        "dependencies": {
+          "MasterNet.Domain": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/MasterNet.Persistence.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/MasterNet.Persistence.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "MasterNet.Application/1.0.0": {
+      "type": "project",
+      "path": "../MasterNet.Application/MasterNet.Application.csproj",
+      "msbuildProject": "../MasterNet.Application/MasterNet.Application.csproj"
+    },
+    "MasterNet.Domain/1.0.0": {
+      "type": "project",
+      "path": "../MasterNet.Domain/MasterNet.Domain.csproj",
+      "msbuildProject": "../MasterNet.Domain/MasterNet.Domain.csproj"
+    },
+    "MasterNet.Persistence/1.0.0": {
+      "type": "project",
+      "path": "../MasterNet.Persistence/MasterNet.Persistence.csproj",
+      "msbuildProject": "../MasterNet.Persistence/MasterNet.Persistence.csproj"
+    }
+  },
+  "projectFileDependencyGroups": {
+    "net9.0": [
+      "MasterNet.Application >= 1.0.0"
+    ]
+  },
+  "packageFolders": {
+    "C:\\Users\\pantezana\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {},
+    "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder": {}
+  },
+  "project": {
+    "version": "1.0.0",
+    "restore": {
+      "projectUniqueName": "C:\\Users\\pantezana\\source\\data\\notes\\cursos\\C#\\WebApi\\src\\MasterNet.WebApi\\MasterNet.WebApi.csproj",
+      "projectName": "MasterNet.WebApi",
+      "projectPath": "C:\\Users\\pantezana\\source\\data\\notes\\cursos\\C#\\WebApi\\src\\MasterNet.WebApi\\MasterNet.WebApi.csproj",
+      "packagesPath": "C:\\Users\\pantezana\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\pantezana\\source\\data\\notes\\cursos\\C#\\WebApi\\src\\MasterNet.WebApi\\obj\\",
+      "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
+        "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+      ],
+      "configFilePaths": [
+        "C:\\Users\\pantezana\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+      ],
+      "originalTargetFrameworks": [
+        "net9.0"
+      ],
+      "sources": {
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+        "https://api.nuget.org/v3/index.json": {},
+        "https://nuget.telerik.com/v3/index.json": {}
+      },
+      "frameworks": {
+        "net9.0": {
+          "targetAlias": "net9.0",
+          "projectReferences": {
+            "C:\\Users\\pantezana\\source\\data\\notes\\cursos\\C#\\WebApi\\src\\MasterNet.Application\\MasterNet.Application.csproj": {
+              "projectPath": "C:\\Users\\pantezana\\source\\data\\notes\\cursos\\C#\\WebApi\\src\\MasterNet.Application\\MasterNet.Application.csproj"
+            }
+          }
+        }
+      },
+      "warningProperties": {
+        "warnAsError": [
+          "NU1605"
+        ]
+      }
+    },
+    "frameworks": {
+      "net9.0": {
+        "targetAlias": "net9.0",
+        "imports": [
+          "net461",
+          "net462",
+          "net47",
+          "net471",
+          "net472",
+          "net48",
+          "net481"
+        ],
+        "assetTargetFallback": true,
+        "warn": true,
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.102\\RuntimeIdentifierGraph.json"
+      }
+    }
+  }
+}

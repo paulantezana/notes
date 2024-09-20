@@ -1,0 +1,124 @@
+{
+  "format": 1,
+  "restore": {
+    "C:\\Users\\pantezana\\source\\data\\notes\\cursos\\C#\\WebApi\\src\\MasterNet.Persistence\\MasterNet.Persistence.csproj": {}
+  },
+  "projects": {
+    "C:\\Users\\pantezana\\source\\data\\notes\\cursos\\C#\\WebApi\\src\\MasterNet.Domain\\MasterNet.Domain.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\pantezana\\source\\data\\notes\\cursos\\C#\\WebApi\\src\\MasterNet.Domain\\MasterNet.Domain.csproj",
+        "projectName": "MasterNet.Domain",
+        "projectPath": "C:\\Users\\pantezana\\source\\data\\notes\\cursos\\C#\\WebApi\\src\\MasterNet.Domain\\MasterNet.Domain.csproj",
+        "packagesPath": "C:\\Users\\pantezana\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\pantezana\\source\\data\\notes\\cursos\\C#\\WebApi\\src\\MasterNet.Domain\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
+          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\pantezana\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net9.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {},
+          "https://nuget.telerik.com/v3/index.json": {}
+        },
+        "frameworks": {
+          "net9.0": {
+            "targetAlias": "net9.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net9.0": {
+          "targetAlias": "net9.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.102\\RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "C:\\Users\\pantezana\\source\\data\\notes\\cursos\\C#\\WebApi\\src\\MasterNet.Persistence\\MasterNet.Persistence.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\pantezana\\source\\data\\notes\\cursos\\C#\\WebApi\\src\\MasterNet.Persistence\\MasterNet.Persistence.csproj",
+        "projectName": "MasterNet.Persistence",
+        "projectPath": "C:\\Users\\pantezana\\source\\data\\notes\\cursos\\C#\\WebApi\\src\\MasterNet.Persistence\\MasterNet.Persistence.csproj",
+        "packagesPath": "C:\\Users\\pantezana\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\pantezana\\source\\data\\notes\\cursos\\C#\\WebApi\\src\\MasterNet.Persistence\\obj\\",
+        "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages",
+          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\pantezana\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net9.0"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {},
+          "https://nuget.telerik.com/v3/index.json": {}
+        },
+        "frameworks": {
+          "net9.0": {
+            "targetAlias": "net9.0",
+            "projectReferences": {
+              "C:\\Users\\pantezana\\source\\data\\notes\\cursos\\C#\\WebApi\\src\\MasterNet.Domain\\MasterNet.Domain.csproj": {
+                "projectPath": "C:\\Users\\pantezana\\source\\data\\notes\\cursos\\C#\\WebApi\\src\\MasterNet.Domain\\MasterNet.Domain.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net9.0": {
+          "targetAlias": "net9.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.102\\RuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}
