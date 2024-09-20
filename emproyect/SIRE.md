@@ -106,7 +106,7 @@ BEGIN
     , @RutaCompletaArchivo = @RutaArchivo
     , @IdSunatElectronicoPeriodo = @IdSunatElectronicoPeriodo
     , @IdSunatElectronicoPeriodoVersion = @IdSunatElectronicoPeriodoVersion
-    , @DestinationTable = 'Financiero.SireTxtPropuesta'
+    , @DestinationTable = 'Financiero.SunatElectronicoTxtPropuestaSunat'
   END
 
   IF @CodigoTipoProcesoSunatElectronico = 'DCL' -- DECLARADO
@@ -116,7 +116,7 @@ BEGIN
     , @RutaCompletaArchivo = @RutaArchivo
     , @IdSunatElectronicoPeriodo = @IdSunatElectronicoPeriodo
     , @IdSunatElectronicoPeriodoVersion = @IdSunatElectronicoPeriodoVersion
-    , @DestinationTable = 'Financiero.SireTxtDeclarado'
+    , @DestinationTable = 'Financiero.SunatElectronicoTxtDeclarado'
   END
 
   -- NEXT  
@@ -157,7 +157,7 @@ Financiero.SE_txt_propuesta_reporte -->
 -- SireTxtPropuesta
 -- SireTxtDeclarado
 -- SireTxtGenerado
-CREATE TABLE Financiero.SunatElectronicoTxtGenerado (
+CREATE TABLE Financiero.SunatElectronicoTxtPropuestaSunat (
   Id INT IDENTITY(1,1) PRIMARY KEY,
   Codigo VARCHAR(12) NOT NULL,
 
@@ -268,6 +268,9 @@ CREATE TABLE Financiero.SunatElectronicoTxtGenerado (
   Col100 VARCHAR(MAX)
 )
 ```
+
+
+
   DECLARE @IdSunatElectronicoPeriodo INT = 91980; -- 202312
   DECLARE @PeriodoInicio VARCHAR(6) = '202301';
   DECLARE @Usuario VARCHAR(6) = 'Admin';
@@ -332,14 +335,14 @@ CREATE TABLE Financiero.SunatElectronicoTxtGenerado (
   DROP TABLE IF EXISTS #SeDeclarado;
   CREATE TABLE #SeDeclarado (
     IdCompania INT NOT NULL,
-    CodigoAnioPeriodoDeclarado VARCHAR(12) NOT NULL,
+    CodigoAnioPeriodo VARCHAR(12) NOT NULL,
   )
 
   SET @i = 1;
   SET @QuerySQL = '';
   WHILE @i <= @NumeroColumnas
   BEGIN
-      SET @QuerySQL += 'ALTER TABLE #SeDeclarado ADD Col' + CAST(@i AS NVARCHAR(3)) + '_A NVARCHAR(4000);';
+      SET @QuerySQL += 'ALTER TABLE #SeDeclarado ADD Col' + CAST(@i AS NVARCHAR(3)) + ' NVARCHAR(4000);';
       SET @i += 1;
   END
   EXEC sp_executesql @QuerySQL;
@@ -347,11 +350,11 @@ CREATE TABLE Financiero.SunatElectronicoTxtGenerado (
   -- ==================================================================
   -- O B T E N E R         D A T O S       D E C L A R A D O S
   SET @QuerySQL = '
-    INSERT INTO #SeDeclarado (IdCompania, CodigoAnioPeriodoDeclarado, ' + @ColumnList + ')
-    SELECT IdCompania, CodigoAnioPeriodoDeclarado, ' + @ColumnList + ' FROM Financiero.SireTxtDeclarado 
+    INSERT INTO #SeDeclarado (IdCompania, CodigoAnioPeriodo, ' + @ColumnList + ')
+    SELECT IdCompania, CodigoAnioPeriodo, ' + @ColumnList + ' FROM Financiero.SunatElectronicoTxtDeclarado 
     WHERE IdCompania = ' + CONVERT(varchar, @IdCompania) + '
-      AND CodigoAnioPeriodoDeclarado >= ' + @PeriodoInicioLocal +'   
-      AND CodigoAnioPeriodoDeclarado < ' + @PeriodoFin + '
+      AND CodigoAnioPeriodo >= ' + @PeriodoInicioLocal +'   
+      AND CodigoAnioPeriodo < ' + @PeriodoFin + '
   '
   EXEC sp_executesql @QuerySQL;
 
@@ -362,7 +365,7 @@ CREATE TABLE Financiero.SunatElectronicoTxtGenerado (
   DROP TABLE IF EXISTS #SeCorregido;
   CREATE TABLE #SeCorregido (
     IdCompania INT NOT NULL,
-    CodigoAnioPeriodoDeclarado VARCHAR(12) NOT NULL,
+    CodigoAnioPeriodo VARCHAR(12) NOT NULL,
   )
 
   SET @i = 1;
@@ -382,12 +385,12 @@ CREATE TABLE Financiero.SunatElectronicoTxtGenerado (
   DECLARE @ColumnComparaList VARCHAR(200) = 'Col4, Col5, Col6, Col7, Col8, Col9, Col10, Col11, Col12, Col13, Col14, Col15, Col16, Col17, Col18';
 
   SET @QuerySQL = '
-    INSERT INTO #SeCorregido (IdCompania, CodigoAnioPeriodoDeclarado, ' + @ColumnList + ')
-    SELECT IdCompania, CodigoAnioPeriodoDeclarado, ' + @ColumnList + '
+    INSERT INTO #SeCorregido (IdCompania, CodigoAnioPeriodo, ' + @ColumnList + ')
+    SELECT IdCompania, CodigoAnioPeriodo, ' + @ColumnList + '
     FROM (
         SELECT
-          Fila = ROW_NUMBER() OVER(PARTITION BY ' + @ColumnClaveList + ' ORDER BY ' + @ColumnClaveList + ', CodigoAnioPeriodoDeclarado DESC)   
-          , IdCompania, CodigoAnioPeriodoDeclarado, ' + @ColumnList + '
+          Fila = ROW_NUMBER() OVER(PARTITION BY ' + @ColumnClaveList + ' ORDER BY ' + @ColumnClaveList + ', CodigoAnioPeriodo DESC)   
+          , IdCompania, CodigoAnioPeriodo, ' + @ColumnList + '
         FROM #SeDeclarado 
         WHERE LEFT(' + @ColumnPeriodo + ',6) BETWEEN ' + @PeriodoInicioLocal + ' AND ' + @PeriodoFin + '
     ) t
@@ -426,7 +429,7 @@ CREATE TABLE Financiero.SunatElectronicoTxtGenerado (
   -- O B T E N E R         D A T O S       A C T U A L E S
   SET @QuerySQL = '
     INSERT INTO #SeSistema (IdCompania, CodigoAnioPeriodo, ' + @ColumnList + ')
-    SELECT IdCompania, CodigoAnioPeriodo, ' + @ColumnList + ' FROM Financiero.SireTxtGenerado 
+    SELECT IdCompania, CodigoAnioPeriodo, ' + @ColumnList + ' FROM Financiero.SunatElectronicoTxtGenerado 
     WHERE IdCompania = ' + CONVERT(varchar, @IdCompania) + '
       AND CodigoAnioPeriodo >= ' + @PeriodoInicioLocal +'   
       AND CodigoAnioPeriodo < ' + @PeriodoFin + '
@@ -462,7 +465,7 @@ CREATE TABLE Financiero.SunatElectronicoTxtGenerado (
     @FullJoinColumnASQL = @FullJoinColumnASQL +
           CASE WHEN @FullJoinColumnASQL = '' THEN '' ELSE ', ' END +
           value + '_A = a.' + value + CHAR(13) + CHAR(10)
-  FROM STRING_SPLIT(@ColumnComparaList, ',')
+  FROM STRING_SPLIT(@ColumnList, ',')
   WHERE RTRIM(LTRIM(value)) <> '';
 
   -- Columnas - B
@@ -470,7 +473,7 @@ CREATE TABLE Financiero.SunatElectronicoTxtGenerado (
     @FullJoinColumnBSQL = @FullJoinColumnBSQL +
           CASE WHEN @FullJoinColumnBSQL = '' THEN '' ELSE ', ' END +
           value + '_B = b.' + value + CHAR(13) + CHAR(10)
-  FROM STRING_SPLIT(@ColumnComparaList, ',')
+  FROM STRING_SPLIT(@ColumnList, ',')
   WHERE RTRIM(LTRIM(value)) <> '';
 
   -- Genera Full Join Campos a comparar
@@ -498,8 +501,6 @@ CREATE TABLE Financiero.SunatElectronicoTxtGenerado (
   FROM STRING_SPLIT(@ColumnComparaList, ',')
   WHERE RTRIM(LTRIM(value)) <> '';
 
-  --IdCompania              = ISNULL(a.IdCompania, b.IdCompania)  
-  
 
   -- //
   SET @QuerySQL = '
@@ -521,8 +522,63 @@ CREATE TABLE Financiero.SunatElectronicoTxtGenerado (
     FULL JOIN #SeSistema b   
       on  b.IdCompania = a.IdCompania
       and ' + @FullJoinConditionSQL + '  
-  ) AS sec 
-    '
-  PRINT(@QuerySQL);
+  ) AS sec'
+
   EXEC sp_executesql @QuerySQL;
 
+  -- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  -- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  -- G E N E R A      R E P O R T E 
+  -- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  -- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
+
+  DROP TABLE IF EXISTS #SeRectifica;
+  CREATE TABLE #SeRectifica (
+    IdCompania INT NOT NULL,
+    CodigoAnioPeriodo VARCHAR(12) NOT NULL,
+    Descripcion VARCHAR(255) NOT NULL,
+    PeriodoInicioRectifica VARCHAR(12) NOT NULL,
+    PeriodoFinRectifica VARCHAR(12) NOT NULL,
+  )
+
+  SET @i = 1;
+  SET @QuerySQL = '';
+  WHILE @i <= @NumeroColumnas
+  BEGIN
+      SET @QuerySQL += 'ALTER TABLE #SeRectifica ADD Col' + CAST(@i AS NVARCHAR(3)) + ' NVARCHAR(4000);';
+      SET @i += 1;
+  END
+  EXEC sp_executesql @QuerySQL;
+
+
+  SET @QuerySQL = '
+    INSERT INTO #SeRectifica (IdCompania, CodigoAnioPeriodo, Descripcion, PeriodoInicioRectifica, PeriodoFinRectifica, ' + @ColumnList + ')
+
+    -- Estado 9 Que Modifica
+    SELECT
+      *
+    FROM #SeRectifica
+    WHERE ExisteEnOrigen = ''S''
+      AND ExisteEnTxt = ''S'' 
+      AND Valido = ''N''
+
+    UNION ALL
+
+    -- Estado 9 Que Modifica con valores 0
+    SELECT
+      *
+    FROM #SeRectifica
+    WHERE ExisteEnOrigen = ''N''
+      
+    UNION ALL
+
+    -- Estado 8 Nuevos registros
+    SELECT
+      *
+    FROM #SeRectifica
+    WHERE ExisteEnTxt = ''N''
+  '
+
+  EXEC sp_executesql @QuerySQL;
