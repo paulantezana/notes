@@ -270,9 +270,8 @@ CREATE TABLE Financiero.SunatElectronicoTxtPropuestaSunat (
 ```
 
 
-
   DECLARE @IdSunatElectronicoPeriodo INT = 91980; -- 202312
-  DECLARE @PeriodoInicio VARCHAR(6) = '202301';
+  DECLARE @PeriodoInicio VARCHAR(6) = '201901';
   DECLARE @Usuario VARCHAR(6) = 'Admin';
   DECLARE @SistemaOrigen VARCHAR(30) = 'CONCAR';  
 
@@ -308,140 +307,153 @@ CREATE TABLE Financiero.SunatElectronicoTxtPropuestaSunat (
 
   SELECT @NumeroColumnas = TxtDeclaradoNumCols FROM Configuracion.SunatElectronico WHERE Id = 27;
 
+  -- ==================================================================================================================
+  -- ==================================================================================================================
+  -- ------- G E N E R A R     T A B L A S     Y     C O L U M N A S
+  -- ==================================================================================================================
+  -- ==================================================================================================================
+  DECLARE @ColumnPeriodo VARCHAR(200) = 'Col1';
+  DECLARE @ColumnClaveList VARCHAR(200) = 'Col1, Col2';
+  DECLARE @ColumnDetalleClaveList VARCHAR(200) = 'Col1, Col2, Col3';
 
-  -- ==================================================================
-  -- G E N E R A     L A S     C O L U M N A S
-  SET @i = 1;
-  SELECT @ColumnList = '', @ColumnListA = '', @ColumnListB = '';
-  WHILE @i <= @NumeroColumnas
-  BEGIN
-      SET @ColumnList += 'Col' + CAST(@i AS NVARCHAR(3));
-      SET @ColumnListA += 'Col' + CAST(@i AS NVARCHAR(3)) + '_A';
-      SET @ColumnListB += 'Col' + CAST(@i AS NVARCHAR(3)) + '_B';
+  DECLARE @ColumnNumberComparaList VARCHAR(200) = 'Col18, Col19';
+  DECLARE @ColumnTextComparaList VARCHAR(200) = 'Col4, Col5, Col6, Col7, Col8, Col9, Col10, Col13, Col14, Col15, Col17, Col20';
+  DECLARE @ColumnDescriptionComparaList VARCHAR(200) = 'Col11, Col12, Col16';
+  DECLARE @ColumnComparaList VARCHAR(200) = @ColumnNumberComparaList + ', ' + @ColumnTextComparaList + ', ' + @ColumnDescriptionComparaList;
 
-      IF @i < @NumeroColumnas SELECT @ColumnList += ', ', @ColumnListA += ', ', @ColumnListB += ', ';
-      SET @i += 1;
-  END
+  DECLARE @ColumnEstado VARCHAR(200) = 'Col21';
+  DECLARE @PatronNoAlfanumerico varchar(52) = '!"#$%&''()*+,-./:;<=>?@[\]^_`{|}~áéíóúÁÉÍÓÚÑñ¿¡°¨§¬¥¢£€©®汉字' + char(9) + char(13) + char(10)
 
 
-  -- ==================================================================
-  -- ==================================================================
-  -- D A T A      D E C L A R A D O
-  -- ==================================================================
-  -- ==================================================================
-
-  -- ==================================================================
-  -- C R E A R     T A B L A    D E C L A R A D O
   DROP TABLE IF EXISTS #SeDeclarado;
+  DROP TABLE IF EXISTS #SeCorregido;
+  DROP TABLE IF EXISTS #SeSistema;
+
   CREATE TABLE #SeDeclarado (
     IdCompania INT NOT NULL,
     CodigoAnioPeriodo VARCHAR(12) NOT NULL,
   )
-
-  SET @i = 1;
-  SET @QuerySQL = '';
-  WHILE @i <= @NumeroColumnas
-  BEGIN
-      SET @QuerySQL += 'ALTER TABLE #SeDeclarado ADD Col' + CAST(@i AS NVARCHAR(3)) + ' NVARCHAR(4000);';
-      SET @i += 1;
-  END
-  EXEC sp_executesql @QuerySQL;
-
-  -- ==================================================================
-  -- O B T E N E R         D A T O S       D E C L A R A D O S
-  SET @QuerySQL = '
-    INSERT INTO #SeDeclarado (IdCompania, CodigoAnioPeriodo, ' + @ColumnList + ')
-    SELECT IdCompania, CodigoAnioPeriodo, ' + @ColumnList + ' FROM Financiero.SunatElectronicoTxtDeclarado 
-    WHERE IdCompania = ' + CONVERT(varchar, @IdCompania) + '
-      AND CodigoAnioPeriodo >= ' + @PeriodoInicioLocal +'   
-      AND CodigoAnioPeriodo < ' + @PeriodoFin + '
-  '
-  EXEC sp_executesql @QuerySQL;
-
-
-
-  -- ==================================================================
-  -- C R E A R     T A B L A    C O R R E G I D O
-  DROP TABLE IF EXISTS #SeCorregido;
   CREATE TABLE #SeCorregido (
     IdCompania INT NOT NULL,
     CodigoAnioPeriodo VARCHAR(12) NOT NULL,
   )
-
-  SET @i = 1;
-  SET @QuerySQL = '';
-  WHILE @i <= @NumeroColumnas
-  BEGIN
-      SET @QuerySQL += 'ALTER TABLE #SeCorregido ADD Col' + CAST(@i AS NVARCHAR(3)) + ' NVARCHAR(4000);';
-      SET @i += 1;
-  END
-  EXEC sp_executesql @QuerySQL;
-
-  -- ==================================================================
-  -- G E N E R A R     C O R R E G I D O
-  DECLARE @ColumnPeriodo VARCHAR(200) = 'Col1';
-  DECLARE @ColumnClaveList VARCHAR(200) = 'Col1, Col2';
-  DECLARE @ColumnDetalleClaveList VARCHAR(200) = 'Col1, Col2, Col3';
-  DECLARE @ColumnComparaList VARCHAR(200) = 'Col4, Col5, Col6, Col7, Col8, Col9, Col10, Col11, Col12, Col13, Col14, Col15, Col16, Col17, Col18';
-
-  SET @QuerySQL = '
-    INSERT INTO #SeCorregido (IdCompania, CodigoAnioPeriodo, ' + @ColumnList + ')
-    SELECT IdCompania, CodigoAnioPeriodo, ' + @ColumnList + '
-    FROM (
-        SELECT
-          Fila = ROW_NUMBER() OVER(PARTITION BY ' + @ColumnClaveList + ' ORDER BY ' + @ColumnClaveList + ', CodigoAnioPeriodo DESC)   
-          , IdCompania, CodigoAnioPeriodo, ' + @ColumnList + '
-        FROM #SeDeclarado 
-        WHERE LEFT(' + @ColumnPeriodo + ',6) BETWEEN ' + @PeriodoInicioLocal + ' AND ' + @PeriodoFin + '
-    ) t
-    WHERE Fila = 1
-  ';
-
-  EXEC sp_executesql @QuerySQL;
-
-
-
-  -- ==================================================================
-  -- ==================================================================
-  -- D A T A      E N     E L      S I S T E M A
-  -- ==================================================================
-  -- ==================================================================
-
-
-  -- ==================================================================
-  -- C R E A R     T A B L A    S I S T E M A
-  DROP TABLE IF EXISTS #SeSistema;
   CREATE TABLE #SeSistema (
     IdCompania INT NOT NULL,
     CodigoAnioPeriodo VARCHAR(12) NOT NULL,
   )
 
+  SELECT @QuerySQL = '';
+  SELECT @ColumnList = '', @ColumnListA = '', @ColumnListB = '';
+
   SET @i = 1;
-  SET @QuerySQL = '';
   WHILE @i <= @NumeroColumnas
   BEGIN
+      SET @QuerySQL += 'ALTER TABLE #SeDeclarado ADD Col' + CAST(@i AS NVARCHAR(3)) + ' NVARCHAR(4000);';
+      SET @QuerySQL += 'ALTER TABLE #SeCorregido ADD Col' + CAST(@i AS NVARCHAR(3)) + ' NVARCHAR(4000);';
       SET @QuerySQL += 'ALTER TABLE #SeSistema ADD Col' + CAST(@i AS NVARCHAR(3)) + ' NVARCHAR(4000);';
+
+      SET @ColumnList += 'Col' + CAST(@i AS NVARCHAR(3));
+      SET @ColumnListA += 'Col' + CAST(@i AS NVARCHAR(3)) + '_A';
+      SET @ColumnListB += 'Col' + CAST(@i AS NVARCHAR(3)) + '_B';
+
+      IF @i < @NumeroColumnas SELECT @ColumnList += ', ', @ColumnListA += ', ', @ColumnListB += ', ';
+
       SET @i += 1;
   END
+
+  SELECT @QuerySQL = @QuerySQL
+          + 'ALTER TABLE #SeDeclarado ADD ' + [value] + '_Aux NVARCHAR(4000);'
+          + 'ALTER TABLE #SeCorregido ADD ' + [value] + '_Aux NVARCHAR(4000);'
+          + 'ALTER TABLE #SeSistema ADD ' + [value] + '_Aux NVARCHAR(4000);'
+  FROM STRING_SPLIT(@ColumnDescriptionComparaList, ',')
+  WHERE RTRIM(LTRIM([value])) <> '';
+
   EXEC sp_executesql @QuerySQL;
 
-  -- ==================================================================
-  -- O B T E N E R         D A T O S       A C T U A L E S
+
+  DECLARE @ColumnDescriptionComparaListAux VARCHAR(MAX) = '';
+  DECLARE @ColumnDescriptionComparaListAuxClean VARCHAR(MAX) = '';
+  SELECT
+    @ColumnDescriptionComparaListAux = @ColumnDescriptionComparaListAux +
+          CASE WHEN @ColumnDescriptionComparaListAux = '' THEN '' ELSE ', ' END +
+          [value] + '_Aux' + CHAR(13) + CHAR(10),
+    @ColumnDescriptionComparaListAuxClean = @ColumnDescriptionComparaListAuxClean +
+          CASE WHEN @ColumnDescriptionComparaListAuxClean = '' THEN '' ELSE ', ' END +
+          [value] + '_Aux = REPLACE(REPLACE(REPLACE('+
+                            + 'TRANSLATE(' + [value] + ', ''' + REPLACE(@PatronNoAlfanumerico, '''', '''''') + ''', REPLICATE('' '', LEN(''' + REPLACE(@PatronNoAlfanumerico, '''', '''''') + '''))) ' +
+                            + ', CHAR(32), ''<>''), ''><'',''''), ''<>'',CHAR(32))' + CHAR(13) + CHAR(10)
+  FROM STRING_SPLIT(@ColumnDescriptionComparaList, ',')
+  WHERE RTRIM(LTRIM([value])) <> '';
+
+  -- ==================================================================================================================
+  -- ==================================================================================================================
+  -- ------- D A T A      D E C L A R A D O
+  -- ==================================================================================================================
+  -- ==================================================================================================================
+
+
+  -- -----------------------------------------------------
+  -- Obtener datos declarados
+  SET @QuerySQL = '
+    SELECT IdCompania, CodigoAnioPeriodo, ' + @ColumnList + ', ' + @ColumnDescriptionComparaListAuxClean + '
+      INTO #SeDeclaradoData
+    FROM Financiero.SunatElectronicoTxtDeclarado 
+    WHERE IdCompania = ' + CONVERT(varchar, @IdCompania) + '
+      AND Codigo = ''' + @CodigoSunatElectronico  + '''
+      AND CodigoAnioPeriodo >= ' + @PeriodoInicioLocal +'   
+      AND CodigoAnioPeriodo < ' + @PeriodoFin + ';
+
+    SELECT IdCompania, CodigoAnioPeriodo, ' + @ColumnList + ', ' + @ColumnDescriptionComparaListAux + '
+      INTO #SeCorregidoData
+    FROM (
+        SELECT
+          Fila = ROW_NUMBER() OVER(PARTITION BY ' + @ColumnClaveList + ' ORDER BY ' + @ColumnClaveList + ', CodigoAnioPeriodo DESC)   
+          , IdCompania, CodigoAnioPeriodo, ' + @ColumnList + ', ' + @ColumnDescriptionComparaListAux + '
+        FROM #SeDeclaradoData 
+        WHERE LEFT(' + @ColumnPeriodo + ',6) BETWEEN ' + @PeriodoInicioLocal + ' AND ' + @PeriodoFin + '
+    ) t
+    WHERE Fila = 1;
+
+    INSERT INTO #SeCorregido (IdCompania, CodigoAnioPeriodo, ' + @ColumnList + ', ' + @ColumnDescriptionComparaListAux + ')
+    SELECT IdCompania, CodigoAnioPeriodo, ' + @ColumnList + ', ' + @ColumnDescriptionComparaListAux + ' FROM #SeCorregidoData
+  '
+
+  SELECT @QuerySQL;
+  EXEC sp_executesql @QuerySQL;
+
+  -- ==================================================================================================================
+  -- ==================================================================================================================
+  -- ------- D A T A      E N     E L      S I S T E M A
+  -- ==================================================================================================================
+  -- ==================================================================================================================
+
+
+  -- -----------------------------------------------------
+  -- Obtener Datos actuales
   SET @QuerySQL = '
     INSERT INTO #SeSistema (IdCompania, CodigoAnioPeriodo, ' + @ColumnList + ')
     SELECT IdCompania, CodigoAnioPeriodo, ' + @ColumnList + ' FROM Financiero.SunatElectronicoTxtGenerado 
     WHERE IdCompania = ' + CONVERT(varchar, @IdCompania) + '
+      AND Codigo = ''' + @CodigoSunatElectronico  + '''
       AND CodigoAnioPeriodo >= ' + @PeriodoInicioLocal +'   
       AND CodigoAnioPeriodo < ' + @PeriodoFin + '
   '
   EXEC sp_executesql @QuerySQL;
 
 
-  -- ==================================================================
-  -- ==================================================================
-  -- C O M P A R A
-  -- ==================================================================
-  -- ==================================================================
+  -- ==================================================================================================================
+  -- ==================================================================================================================
+  -- ------- C O M P A R A
+  -- ==================================================================================================================
+  -- ==================================================================================================================
+  DROP TABLE IF EXISTS #SeComparar;
+  CREATE TABLE #SeComparar (
+    IdCompania INT NOT NULL,
+    CodigoAnioPeriodo VARCHAR(12) NOT NULL,
+    Valido Char NOT NULL,
+    ExisteEnTxt Char NOT NULL,
+    ExisteEnOrigen Char NOT NULL,
+  );
 
   DECLARE @FullJoinConditionSQL NVARCHAR(MAX) = '';
   DECLARE @FullJoinColumnCompareListSQL NVARCHAR(MAX) = '';
@@ -449,91 +461,198 @@ CREATE TABLE Financiero.SunatElectronicoTxtPropuestaSunat (
   DECLARE @FullJoinColumnASQL NVARCHAR(MAX) = '';
   DECLARE @FullJoinColumnBSQL NVARCHAR(MAX) = '';
 
+  DECLARE @ComparaColumnASQL NVARCHAR(MAX) = '';
+  DECLARE @ComparaColumnBSQL NVARCHAR(MAX) = '';
+  DECLARE @ComparaColumnComparSQL NVARCHAR(MAX) = '';
+  DECLARE @ComparaColumnClaveSQL NVARCHAR(MAX) = '';
+
   DECLARE @FullJoinColumnValidateSQL NVARCHAR(MAX) = '';
+
+  DECLARE @TablaSeCompararColumnListSQL NVARCHAR(MAX) = '';
+
 
   -- Genera Full Join Condicion
   SELECT
     @FullJoinConditionSQL = @FullJoinConditionSQL +
               CASE WHEN @FullJoinConditionSQL = '' THEN '' ELSE ' AND ' END +
-              'b.' + value + ' = a.' + value + CHAR(13) + CHAR(10)
+              'b.' + [value] + ' = a.' + [value] + CHAR(13) + CHAR(10)
   FROM STRING_SPLIT(@ColumnDetalleClaveList, ',')
-  WHERE RTRIM(LTRIM(value)) <> '';
-
-
-  -- Columnas - A
-  SELECT
-    @FullJoinColumnASQL = @FullJoinColumnASQL +
-          CASE WHEN @FullJoinColumnASQL = '' THEN '' ELSE ', ' END +
-          value + '_A = a.' + value + CHAR(13) + CHAR(10)
-  FROM STRING_SPLIT(@ColumnList, ',')
-  WHERE RTRIM(LTRIM(value)) <> '';
-
-  -- Columnas - B
-  SELECT
-    @FullJoinColumnBSQL = @FullJoinColumnBSQL +
-          CASE WHEN @FullJoinColumnBSQL = '' THEN '' ELSE ', ' END +
-          value + '_B = b.' + value + CHAR(13) + CHAR(10)
-  FROM STRING_SPLIT(@ColumnList, ',')
-  WHERE RTRIM(LTRIM(value)) <> '';
-
-  -- Genera Full Join Campos a comparar
-  SELECT
-    @FullJoinColumnCompareListSQL = @FullJoinColumnCompareListSQL +
-          CASE WHEN @FullJoinColumnCompareListSQL = '' THEN '' ELSE ', ' END +
-          value + '_Dif = IIF(a.' + value + ' != b.' + value + ', ''S'', ''N'')' + CHAR(13) + CHAR(10)
-  FROM STRING_SPLIT(@ColumnComparaList, ',')
-  WHERE RTRIM(LTRIM(value)) <> '';
+  WHERE RTRIM(LTRIM([value])) <> '';
 
   -- Genera Full Join Campos Clave
   SELECT
     @FullJoinColumnClaveListSQL = @FullJoinColumnClaveListSQL +
         CASE WHEN @FullJoinColumnClaveListSQL = '' THEN '' ELSE ', ' END +
-        value + ' = ISNULL(a.' + value + ', b.' + value + ')' + CHAR(13) + CHAR(10)
+        [value] + ' = ISNULL(a.' + [value] + ', b.' + [value] + ')' + CHAR(13) + CHAR(10),
+
+    @TablaSeCompararColumnListSQL = @TablaSeCompararColumnListSQL +
+            'ALTER TABLE #SeComparar ADD ' + [value] + ' NVARCHAR(4000); ' + CHAR(13) + CHAR(10)
   FROM STRING_SPLIT(@ColumnDetalleClaveList, ',')
-  WHERE RTRIM(LTRIM(value)) <> '';
+  WHERE RTRIM(LTRIM([value])) <> '';
+
+  -- Columnas - A
+  SELECT
+    @FullJoinColumnASQL = @FullJoinColumnASQL +
+          CASE WHEN @FullJoinColumnASQL = '' THEN '' ELSE ', ' END +
+            [value] + '_A = a.' + [value] + CHAR(13) + CHAR(10),
+
+    @ComparaColumnASQL = @ComparaColumnASQL +
+          CASE WHEN @ComparaColumnASQL = '' THEN '' ELSE ', ' END +
+            [value] + '_A' + CHAR(13) + CHAR(10),
+
+    @TablaSeCompararColumnListSQL = @TablaSeCompararColumnListSQL +
+            'ALTER TABLE #SeComparar ADD ' + [value] + '_A' + ' NVARCHAR(4000); ' + CHAR(13) + CHAR(10)
+
+  FROM STRING_SPLIT(@ColumnList, ',')
+  WHERE RTRIM(LTRIM([value])) <> '';
 
 
+  
+
+  -- Columnas - B
+  SELECT
+    @FullJoinColumnBSQL = @FullJoinColumnBSQL +
+          CASE WHEN @FullJoinColumnBSQL = '' THEN '' ELSE ', ' END +
+          [value] + '_B = b.' + [value] + CHAR(13) + CHAR(10),
+
+    @ComparaColumnBSQL = @ComparaColumnBSQL +
+          CASE WHEN @ComparaColumnBSQL = '' THEN '' ELSE ', ' END +
+          [value] + '_B' + CHAR(13) + CHAR(10),
+
+    @TablaSeCompararColumnListSQL = @TablaSeCompararColumnListSQL +
+            'ALTER TABLE #SeComparar ADD ' + [value] + '_B' + ' NVARCHAR(4000); ' + CHAR(13) + CHAR(10)
+  FROM STRING_SPLIT(@ColumnList, ',')
+  WHERE RTRIM(LTRIM([value])) <> '';
+
+  -- Genera Full Join Campos a comparar
+  SELECT
+    --@FullJoinColumnCompareListSQL = @FullJoinColumnCompareListSQL +
+    --      CASE WHEN @FullJoinColumnCompareListSQL = '' THEN '' ELSE ', ' END +
+    --      [value] + '_Dif = IIF(a.' + [value] + ' != b.' + [value] + ', ''S'', ''N'')' + CHAR(13) + CHAR(10),
+
+    @ComparaColumnComparSQL = @ComparaColumnComparSQL +
+          CASE WHEN @ComparaColumnComparSQL = '' THEN '' ELSE ', ' END +
+          [value] + '_Dif' + CHAR(13) + CHAR(10),
+
+    @TablaSeCompararColumnListSQL = @TablaSeCompararColumnListSQL +
+            'ALTER TABLE #SeComparar ADD ' + [value] + '_Dif' + ' NVARCHAR(4000); ' + CHAR(13) + CHAR(10)
+  FROM STRING_SPLIT(@ColumnComparaList, ',')
+  WHERE RTRIM(LTRIM([value])) <> '';
+
+
+  SELECT
+    @FullJoinColumnCompareListSQL = @FullJoinColumnCompareListSQL +
+          CASE WHEN @FullJoinColumnCompareListSQL = '' THEN '' ELSE ', ' END +
+          [value] + '_Dif = IIF(a.' + [value] + ' != b.' + [value] + ', ''S'', ''N'')' + CHAR(13) + CHAR(10)
+  FROM STRING_SPLIT(@ColumnTextComparaList, ',')
+  WHERE RTRIM(LTRIM([value])) <> '';
+
+
+  SELECT
+      @FullJoinColumnCompareListSQL = @FullJoinColumnCompareListSQL +
+          CASE WHEN @FullJoinColumnCompareListSQL = '' THEN '' ELSE ', ' END +
+          [value] + '_Dif = IIF(a.' + [value] + ' != b.' + [value] + ', ''S'', ''N'')' + CHAR(13) + CHAR(10)
+
+    --@FullJoinColumnCompareListSQL = @FullJoinColumnCompareListSQL +
+    --      CASE WHEN @FullJoinColumnCompareListSQL = '' THEN '' ELSE ', ' END +
+    --      [value] + '_Dif = IIF(
+    --                            REPLACE(REPLACE(REPLACE(
+    --                              TRANSLATE(a.' + [value] + ', ''' + REPLACE(@PatronNoAlfanumerico, '''', '''''') + ''', REPLICATE('' '', LEN(''' + REPLACE(@PatronNoAlfanumerico, '''', '''''') + ''')))
+    --                            , CHAR(32), ''<>''), ''><'',''''), ''<>'',CHAR(32))
+
+    --                            != 
+
+    --                            REPLACE(REPLACE(REPLACE(
+    --                              TRANSLATE(b.' + [value] + ', ''' + REPLACE(@PatronNoAlfanumerico, '''', '''''') + ''', REPLICATE('' '', LEN(''' + REPLACE(@PatronNoAlfanumerico, '''', '''''') + ''')))
+    --                            , CHAR(32), ''<>''), ''><'',''''), ''<>'',CHAR(32))
+
+    --                        , ''S''
+    --                        , ''N''
+    --                      )' + CHAR(13) + CHAR(10)
+  FROM STRING_SPLIT(@ColumnDescriptionComparaList, ',')
+  WHERE RTRIM(LTRIM([value])) <> '';
+
+  --  DECLARE @CompareReplace VARCHAR(200) = '
+  --  REPLACE(REPLACE(REPLACE(
+  --                TRANSLATE(ddddddddddddddd, ''' + @PatronNoAlfanumerico + ''', REPLICATE('' '', LEN(''' + @PatronNoAlfanumerico + ''')))
+  --  , CHAR(32), ''<>''), ''><'',''''), ''<>'',CHAR(32))
+  --'
+
+  SELECT
+    @FullJoinColumnCompareListSQL = @FullJoinColumnCompareListSQL +
+          CASE WHEN @FullJoinColumnCompareListSQL = '' THEN '' ELSE ', ' END +
+          [value] + '_Dif = IIF(a.' + [value] + ' != b.' + [value] + ', ''S'', ''N'')' + CHAR(13) + CHAR(10)
+  FROM STRING_SPLIT(@ColumnNumberComparaList, ',')
+  WHERE RTRIM(LTRIM([value])) <> '';
+
+
+  --DECLARE @ColumnNumberComparaList VARCHAR(200) = 'Col18, Col19';
+  --DECLARE @ColumnTextComparaList VARCHAR(200) = 'Col4, Col5, Col6, Col7, Col8, Col9, Col10, Col13, Col14, Col15, Col17, Col20';
+  --DECLARE @ColumnDescriptionComparaList VARCHAR(200) = 'Col11, Col12, Col16';
+  --DECLARE @ColumnComparaList VARCHAR(200) = @ColumnNumberComparaList + ', ' + @ColumnTextComparaList + ', ' + @ColumnDescriptionComparaList;
+
+
+  -- ----------------------------
   -- Genera Full Validate Campos
   SELECT
     @FullJoinColumnValidateSQL = @FullJoinColumnValidateSQL +
         CASE WHEN @FullJoinColumnValidateSQL = '' THEN '' ELSE 'OR ' END +
         value + '_Dif = ''S''' + CHAR(13) + CHAR(10)
   FROM STRING_SPLIT(@ColumnComparaList, ',')
-  WHERE RTRIM(LTRIM(value)) <> '';
+  WHERE RTRIM(LTRIM([value])) <> '';
 
+
+  -- Agregar Columnas;
+  EXEC sp_executesql @TablaSeCompararColumnListSQL;
 
   -- //
   SET @QuerySQL = '
-  SELECT   
-    sec.*
-    , Valido = IIF(' + @FullJoinColumnValidateSQL + ',''N'',''S'')
-  FROM (   
-    SELECT   
-      ' + @FullJoinColumnASQL + '
-      , ' + @FullJoinColumnBSQL + '
-      , ' + @FullJoinColumnClaveListSQL + '
-      , ' + @FullJoinColumnCompareListSQL + '
+  INSERT INTO #SeComparar (
+    IdCompania, CodigoAnioPeriodo, Valido
+    , ExisteEnTxt, ExisteEnOrigen
+    , ' + @ColumnDetalleClaveList + '
 
-      , IdCompania              = ISNULL(a.IdCompania, b.IdCompania)
+    , ' + @ComparaColumnASQL + '
+    , ' + @ComparaColumnBSQL + '
+    , ' + @ComparaColumnComparSQL + '
+  )
+  SELECT
+    IdCompania, CodigoAnioPeriodo, Valido = IIF(' + @FullJoinColumnValidateSQL + ',''N'',''S'')
+    , ExisteEnTxt, ExisteEnOrigen
+    , ' + @ColumnDetalleClaveList + '
+
+    , ' + @ComparaColumnASQL + '
+    , ' + @ComparaColumnBSQL + '
+    , ' + @ComparaColumnComparSQL + '
+  FROM (   
+    SELECT
+      IdCompania              = ISNULL(a.IdCompania, b.IdCompania)
+      , CodigoAnioPeriodo       = ISNULL(a.CodigoAnioPeriodo, b.CodigoAnioPeriodo)
       , ExisteEnTxt             = IIF(a.IdCompania IS NOT NULL, ''S'', ''N'')
       , ExisteEnOrigen          = IIF(b.IdCompania IS NOT NULL, ''S'', ''N'')
+      , ' + @FullJoinColumnClaveListSQL + '
 
+      , ' + @FullJoinColumnASQL + '
+      , ' + @FullJoinColumnBSQL + '
+      , ' + @FullJoinColumnCompareListSQL + '
     FROM #SeCorregido a   
     FULL JOIN #SeSistema b   
       on  b.IdCompania = a.IdCompania
       and ' + @FullJoinConditionSQL + '  
   ) AS sec'
-
+  SELECT @QuerySQL;
   EXEC sp_executesql @QuerySQL;
 
-  -- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  -- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  -- G E N E R A      R E P O R T E 
-  -- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-  -- ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
 
+
+
+  -- ==================================================================================================================
+  -- ==================================================================================================================
+  -- ------- G E N E R A      R E C T I F I C A T O R I A
+  -- ==================================================================================================================
+  -- ==================================================================================================================
   DROP TABLE IF EXISTS #SeRectifica;
   CREATE TABLE #SeRectifica (
     IdCompania INT NOT NULL,
@@ -541,6 +660,12 @@ CREATE TABLE Financiero.SunatElectronicoTxtPropuestaSunat (
     Descripcion VARCHAR(255) NOT NULL,
     PeriodoInicioRectifica VARCHAR(12) NOT NULL,
     PeriodoFinRectifica VARCHAR(12) NOT NULL,
+    Valido Char NOT NULL,
+    ExisteEnTxt Char NOT NULL,
+    ExisteEnOrigen Char NOT NULL,
+    Motivo VARCHAR(MAX) NOT NULL,
+    De VARCHAR(MAX) NOT NULL,
+    Por VARCHAR(MAX) NOT NULL,
   )
 
   SET @i = 1;
@@ -553,32 +678,219 @@ CREATE TABLE Financiero.SunatElectronicoTxtPropuestaSunat (
   EXEC sp_executesql @QuerySQL;
 
 
-  SET @QuerySQL = '
-    INSERT INTO #SeRectifica (IdCompania, CodigoAnioPeriodo, Descripcion, PeriodoInicioRectifica, PeriodoFinRectifica, ' + @ColumnList + ')
 
-    -- Estado 9 Que Modifica
+  DECLARE @ColumnParteASQL NVARCHAR(MAX) = '';
+  DECLARE @ColumnParteBSQL NVARCHAR(MAX) = '';
+  DECLARE @ColumnEstadi8MotivoSQL NVARCHAR(MAX) = '';
+  DECLARE @ColumnEstadi8DeSQL NVARCHAR(MAX) = '';
+  DECLARE @ColumnEstadi8PorSQL NVARCHAR(MAX) = '';
+
+
+  SET @ColumnList = REPLACE(REPLACE(@ColumnList , @ColumnEstado, ''), ', ,', ',');
+
+
+  -- Columnas - Parte A
+  SELECT
+    @ColumnParteASQL = @ColumnParteASQL +
+          CASE WHEN @ColumnParteASQL = '' THEN '' ELSE ', ' END +
+          value + ' = ' + value + '_A ' + CHAR(13) + CHAR(10)
+  FROM STRING_SPLIT(@ColumnList, ',')
+  WHERE RTRIM(LTRIM(value)) <> '';
+
+  -- Columnas - Parte B
+  SELECT
+    @ColumnParteBSQL = @ColumnParteBSQL +
+          CASE WHEN @ColumnParteBSQL = '' THEN '' ELSE ', ' END +
+          value + ' = ' + value + '_B ' + CHAR(13) + CHAR(10)
+  FROM STRING_SPLIT(@ColumnList, ',')
+  WHERE RTRIM(LTRIM(value)) <> '';
+
+
+
+  SELECT
+    @ColumnEstadi8MotivoSQL = @ColumnEstadi8MotivoSQL +
+          CASE WHEN @ColumnEstadi8MotivoSQL = '' THEN '' ELSE ', ' END +
+          'IIF(' + [value] + '_Dif = ''S'', '' | ' + [value] + ''', '''')' + CHAR(13) + CHAR(10),
+
+    @ColumnEstadi8DeSQL = @ColumnEstadi8DeSQL +
+          CASE WHEN @ColumnEstadi8DeSQL = '' THEN '' ELSE ', ' END +
+          'IIF(' + [value] + '_Dif = ''S'', '' | '' + ' + [value] + '_A, '''')' + CHAR(13) + CHAR(10),
+
+    @ColumnEstadi8PorSQL = @ColumnEstadi8PorSQL +
+          CASE WHEN @ColumnEstadi8PorSQL = '' THEN '' ELSE ', ' END +
+          'IIF(' + [value] + '_Dif = ''S'', '' | '' + ' + [value] + '_B, '''')' + CHAR(13) + CHAR(10)
+
+  FROM STRING_SPLIT(@ColumnComparaList, ',')
+  WHERE RTRIM(LTRIM([value])) <> '';
+
+
+  --SELECT @ColumnEstadi8MotivoSQL, @ColumnEstadi8DeSQL, @ColumnEstadi8PorSQL
+
+  --
+
+
+  SET @QuerySQL = '
+    INSERT INTO #SeRectifica (
+      IdCompania
+      , CodigoAnioPeriodo
+      , Descripcion             
+      , PeriodoInicioRectifica  
+      , PeriodoFinRectifica     
+
+      , Valido
+      , ExisteEnTxt
+      , ExisteEnOrigen
+      , Motivo
+      , De
+      , Por
+
+      , ' + @ColumnList + '
+      , ' + @ColumnEstado + '
+    )'
+
+  SET @QuerySQL = @QuerySQL + '
     SELECT
-      *
-    FROM #SeRectifica
+      IdCompania
+      , CodigoAnioPeriodo
+      , Descripcion             = ''Rectificatoria desde ' + @PeriodoInicioLocal + ' hasta ' + @PeriodoFin + '''
+      , PeriodoInicioRectifica  = ' + @PeriodoInicioLocal + '
+      , PeriodoFinRectifica     = ' + @PeriodoFin + '
+
+      , Valido
+      , ExisteEnTxt
+      , ExisteEnOrigen
+      , Motivo                = ''Cambio en: '' + CONCAT(' + @ColumnEstadi8MotivoSQL + ') 
+      , De                    = CONCAT(' + @ColumnEstadi8DeSQL + ') 
+      , Por                   = CONCAT(' + @ColumnEstadi8PorSQL + ') 
+
+      , ' + @ColumnParteBSQL + '
+      , ' + @ColumnEstado + ' = 9
+    FROM #SeComparar
     WHERE ExisteEnOrigen = ''S''
       AND ExisteEnTxt = ''S'' 
       AND Valido = ''N''
+  '
+
+  SET @QuerySQL = @QuerySQL + '
 
     UNION ALL
 
-    -- Estado 9 Que Modifica con valores 0
     SELECT
-      *
-    FROM #SeRectifica
+      IdCompania
+      , CodigoAnioPeriodo
+      , Descripcion             = ''Rectificatoria desde ' + @PeriodoInicioLocal + ' hasta ' + @PeriodoFin + '''
+      , PeriodoInicioRectifica  = ' + @PeriodoInicioLocal + '
+      , PeriodoFinRectifica     = ' + @PeriodoFin + '
+
+      , Valido
+      , ExisteEnTxt
+      , ExisteEnOrigen
+      , Motivo                = ''Modifica por CERO''
+      , De                    = ''''
+      , Por                   = ''''
+
+      , ' + @ColumnParteASQL + '
+      , ' + @ColumnEstado + ' = 9
+    FROM #SeComparar
     WHERE ExisteEnOrigen = ''N''
-      
+  '
+
+  SET @QuerySQL = @QuerySQL + '
     UNION ALL
 
-    -- Estado 8 Nuevos registros
     SELECT
-      *
-    FROM #SeRectifica
+      IdCompania
+      , CodigoAnioPeriodo
+      , Descripcion             = ''Rectificatoria desde ' + @PeriodoInicioLocal + ' hasta ' + @PeriodoFin + '''
+      , PeriodoInicioRectifica  = ' + @PeriodoInicioLocal + '
+      , PeriodoFinRectifica     = ' + @PeriodoFin + '
+
+      , Valido
+      , ExisteEnTxt
+      , ExisteEnOrigen
+      , Motivo                = ''Nuevo Registro''
+      , De                    = ''''
+      , Por                   = ''''
+
+      , ' + @ColumnParteBSQL + '
+      , ' + @ColumnEstado + ' = 8
+    FROM #SeComparar
     WHERE ExisteEnTxt = ''N''
   '
 
   EXEC sp_executesql @QuerySQL;
+
+
+  -- ==================================================================================================================
+  -- ------- G E N E R A      R E P O R T E
+  -- ==================================================================================================================
+  DROP TABLE IF EXISTS #SunatElectronicoRangoPeriodo;
+
+  DROP TABLE IF EXISTS #SeReporte;
+  CREATE TABLE #SeReporte (
+    Orden VARCHAR(32),
+    Mensaje VARCHAR(255),
+    CodigoAnioPeriodo VARCHAR(12) DEFAULT ''
+  )
+  
+  -- Obtener Periodos
+  SELECT   
+    CodigoSunatElectronico = CodigoSunatElectronico   
+    , CodigoAnioPeriodo = vap.CodigoAnioPeriodo   
+    INTO #SunatElectronicoRangoPeriodo   
+  FROM Financiero.ViewSunatElectronicoPeriodo AS vap (nolock)   
+  WHERE vap.IdCompania = @IdCompania   
+    AND vap.CodigoAnioPeriodo >= @PeriodoInicioLocal   
+    AND vap.CodigoAnioPeriodo < @PeriodoFin   
+    AND RIGHT(vap.CodigoAnioPeriodo,2) NOT IN ('00','13')   
+    AND vap.CodigoSunatElectronico = @CodigoSunatElectronico   
+
+  -- Generar Reporte
+  INSERT INTO #SeReporte (Orden, Mensaje, CodigoAnioPeriodo) 
+  SELECT 
+    '10' + CONVERT(VARCHAR, p.CodigoAnioPeriodo) + '00000000'
+    , p.CodigoAnioPeriodo -- + '|' +  IIF(txt.TXT_CodigoAnioPeriodo IS NULL, 'TXT No Existe', 'Existe')
+    , p.CodigoAnioPeriodo
+  FROM #SunatElectronicoRangoPeriodo AS p
+  -- LEFT JOIN #diferencias_TXT_VS_XPLE AS txt ON p.CodigoAnioPeriodo = txt.CodigoAnioPeriodo
+  -- LEFT JOIN (SELECT DISTINCT CodigoAnioPeriodo FROM #ple050100TXTdeclarado) AS pl5 ON p.CodigoAnioPeriodo = pl5.CodigoAnioPeriodo
+  ORDER BY p.CodigoAnioPeriodo
+
+
+  -- Total Cantidad Procesados
+  SET @QuerySQL = '
+    SELECT ''2000000000000000000''
+      , ''Procesado |'' + CONVERT(VARCHAR(8), COUNT(1)) + '' Reg.procesados''   
+    FROM #SeComparar; 
+  '
+  INSERT INTO #SeReporte (Orden, Mensaje) 
+  EXEC sp_executesql @QuerySQL;
+
+
+  -- Reporte Rectificado
+  SET @QuerySQL = '
+    SELECT   
+      ''3000000000000000000'' + ROW_NUMBER() OVER (ORDER BY IdCompania, CodigoAnioPeriodo, ' + @ColumnEstado + ')   
+      , ''Rectifica periodo '' + ISNULL(CodigoAnioPeriodo, '''') + ''|'' + CONVERT(varchar(8), COUNT(1)) + '' Reg.con Estado ('' + ISNULL(' + @ColumnEstado + ', '''') + '')''
+    FROM #SeRectifica
+    GROUP BY IdCompania, CodigoAnioPeriodo, ' + @ColumnEstado + '
+  '
+  INSERT INTO #SeReporte (Orden, Mensaje) 
+  EXEC sp_executesql @QuerySQL;
+
+
+  -- Resumen Totales
+  SET @QuerySQL = '
+    SELECT   
+      ''4000000000000000000'' + ROW_NUMBER() OVER (ORDER BY ' + @ColumnEstado + ')   
+      , ''Total rectifica con Estado ('' + ISNULL(' + @ColumnEstado + ', '''') + '')|'' + CONVERT(varchar(8), COUNT(1)) + '' registros ''
+    FROM #SeRectifica
+    GROUP BY ' + @ColumnEstado + '
+  '
+  INSERT INTO #SeReporte (Orden, Mensaje) 
+  EXEC sp_executesql @QuerySQL;
+
+
+
+  -- Mostrar reporte
+  SELECT * FROM #SeReporte ORDER BY Orden;
