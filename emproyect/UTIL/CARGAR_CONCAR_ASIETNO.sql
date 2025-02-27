@@ -1,6 +1,6 @@
-DECLARE @CodigoEnproyecdb VARCHAR(12) = '0001';
-DECLARE @PeriodoInicio VARCHAR(6) = '201801';
-DECLARE @PeriodoFin VARCHAR(6) = '202408';
+DECLARE @CodigoEnproyecdb VARCHAR(12) = '0002';
+DECLARE @PeriodoInicio VARCHAR(6) = '202201';
+DECLARE @PeriodoFin VARCHAR(6) = '202311';
 DECLARE @Usuario VARCHAR(6) = 'Admin';
 DECLARE @SistemaOrigen VARCHAR(30) = 'CONCAR';  
 DECLARE @IdCompania INT;
@@ -309,13 +309,13 @@ INSERT INTO Financiero.SunatElectronicoTxtGenerado (
   Col6, Col7, Col8, Col9, Col10, 
   Col11, Col12, Col13, Col14, Col15, 
   Col16, Col17, Col18, Col19, Col20, 
-  Col21
+  Col21, Fila
 )
 SELECT
 '050100', @IdCompania, LEFT(BC1_Periodo, 6)
 , BC1_Periodo, BC2_Cuo, BC3_Correlativo, BC4_Cuenta, BC5_UnidadOperacion
 , BC6_CentroCosto, BC7_MonedaOrigen, BC8_TipoDocumento, BC9_NumeroDocumento, BC10_TipoComprobante
 , BC11_Serie, BC12_Numero, BC13_FechaContable, BC14_FechaVencimiento, BC15_FechaDocumento 
-, BC16_Glosa_ParaComparar , BC16_Glosa, BC18_Debe , BC19_Haber, BC20_Estructura
-, '1'
+, BC16_Glosa, '', BC18_Debe , BC19_Haber, BC20_Estructura
+, '1', 1
 FROM #ple050100_origen;

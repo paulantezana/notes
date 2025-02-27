@@ -40,7 +40,7 @@ SELECT TOP 10 * FROM Auditoria.LogDeExcepciones ORDER BY Id DESC
 6. Las pruebas serán realizadas con la empresa MINERCOBRE con ruc 20524561264.
 
 -- Genera Diccionario
-EXEC [Configuracion].[usp_GeneraDiccionario]
+  EXEC [Configuracion].[usp_GeneraDiccionario]
 SELECT * FROM Configuracion.DiccionarioPantallaTabla WHERE Pantalla = 'FIN.CTB.075'
 SELECT * FROM Configuracion.DiccionarioPantallaCampo WHERE Pantalla = 'FIN.CTB.075'
 
@@ -79,6 +79,13 @@ CLAVE -- SOL
 20524561264
 NTEMPARM
 Mi27012021
+
+IMPORTANTE: Eliminar Propuesta 202306 compras emitido por error.
+// 1052)}
+
+20330791170
+CMXE6CFA
+En27012021
 
 20524561264
 pAntezana@grupoValor.com

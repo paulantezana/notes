@@ -265,61 +265,70 @@ ORDER BY lot.Cuenta
 -- ================================== COMPARATIVA SALDOS FINALES =======================================
 -- =====================================================================================================
 
-SELECT Libro = li.Codigo, vld.Cuenta, vld.SaldoBase, sac.FinalSaldo FROM (
-    SELECT
-        ld.IdCompania
-        , ld.IdLibro   
-        , Cuenta = RTRIM(c.Codigo)
-        , SaldoBase = SUM(DebeMonedaBase - HaberMonedaBase)
-    FROM  Financiero.LoteDetalle     ld (NOLOCK)         
-    LEFT JOIN Financiero.AnioPeriodo  ap (NOLOCK) on ap.id = ld.IdAnioPeriodo  
-    LEFT JOIN Financiero.Anio    a  (NOLOCK) on a.id  = ld.IdAnio
-    LEFT JOIN Financiero.Cuenta   c (NOLOCK) on c.Id = ld.IdCuenta AND c.IdCompania = ld.IdCompania
+DROP TABLE IF EXISTS #LoteDetalle;
+DROP TABLE IF EXISTS #SaldoAnioCuenta;
 
-    LEFT JOIN Financiero.Lote   l  (NOLOCK) on l.id  = ld.IdLote
-    LEFT JOIN Configuracion.EstadoLote el (NOLOCK) on el.id = l.IdEstadoLote
-
-    WHERE ap.Codigo <= '202312' AND ld.IdCompania = 27 AND el.Codigo = 'ASE'
-    GROUP BY 
+SELECT
     ld.IdCompania
-    , ld.IdLibro
+    , ld.IdLibro   
+    , Cuenta = RTRIM(c.Codigo)
+    , SaldoBase = SUM(DebeMonedaBase - HaberMonedaBase)
+    INTO #LoteDetalle
+FROM  Financiero.LoteDetalle     ld (NOLOCK)         
+LEFT JOIN Financiero.AnioPeriodo  ap (NOLOCK) on ap.id = ld.IdAnioPeriodo  
+LEFT JOIN Financiero.Anio    a  (NOLOCK) on a.id  = ld.IdAnio
+LEFT JOIN Financiero.Cuenta   c (NOLOCK) on c.Id = ld.IdCuenta AND c.IdCompania = ld.IdCompania
+
+LEFT JOIN Financiero.Lote   l  (NOLOCK) on l.id  = ld.IdLote
+LEFT JOIN Configuracion.EstadoLote el (NOLOCK) on el.id = l.IdEstadoLote
+
+WHERE ap.Codigo <= '202312' AND ld.IdCompania = 32 AND el.Codigo = 'ASE'
+GROUP BY 
+ld.IdCompania
+, ld.IdLibro
+, c.Codigo
+
+-- ///
+
+SELECT        
+    sac.IdCompania
+    , sac.IdLibro
+    , sac.IdMoneda
+    , Cuenta = RTRIM(c.Codigo)
+    , FinalSaldo = SUM(        
+        CASE RIGHT(ap.Codigo,2)               
+        WHEN '01' THEN sac.Acumulado01        
+        WHEN '02' THEN sac.Acumulado02        
+        WHEN '03' THEN sac.Acumulado03        
+        WHEN '04' THEN sac.Acumulado04        
+        WHEN '05' THEN sac.Acumulado05        
+        WHEN '06' THEN sac.Acumulado06        
+        WHEN '07' THEN sac.Acumulado07        
+        WHEN '08' THEN sac.Acumulado08        
+        WHEN '09' THEN sac.Acumulado09        
+        WHEN '10' THEN sac.Acumulado10        
+        WHEN '11' THEN sac.Acumulado11        
+        WHEN '12' THEN sac.Acumulado12        
+        WHEN '13' THEN sac.Acumulado13        
+        ELSE 0 END        
+        ) 
+  INTO #SaldoAnioCuenta
+FROM Financiero.SaldoAnioCuenta AS sac (nolock)        
+INNER JOIN Financiero.Anio  AS  a (nolock) ON a.id = sac.IdAnio        
+INNER JOIN Financiero.AnioPeriodo AS ap (nolock) ON ap.IdAnio = a.Id
+LEFT JOIN Financiero.Cuenta   c (NOLOCK) on c.Id = sac.IdCuenta AND c.IdCompania = sac.IdCompania
+WHERE ap.Codigo = '202312' AND IdMoneda = '001'  AND sac.IdCompania = 32
+GROUP BY
+    sac.IdCompania
+    , sac.IdLibro
+    , sac.IdMoneda
     , c.Codigo
-) as vld
-INNER JOIN Configuracion.Libro li (nolock) on li.id  = vld.IdLibro  
-LEFT JOIN (
-    SELECT        
-        sac.IdCompania
-        , sac.IdLibro
-        , sac.IdMoneda
-        , Cuenta = RTRIM(c.Codigo)
-        , FinalSaldo = SUM(        
-            CASE RIGHT(ap.Codigo,2)               
-            WHEN '01' THEN sac.Acumulado01        
-            WHEN '02' THEN sac.Acumulado02        
-            WHEN '03' THEN sac.Acumulado03        
-            WHEN '04' THEN sac.Acumulado04        
-            WHEN '05' THEN sac.Acumulado05        
-            WHEN '06' THEN sac.Acumulado06        
-            WHEN '07' THEN sac.Acumulado07        
-            WHEN '08' THEN sac.Acumulado08        
-            WHEN '09' THEN sac.Acumulado09        
-            WHEN '10' THEN sac.Acumulado10        
-            WHEN '11' THEN sac.Acumulado11        
-            WHEN '12' THEN sac.Acumulado12        
-            WHEN '13' THEN sac.Acumulado13        
-            ELSE 0 END        
-            ) 
-    FROM Financiero.SaldoAnioCuenta AS sac (nolock)        
-    INNER JOIN Financiero.Anio  AS  a (nolock) ON a.id = sac.IdAnio        
-    INNER JOIN Financiero.AnioPeriodo AS ap (nolock) ON ap.IdAnio = a.Id
-    LEFT JOIN Financiero.Cuenta   c (NOLOCK) on c.Id = sac.IdCuenta AND c.IdCompania = sac.IdCompania
-    WHERE ap.Codigo = '202312' AND IdMoneda = '001'  AND sac.IdCompania = 27
-    GROUP BY
-        sac.IdCompania
-        , sac.IdLibro
-        , sac.IdMoneda
-        , c.Codigo
-) as sac ON vld.IdCompania = sac.IdCompania
+
+
+SELECT
+  vld.IdLibro, vld.Cuenta, vld.SaldoBase, sac.FinalSaldo
+FROM #LoteDetalle as vld
+LEFT JOIN #SaldoAnioCuenta as sac ON vld.IdCompania = sac.IdCompania
     AND vld.IdLibro = sac.IdLibro
     AND vld.Cuenta = sac.Cuenta
 WHERE vld.SaldoBase != sac.FinalSaldo
